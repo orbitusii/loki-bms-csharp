@@ -9,13 +9,15 @@ namespace loki_bms_csharp.Database
         public IFFType Type;
         public short Code;
 
+        [Flags]
         public enum IFFType
         {
-            Mode1 = 0,
-            Mode2 = 1,
-            Mode3 = 2,
-            Mode4 = 3,
-            TADIL = 4,
+            None = 0,
+            Mode1 = 1,
+            Mode2 = 2,
+            Mode3 = 4,
+            Mode4 = 8,
+            TADIL = 16,
         }
     }
 }

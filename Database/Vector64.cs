@@ -6,7 +6,6 @@ Copyright: 2022
 */
 
 using System;
-using UnityEngine;
 
 [System.Serializable]
 public struct Vector64
@@ -42,14 +41,6 @@ public struct Vector64
         get
         {
             return this / magnitude;
-        }
-    }
-
-    public Vector3 normalizedVector3
-    {
-        get
-        {
-            return (Vector3)normalized;
         }
     }
 
@@ -218,26 +209,20 @@ public struct Vector64
     {
         return new Vector64(left.x * right, left.y * right, left.z * right);
     }
+    public static Vector64 operator *(double left, Vector64 right)
+    {
+        return new Vector64(right.x * left, right.y * left, right.z * left);
+    }
 
     public static Vector64 operator /(Vector64 left, double right)
     {
-        return new Vector64(left.x / right, left.y / right, left.z / right);
+        return left * (1/right);
     }
-    
+
     // Negative sign operator, duh?
     public static Vector64 operator -(Vector64 vec)
     {
         return new Vector64(-vec.x, -vec.y, -vec.z);
-    }
-
-    public static explicit operator Vector3(Vector64 vec)
-    {
-        return new Vector3((float)vec.x, (float)vec.y, (float)vec.z);
-    }
-
-    public static implicit operator Vector64(Vector3 vec)
-    {
-        return new Vector64(vec.x, vec.y, vec.z);
     }
 
 
