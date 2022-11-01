@@ -1,0 +1,30 @@
+﻿<Application x:Class="loki_bms_csharp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:loki_bms_csharp"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="SuperDarkGray" Color="#1A1A1F"/>
+        <SolidColorBrush x:Key="VeryDarkGray" Color="#20202f"/>
+        <SolidColorBrush x:Key="MidGray" Color="#AFAFCF"/>
+        <SolidColorBrush x:Key="OffWhite" Color="#DFDFDF"/>
+        <SolidColorBrush x:Key="SkyBG" Color="#000000"/>
+        <SolidColorBrush x:Key="Ocean" Color="#111155"/>
+        <SolidColorBrush x:Key="Ground" Color="#333333"/>
+
+        <Style x:Key="WindowTheme" TargetType="Window">
+            <Setter Property="Background" Value="{StaticResource SuperDarkGray}"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource VeryDarkGray}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
+            <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
+        </Style>
+        <Style x:Key="ScopeWindow" TargetType="Canvas">
+            <Setter Property="Background" Value="{StaticResource SkyBG}"/>
+        </Style>
+    </Application.Resources>
+</Application>
