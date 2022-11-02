@@ -6,7 +6,7 @@ namespace loki_bms_csharp.Database
 {
     public struct TrackFile : IReturnData
     {
-        public Vector64 LastSurePosition { get; private set; }
+        public Vector64 RawPosition { get; private set; }
         public Vector64 Position { get; private set; }
         public Vector64 Velocity { get; private set; }
 
@@ -14,6 +14,7 @@ namespace loki_bms_csharp.Database
         public IFFData.IFFType IFFTypes { get; private set; }
 
         public DateTime Timestamp { get; private set; }
+        public bool IsSimTrack
 
         // TrackFile Amplifying Data
         public FriendFoeStatus FFS;
@@ -28,7 +29,7 @@ namespace loki_bms_csharp.Database
 
         public void AddNewData (IReturnData data)
         {
-            LastSurePosition = data.Position;
+            RawPosition = data.Position;
             Position = data.Position;
 
             Velocity = data.Velocity;
@@ -45,9 +46,9 @@ namespace loki_bms_csharp.Database
 
         public void UpdateVisual (float dt)
         {
-            Position += (Velocity - 9.80665 * Position.normalized) * dt;
+            Velocity -= 9.80665 * Position.normalized * dt;
 
-            Velocity -= 9.80665 * Position.normalized;
+            Position += Velocity * dt;
 
             if(DateTime.UtcNow - NewestHistory > TimeSpan.FromSeconds(10))
             {
@@ -60,16 +61,5 @@ namespace loki_bms_csharp.Database
                 OldestHistory += TimeSpan.FromSeconds(10);
             }
         }
-    }
-
-    public enum FriendFoeStatus
-    {
-        KnownFriend,
-        AssumedFriend,
-        Neutral,
-        Suspect,
-        Hostile,
-        Unknown,
-        Pending,
     }
 }
