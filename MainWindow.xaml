@@ -21,7 +21,7 @@
         <Slider x:Name="Lat_Slider" HorizontalAlignment="Left" Margin="60,58,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Maximum="90" Minimum="-90"/>
         <Label x:Name="X_Pos_Label" Content="{Binding Value, ElementName=Lon_Slider}" HorizontalAlignment="Left" Margin="10,85,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45"/>
         <Label x:Name="Y_Pos_Label" Content="{Binding Value, ElementName=Lat_Slider}" HorizontalAlignment="Left" Margin="10,54,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45" RenderTransformOrigin="0.511,0.02"/>
-        <Slider x:Name="Zoom_Slider" HorizontalAlignment="Left" Margin="60,120,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Maximum="16" SmallChange="1" TickPlacement="None" Value="2"/>
+        <Slider x:Name="Zoom_Slider" HorizontalAlignment="Left" Margin="60,120,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Maximum="16" SmallChange="1" TickPlacement="TopLeft" Value="1" Minimum="1" IsSnapToTickEnabled="True"/>
         <Label x:Name="Y_Pos_Label_Copy" Content="{Binding Value, ElementName=Zoom_Slider}" HorizontalAlignment="Left" Margin="10,116,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45"/>
 
     </Grid>

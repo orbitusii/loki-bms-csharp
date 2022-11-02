@@ -73,11 +73,11 @@ namespace loki_bms_csharp
             MathL.TangentMatrix camMatrix = MathL.TangentMatrix.FromLatLon(lat, lon, false);
 
             var renderer = new ScopeRenderer(args, camMatrix);
-            renderer.VerticalSize = alt;
+            renderer.VerticalSize = Math.Pow(2, alt) * 100;
 
-            renderer.DrawLine((0, 0, 0), (1, 0, 0), SKColors.Red, 3);
-            renderer.DrawLine((0, 0, 0), (0, 1, 0), SKColors.Green, 3);
-            renderer.DrawLine((0, 0, 0), (0, 0, 1), SKColors.Blue, 3);
+            renderer.DrawLine((0, 0, 0), (100000, 0, 0), SKColors.Red, 3);
+            renderer.DrawLine((0, 0, 0), (0, 100000, 0), SKColors.Green, 3);
+            renderer.DrawLine((0, 0, 0), (0, 0, 100000), SKColors.Blue, 3);
         }
 
         public (double LA, double LO, double AL) GetLatLonAltSliders()
