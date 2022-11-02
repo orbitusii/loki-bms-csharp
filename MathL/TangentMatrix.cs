@@ -11,24 +11,30 @@ namespace loki_bms_csharp.MathL
         double g, h, k, pz;
         double scale;
 
-        public static TangentMatrix FromLatLon (double lat, double lon, bool radians = true)
+
+        public static TangentMatrix FromLatLon(double lat, double lon, bool radians = true)
         {
-            if(!radians)
+            LatLonCoord latLon;
+            if(radians)
             {
-                lat *= Math.PI / 180;
-                lon *= Math.PI / 180;
+                latLon = new LatLonCoord { Lat_Rad = lat, Lon_Rad = lon, Alt = 0 };
+            }
+            else
+            {
+                latLon = new LatLonCoord { Lat_Degrees = lat, Lon_Degrees = lon, Alt = 0 };
             }
 
-            double z = Math.Sin(lat);
-            double cosLat = Math.Cos(lat);
-
-            double x = Math.Cos(lon) * cosLat;
-            double y = Math.Sin(lon) * cosLat;
-
-            return OnUnitSphere((x, y, z));
+            return FromLatLon(latLon);
         }
 
-        public static TangentMatrix OnUnitSphere(Vector64 position)
+        public static TangentMatrix FromLatLon(LatLonCoord latLon)
+        {
+            Vector64 vectorForm = MathL.LLToXYZ(latLon);
+
+            return FromXYZ(vectorForm);
+        }
+
+        public static TangentMatrix FromXYZ(Vector64 position)
         {
             if (position.magnitude == 0)
             {
@@ -91,10 +97,19 @@ namespace loki_bms_csharp.MathL
             return cosecant;
         }
 
-        public Vector64 ToLocal(Vector64 world)
+        /// <summary>
+        /// Gets a Point in this TangentMatrix's space from World space.
+        /// Used for Points where relative position matters.
+        /// </summary>
+        /// <param name="world">Vector in World space</param>
+        /// <returns></returns>
+        public Vector64 PointToTangentSpace(Vector64 world)
         {
-            world -= Origin;
+            return VectorToTangentSpace(world - Origin);
+        }
 
+        public Vector64 VectorToTangentSpace(Vector64 world)
+        {
             double lx = Vector64.Dot(world, Out);
             double ly = Vector64.Dot(world, Up);
             double lz = Vector64.Dot(world, Right);
@@ -102,9 +117,20 @@ namespace loki_bms_csharp.MathL
             return new Vector64(lx, ly, lz);
         }
 
-        public Vector64 ToWorld(Vector64 local)
+        /// <summary>
+        /// Returns a Point from this TangentMatrix's space to World space.
+        /// Used for Points where relative position matters.
+        /// </summary>
+        /// <param name="local">Vector in Tangent space</param>
+        /// <returns></returns>
+        public Vector64 PointToWorldSpace(Vector64 local)
         {
-            Vector64 worldVec = local.x * Out + local.y * Up + local.z * Right + Origin;
+            return VectorToWorldSpace(local) + Origin;
+        }
+
+        public Vector64 VectorToWorldSpace(Vector64 local)
+        {
+            Vector64 worldVec = local.x * Out + local.y * Up + local.z * Right;
 
             return worldVec;
         }
