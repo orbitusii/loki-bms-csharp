@@ -6,6 +6,5 @@ namespace loki_bms_csharp.UserInterface
 {
     public interface IScopeSymbol
     {
-        public ScopeView Parent { get; set; }
     }
 }
