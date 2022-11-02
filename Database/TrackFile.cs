@@ -11,10 +11,10 @@ namespace loki_bms_csharp.Database
         public Vector64 Velocity { get; private set; }
 
         public IFFData[] IFFCodes { get; private set; }
-        public IFFData.IFFType IFFTypes { get; private set; }
+        public IFFType IFFTypes { get; private set; }
 
         public DateTime Timestamp { get; private set; }
-        public bool IsSimTrack
+        public TrackType TrackType { get; private set; }
 
         // TrackFile Amplifying Data
         public FriendFoeStatus FFS;
@@ -23,9 +23,31 @@ namespace loki_bms_csharp.Database
 
         public int SpecType;
 
+        public bool ShowHistory;
         public List<Vector64> History { get; private set; }
         private DateTime NewestHistory;
         private DateTime OldestHistory;
+
+        public TrackFile(Vector64 pos, Vector64 vel, IFFData[] codes, FriendFoeStatus _ffs = FriendFoeStatus.Pending, TrackType type = TrackType.Sim, string vcs = "", int spec = 0)
+        {
+            RawPosition = pos;
+            Position = pos;
+            Velocity = vel;
+            IFFCodes = codes;
+            IFFTypes = 0;
+            TrackType = type;
+            FFS = _ffs;
+
+            Timestamp = DateTime.UtcNow;
+
+            Callsign = vcs;
+            SpecType = spec;
+
+            ShowHistory = false;
+            History = new List<Vector64>(0);
+            NewestHistory = Timestamp;
+            OldestHistory = Timestamp;
+        }
 
         public void AddNewData (IReturnData data)
         {
@@ -34,7 +56,7 @@ namespace loki_bms_csharp.Database
 
             Velocity = data.Velocity;
 
-            IFFTypes = IFFData.IFFType.None;
+            IFFTypes = IFFType.None;
             IFFCodes = data.IFFCodes;
             foreach (var code in IFFCodes)
             {
