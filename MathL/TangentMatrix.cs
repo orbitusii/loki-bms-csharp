@@ -45,7 +45,7 @@ namespace loki_bms_csharp.MathL
             }
             else
             {
-                north = GetNorthVector(UnitSurface);
+                north = -GetNorthVector(UnitSurface);
             }
 
             Vector64 east = Vector64.Cross(normal, north);
@@ -56,13 +56,13 @@ namespace loki_bms_csharp.MathL
                 b = normal.y,
                 c = normal.z,
                 px = UnitSurface.x,
-                d = north.x,
-                e = north.y,
-                f = north.z,
+                d = east.x,
+                e = east.y,
+                f = east.z,
                 py = UnitSurface.y,
-                g = east.x,
-                h = east.y,
-                k = east.z,
+                g = north.x,
+                h = north.y,
+                k = north.z,
                 pz = UnitSurface.z,
                 scale = 1,
             };
