@@ -29,7 +29,7 @@ namespace loki_bms_csharp.MathL
 
         public static TangentMatrix FromLatLon(LatLonCoord latLon)
         {
-            Vector64 vectorForm = MathL.LLToXYZ(latLon);
+            Vector64 vectorForm = Conversions.LLToXYZ(latLon);
 
             return FromXYZ(vectorForm);
         }

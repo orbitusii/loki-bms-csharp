@@ -4,7 +4,7 @@ using System.Text;
 
 namespace loki_bms_csharp.MathL
 {
-    public static class MathL
+    public static class Conversions
     {
         public const double ToRadians = Math.PI / 180;
         public const double ToDegrees = 1 / ToRadians;
