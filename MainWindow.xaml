@@ -6,7 +6,7 @@
         xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
         mc:Ignorable="d"
         Title="LOKI BMS - Main Scope" Height="880" Width="1720" ResizeMode="CanResizeWithGrip"
-        Style="{StaticResource WindowTheme}" Topmost="True" Closing="PrimaryDisplay_Closing">
+        Style="{StaticResource WindowTheme}" Closing="PrimaryDisplay_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
@@ -19,10 +19,10 @@
         <Button x:Name="Button_0" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="34" Width="100" Grid.Row="1" ClickMode="Release" Content="Press me or [D]" AutomationProperties.AcceleratorKey=""/>
         <Slider x:Name="Lon_Slider" HorizontalAlignment="Left" Margin="60,89,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Maximum="180" Minimum="-180" Value="45"/>
         <Slider x:Name="Lat_Slider" HorizontalAlignment="Left" Margin="60,58,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Maximum="90" Minimum="-90"/>
-        <Label x:Name="X_Pos_Label" Content="{Binding Value, ElementName=Lon_Slider}" HorizontalAlignment="Left" Margin="10,85,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45"/>
-        <Label x:Name="Y_Pos_Label" Content="{Binding Value, ElementName=Lat_Slider}" HorizontalAlignment="Left" Margin="10,54,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45" RenderTransformOrigin="0.511,0.02"/>
-        <Slider x:Name="Zoom_Slider" HorizontalAlignment="Left" Margin="60,120,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Maximum="16" SmallChange="1" TickPlacement="TopLeft" Value="1" Minimum="1" IsSnapToTickEnabled="True"/>
-        <Label x:Name="Y_Pos_Label_Copy" Content="{Binding Value, ElementName=Zoom_Slider}" HorizontalAlignment="Left" Margin="10,116,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45"/>
+        <Label x:Name="Lon_Label" Content="{Binding Value, ElementName=Lon_Slider}" HorizontalAlignment="Left" Margin="10,85,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45"/>
+        <Label x:Name="Lat_Label" Content="{Binding Value, ElementName=Lat_Slider}" HorizontalAlignment="Left" Margin="10,54,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45" RenderTransformOrigin="0.511,0.02"/>
+        <Slider x:Name="Zoom_Slider" HorizontalAlignment="Left" Margin="60,120,0,0" Grid.Row="1" VerticalAlignment="Top" Width="120" Maximum="16" SmallChange="1" TickPlacement="TopLeft" Value="16" Minimum="0" IsSnapToTickEnabled="True"/>
+        <Label x:Name="Zoom_Increment_Label" Content="{Binding Value, ElementName=Zoom_Slider}" HorizontalAlignment="Left" Margin="10,116,0,0" Grid.Row="1" VerticalAlignment="Top" Width="45"/>
 
     </Grid>
 </Window>
