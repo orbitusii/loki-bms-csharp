@@ -24,6 +24,14 @@ namespace loki_bms_csharp
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static readonly DependencyProperty DebugProperty =
+            DependencyProperty.Register("DrawDebug", typeof(bool), typeof(MainWindow));
+        public bool DrawDebug
+        {
+            get { return (bool) GetValue(DebugProperty); }
+            set { SetValue(DebugProperty, value); }
+        }
+
         private Brush StrokeBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         private Brush FillBrush = new SolidColorBrush(Color.FromArgb(128, 255, 0, 0));
 
@@ -42,6 +50,7 @@ namespace loki_bms_csharp
 
             ConfigureClock();
             ScopeCanvas.PaintSurface += OnPaintSurface;
+            DrawDebug = true;
 
             EndInit();
         }
@@ -75,9 +84,11 @@ namespace loki_bms_csharp
             var renderer = new ScopeRenderer(args, camMatrix);
             renderer.VerticalSize = Math.Pow(2, alt) * 200;
 
-            renderer.DrawCircle((0, 0, 0), 6378137, SKColors.Gray);
+            renderer.DrawCircle((0, 0, 0), 6378137, SKColors.DarkGray);
 
-            renderer.DrawAxisLines();
+            if (DrawDebug) renderer.DrawAxisLines();
+
+
         }
 
         public (double LA, double LO, double AL) GetLatLonAltSliders()
