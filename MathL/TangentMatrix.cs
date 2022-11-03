@@ -4,7 +4,7 @@ using System.Text;
 
 namespace loki_bms_csharp.MathL
 {
-    public struct TangentMatrix
+    public class TangentMatrix
     {
         double a, b, c, px;
         double d, e, f, py;

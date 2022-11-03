@@ -30,5 +30,10 @@ namespace loki_bms_csharp
         /// Altitude relative to the surface of the reference sphere
         /// </summary>
         public double Alt;
+
+        public override string ToString()
+        {
+            return $"({Lat_Degrees}{(Lat_Rad >= 0 ? 'N' : 'S')},{Lon_Degrees}{(Lon_Rad >= 0 ? 'E' : 'W')})";
+        }
     }
 }
