@@ -8,7 +8,7 @@ namespace loki_bms_csharp
     public static class UserData
     {
         public static MainWindow MainWindow;
-        public static LatLonCoord ViewPosition { get; private set; }
+        public static LatLonCoord ViewCenter { get; private set; }
         public static TangentMatrix CameraMatrix { get; private set; }
         public static double ZoomIncrement = 16;
         public static double VerticalFOV
@@ -30,9 +30,9 @@ namespace loki_bms_csharp
 
         public static LatLonCoord UpdateViewPosition (LatLonCoord newView)
         {
-            ViewPosition = new LatLonCoord { Lat_Rad = newView.Lat_Rad, Lon_Rad = newView.Lon_Rad, Alt = 0 };
+            ViewCenter = new LatLonCoord { Lat_Rad = newView.Lat_Rad, Lon_Rad = newView.Lon_Rad, Alt = 0 };
 
-            return ViewPosition;
+            return ViewCenter;
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace loki_bms_csharp
 
         public static TangentMatrix UpdateCameraMatrix ()
         {
-            CameraMatrix = TangentMatrix.FromLatLon(ViewPosition);
+            CameraMatrix = TangentMatrix.FromLatLon(ViewCenter);
             CameraMatrix.SetOrigin(CameraMatrix.Out * Conversions.EarthRadius);
 
             return CameraMatrix;
