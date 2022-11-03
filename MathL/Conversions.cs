@@ -59,7 +59,7 @@ namespace loki_bms_csharp.MathL
 
             double vx = verticalSpeed;
             double vy = speed * Math.Sin(heading);
-            double vz = speed * Math.Cos(heading);
+            double vz = speed * -Math.Cos(heading);
 
             Vector64 toWorldSpace = mat.VectorToWorldSpace((vx, vy, vz));
 
