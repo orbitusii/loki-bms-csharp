@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>loki_bms_csharp</RootNamespace>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>LOKI Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
