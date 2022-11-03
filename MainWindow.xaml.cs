@@ -49,9 +49,13 @@ namespace loki_bms_csharp
 
             BeginInit();
 
+            UserData.MainWindow = this;
+            UserData.UpdateViewPosition(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0 });
+            UserData.SetZoom(16);
+
             ConfigureClock();
             ScopeCanvas.PaintSurface += OnPaintSurface;
-            DrawDebug = true;
+            DrawDebug = false;
 
             TrackDatabase.Initialize(1000);
             var FndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0, Alt = 0 },heading: Math.PI/4, speed: 1);
@@ -60,6 +64,7 @@ namespace loki_bms_csharp
 
             FndTrack.FFS = FriendFoeStatus.KnownFriend;
             HosTrack.FFS = FriendFoeStatus.Hostile;
+            PndTrack.FFS = FriendFoeStatus.AssumedFriend;
 
             EndInit();
         }
@@ -87,27 +92,23 @@ namespace loki_bms_csharp
 
         private void OnPaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args)
         {
-            (double lat, double lon, double alt) = GetLatLonAltSliders();
-            MathL.TangentMatrix camMatrix = MathL.TangentMatrix.FromLatLon(lat, lon, false);
-            camMatrix.SetOrigin(camMatrix.Out * 6378137);
+            var renderer = new ScopeRenderer(args, UserData.UpdateCameraMatrix());
+            renderer.SetVerticalSize(UserData.VerticalFOV);
 
-            var renderer = new ScopeRenderer(args, camMatrix);
-            renderer.SetVerticalSize(Math.Pow(2, alt) * 200);
-
-            renderer.DrawCircle((0, 0, 0), 6378137, SKColor.FromHsl(185, 30, 8));
+            renderer.DrawCircle((0, 0, 0), 6378137, SKColor.FromHsl(215, 30, 8));
 
             if (DrawDebug) renderer.DrawAxisLines();
 
             renderer.DrawFromDatabase();
         }
 
-        public (double LA, double LO, double AL) GetLatLonAltSliders()
+        public LatLonCoord GetLatLonAltSliders()
         {
             double lat = Lat_Slider.Value;
             double lon = Lon_Slider.Value;
             double alt = Zoom_Slider.Value;
 
-            return (lat, lon, alt);
+            return new LatLonCoord { Lat_Degrees = lat, Lon_Degrees = lon, Alt = alt };
         }
 
         private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -117,18 +118,12 @@ namespace loki_bms_csharp
 
         private void ScopeCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            Point mousePos = e.GetPosition(ScopeCanvas);
-            SKSize size = ScopeCanvas.CanvasSize;
-            if (mousePos.X >= 0 && mousePos.X <= size.Width && mousePos.Y >= 0 && mousePos.Y < size.Height)
-            {
-                int change = Math.Sign(e.Delta);
-                Zoom_Slider.Value -= change;
-            }
+            ScopeMouseInput.ProcessScrollWheel(e);
         }
 
         private void ScopeCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            ScopeMouseInput.ProcessMouseClick(e);
         }
     }
 }
