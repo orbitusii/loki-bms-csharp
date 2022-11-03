@@ -102,7 +102,7 @@ namespace loki_bms_csharp.Database
             Position += MathL.Conversions.EarthRadius * (forwardAxis * sine
                 - outAxis * (1 - cosine));
 
-            Velocity -= arcLength * (forwardAxis * (1 - cosine) + outAxis * sine);
+            Velocity += arcLength * (-(1 - cosine) * forwardAxis - sine * outAxis);
         }
     }
 }

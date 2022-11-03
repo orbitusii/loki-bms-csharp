@@ -35,7 +35,7 @@ namespace loki_bms_csharp.MathL
         /// <returns></returns>
         public static Vector64 LLToXYZ (LatLonCoord latLon, double radius = 1)
         {
-            double magnitude = latLon.Alt + EarthRadius;
+            double magnitude = latLon.Alt + radius;
             double cosLat = Math.Cos(latLon.Lat_Rad);
 
             double x = cosLat * Math.Cos(latLon.Lon_Rad);
