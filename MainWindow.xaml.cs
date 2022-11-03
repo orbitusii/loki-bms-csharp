@@ -125,5 +125,15 @@ namespace loki_bms_csharp
         {
             ScopeMouseInput.ProcessMouseClick(e);
         }
+
+        private void PrimaryDisplay_KeyDown(object sender, KeyEventArgs e)
+        {
+            ScopeHotkeys.ProcessKeyDown(e);
+        }
+
+        private void PrimaryDisplay_KeyUp(object sender, KeyEventArgs e)
+        {
+            ScopeHotkeys.ProcessKeyUp(e);
+        }
     }
 }
