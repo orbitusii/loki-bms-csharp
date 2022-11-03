@@ -71,8 +71,10 @@ namespace loki_bms_csharp.Database
             //Velocity -= 9.80665 * Position.normalized * dt;
 
             //System.Diagnostics.Debug.WriteLine($"Moving a Track from {Position} to {Position + Velocity * dt}");
-            
-            Position = Position + Velocity * dt;
+
+            //Position = Position + Velocity * dt;
+
+            ConformalMove(dt);
 
             if(DateTime.UtcNow - NewestHistory > TimeSpan.FromSeconds(10))
             {
@@ -84,6 +86,23 @@ namespace loki_bms_csharp.Database
                 History.RemoveAt(0);
                 OldestHistory += TimeSpan.FromSeconds(10);
             }
+        }
+
+        public void ConformalMove (float dt)
+        {
+            Vector64 outAxis = Position.normalized;
+            Vector64 forwardAxis = Velocity.normalized;
+
+            double arcLength = Velocity.magnitude * dt;
+            double angle = arcLength / MathL.Conversions.EarthRadius;
+
+            double sine = Math.Sin(angle);
+            double cosine = Math.Cos(angle);
+
+            Position += MathL.Conversions.EarthRadius * (forwardAxis * sine
+                - outAxis * (1 - cosine));
+
+            Velocity -= arcLength * (forwardAxis * (1 - cosine) + outAxis * sine);
         }
     }
 }
