@@ -120,14 +120,23 @@ namespace loki_bms_csharp.UserInterface
                 //Velocity leader
                 DrawLine(track.Position, track.Position + track.Velocity, SKColors.White, 1);
             }
+
+            foreach(var datum in TrackDatabase.UncorrelatedData)
+            {
+                DrawSingleItem(datum, TrackDatabase.DatumBrush);
+            }
         }
 
         public void DrawSingleItem (IReturnData track, SKPaint brush)
         {
-            Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position) * PixelsPerUnit;
-            SKPoint canvasPos = GetScreenPoint(screenPos);
+            Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
 
-            Canvas.DrawCircle(canvasPos, 4, brush);
+            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius)
+            {
+                SKPoint canvasPos = GetScreenPoint(screenPos * PixelsPerUnit);
+
+                Canvas.DrawCircle(canvasPos, 4, brush);
+            }
         }
 
         public SKPoint GetScreenPoint (Vector64 screenPos)

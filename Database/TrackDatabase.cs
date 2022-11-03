@@ -19,14 +19,15 @@ namespace loki_bms_csharp.Database
         public static Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> ColorByFFS =
             new Dictionary<FriendFoeStatus, SkiaSharp.SKPaint>()
             {
-                {FriendFoeStatus.KnownFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.StrokeAndFill, Color = SkiaSharp.SKColors.Blue } },
-                {FriendFoeStatus.AssumedFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.StrokeAndFill, Color = SkiaSharp.SKColors.Green } },
-                {FriendFoeStatus.Neutral, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.StrokeAndFill, Color = SkiaSharp.SKColors.Purple }  },
-                {FriendFoeStatus.Suspect, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.StrokeAndFill, Color = SkiaSharp.SKColors.Orange }  },
-                {FriendFoeStatus.Hostile, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.StrokeAndFill, Color = SkiaSharp.SKColors.Red }  },
-                {FriendFoeStatus.Unknown, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.StrokeAndFill, Color = SkiaSharp.SKColors.Yellow }  },
-                {FriendFoeStatus.Pending, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.StrokeAndFill, Color = SkiaSharp.SKColors.Gray }  },
+                {FriendFoeStatus.KnownFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Blue } },
+                {FriendFoeStatus.AssumedFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Green } },
+                {FriendFoeStatus.Neutral, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Purple }  },
+                {FriendFoeStatus.Suspect, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Orange }  },
+                {FriendFoeStatus.Hostile, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Red }  },
+                {FriendFoeStatus.Unknown, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Yellow }  },
+                {FriendFoeStatus.Pending, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Gray }  },
             };
+        public static SkiaSharp.SKPaint DatumBrush = new SkiaSharp.SKPaint { Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.DarkOrange };
 
         private static System.Timers.Timer UpdateClock;
         private static DateTime LastUpdate;
