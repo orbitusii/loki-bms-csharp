@@ -13,7 +13,7 @@
             <RowDefinition Height="1*" MinHeight="100"/>
         </Grid.RowDefinitions>
 
-        <skia:SKElement x:Name="ScopeCanvas" PaintSurface="OnPaintSurface"/>
+        <skia:SKElement x:Name="ScopeCanvas" PaintSurface="OnPaintSurface" MouseWheel="ScopeCanvas_MouseWheel" MouseLeftButtonDown="ScopeCanvas_MouseLeftButtonDown"/>
         <!--<Canvas x:Name="ScopeCanvas" Style="{StaticResource ScopeWindow}" ClipToBounds="True"/>-->
         <!--<local:ScopeView x:Name="MainScope" Foreground="{x:Null}" DebugView="True" Loaded="MainScope_Loaded" RenderTransformOrigin="0.5,0.5"/>-->
         <Button x:Name="Button_0" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="34" Width="100" Grid.Row="1" ClickMode="Release" Content="Press me or [D]" AutomationProperties.AcceleratorKey=""/>

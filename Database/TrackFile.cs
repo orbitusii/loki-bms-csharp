@@ -70,7 +70,7 @@ namespace loki_bms_csharp.Database
         {
             //Velocity -= 9.80665 * Position.normalized * dt;
 
-            System.Diagnostics.Debug.WriteLine($"Moving a Track from {Position} to {Position + Velocity * dt}");
+            //System.Diagnostics.Debug.WriteLine($"Moving a Track from {Position} to {Position + Velocity * dt}");
             
             Position = Position + Velocity * dt;
 

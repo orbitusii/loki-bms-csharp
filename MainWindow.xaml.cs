@@ -89,9 +89,10 @@ namespace loki_bms_csharp
         {
             (double lat, double lon, double alt) = GetLatLonAltSliders();
             MathL.TangentMatrix camMatrix = MathL.TangentMatrix.FromLatLon(lat, lon, false);
+            camMatrix.SetOrigin(camMatrix.Out * 6378137);
 
             var renderer = new ScopeRenderer(args, camMatrix);
-            renderer.VerticalSize = Math.Pow(2, alt) * 200;
+            renderer.SetVerticalSize(Math.Pow(2, alt) * 200);
 
             renderer.DrawCircle((0, 0, 0), 6378137, SKColor.FromHsl(185, 30, 8));
 
@@ -112,6 +113,22 @@ namespace loki_bms_csharp
         private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             RenderClock.Stop();
+        }
+
+        private void ScopeCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            Point mousePos = e.GetPosition(ScopeCanvas);
+            SKSize size = ScopeCanvas.CanvasSize;
+            if (mousePos.X >= 0 && mousePos.X <= size.Width && mousePos.Y >= 0 && mousePos.Y < size.Height)
+            {
+                int change = Math.Sign(e.Delta);
+                Zoom_Slider.Value -= change;
+            }
+        }
+
+        private void ScopeCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
         }
     }
 }

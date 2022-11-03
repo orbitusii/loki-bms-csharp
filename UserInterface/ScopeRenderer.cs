@@ -29,6 +29,12 @@ namespace loki_bms_csharp.UserInterface
             get { return Height / VerticalSize; }
         }
 
+        public void SetVerticalSize (double vSize)
+        {
+            VerticalSize = vSize;
+            //CameraMatrix.SetScale(VerticalSize);
+        }
+
         public ScopeRenderer (SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args, MathL.TangentMatrix cameraMatrix)
         {
             Info = args.Info;
@@ -82,9 +88,9 @@ namespace loki_bms_csharp.UserInterface
             Canvas.DrawLine(ptFrom, ptTo, stroke);
         }
 
-        public void DrawCircle (Vector64 center, double radius, SKColor color, bool isRadiusInWorldUnits = true)
+        public void DrawCircle(Vector64 center, double radius, SKColor color, bool isRadiusInWorldUnits = true)
         {
-            if(isRadiusInWorldUnits)
+            if (isRadiusInWorldUnits)
             {
                 radius *= PixelsPerUnit;
             }

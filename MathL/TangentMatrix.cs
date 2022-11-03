@@ -11,6 +11,17 @@ namespace loki_bms_csharp.MathL
         double g, h, k, pz;
         double scale;
 
+        public void SetOrigin (Vector64 newOrigin)
+        {
+            px = newOrigin.x;
+            py = newOrigin.y;
+            pz = newOrigin.z;
+        }
+
+        public void SetScale (double newScale)
+        {
+            scale = newScale;
+        }
 
         public static TangentMatrix FromLatLon(double lat, double lon, bool radians = true)
         {
@@ -105,6 +116,7 @@ namespace loki_bms_csharp.MathL
         /// <returns></returns>
         public Vector64 PointToTangentSpace(Vector64 world)
         {
+            
             return VectorToTangentSpace(world - Origin);
         }
 
@@ -114,7 +126,7 @@ namespace loki_bms_csharp.MathL
             double ly = Vector64.Dot(world, Up);
             double lz = Vector64.Dot(world, Right);
 
-            return new Vector64(lx, ly, lz);
+            return new Vector64(lx, ly, lz) / scale;
         }
 
         /// <summary>
@@ -132,7 +144,7 @@ namespace loki_bms_csharp.MathL
         {
             Vector64 worldVec = local.x * Out + local.y * Up + local.z * Right;
 
-            return worldVec;
+            return worldVec * scale;
         }
 
         public Vector64 Origin
