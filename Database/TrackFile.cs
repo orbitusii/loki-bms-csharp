@@ -4,10 +4,10 @@ using System.Linq;
 
 namespace loki_bms_csharp.Database
 {
-    public struct TrackFile : IReturnData
+    public class TrackFile : IReturnData
     {
         public Vector64 RawPosition { get; private set; }
-        public Vector64 Position { get; private set; }
+        public Vector64 Position { get; set; }
         public Vector64 Velocity { get; private set; }
 
         public IFFData[] IFFCodes { get; private set; }
@@ -68,9 +68,11 @@ namespace loki_bms_csharp.Database
 
         public void UpdateVisual (float dt)
         {
-            Velocity -= 9.80665 * Position.normalized * dt;
+            //Velocity -= 9.80665 * Position.normalized * dt;
 
-            Position += Velocity * dt;
+            System.Diagnostics.Debug.WriteLine($"Moving a Track from {Position} to {Position + Velocity * dt}");
+            
+            Position = Position + Velocity * dt;
 
             if(DateTime.UtcNow - NewestHistory > TimeSpan.FromSeconds(10))
             {

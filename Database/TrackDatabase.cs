@@ -7,7 +7,12 @@ namespace loki_bms_csharp.Database
 {
     public static class TrackDatabase
     {
-        public static short NextITN = 1;
+        public static short NextITN
+        {
+            get { return _itn++; }
+        }
+        private static short _itn = 1;
+
         public static Dictionary<TrackNumber, TrackFile> LiveTracks;
         public static List<TrackDatum> UncorrelatedData;
 
@@ -31,14 +36,18 @@ namespace loki_bms_csharp.Database
             LiveTracks = new Dictionary<TrackNumber, TrackFile>();
             UncorrelatedData = new List<TrackDatum>();
 
+            LastUpdate = DateTime.Now;
+
             UpdateClock = new System.Timers.Timer(tickRate);
             UpdateClock.Elapsed += delegate (Object sender, System.Timers.ElapsedEventArgs args)
             {
+                DateTime now = args.SignalTime;
+                float dt = (float)(now - LastUpdate).TotalSeconds;
+                LastUpdate = now;
+
                 try
                 {
-                    DateTime now = DateTime.UtcNow;
-                    float dt = (float)(now - LastUpdate).TotalSeconds;
-
+                    
                     UpdateTracks(dt);
                 }
                 catch (Exception e)
@@ -46,9 +55,10 @@ namespace loki_bms_csharp.Database
                     System.Diagnostics.Debug.WriteLine($"{DateTime.UtcNow:h:mm:ss.fff} Missed a Database tick! Exception: {e.Message}");
                 }
             };
+            UpdateClock.Start();
         }
 
-        public static void InitiateTrack (LatLonCoord latLon, double heading = 0, double speed = 0, double vertSpeed = 0, TrackType trackType = TrackType.Sim)
+        public static TrackFile InitiateTrack (LatLonCoord latLon, double heading = 0, double speed = 0, double vertSpeed = 0, TrackType trackType = TrackType.Sim)
         {
             Vector64 posit = Conversions.LLToXYZ(latLon, Conversions.EarthRadius);
             Vector64 vel = Conversions.GetTangentVelocity(latLon, heading, speed, vertSpeed);
@@ -62,13 +72,16 @@ namespace loki_bms_csharp.Database
             TrackNumber newTN = new TrackNumber(intl: NextITN);
 
             LiveTracks.Add(newTN, newTrack);
+
+            return newTrack;
         }
 
         public static void UpdateTracks (float dt)
         {
+            //System.Diagnostics.Debug.WriteLine($"Updating Tracks with dt={dt}");
             foreach(var track in LiveTracks.Values)
             {
-                track.UpdateVisual(dt);
+                lock(track) track.UpdateVisual(dt);
             }
         }
     }
