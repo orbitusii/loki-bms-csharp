@@ -22,7 +22,7 @@ namespace loki_bms_csharp.MathL
             Vector64 normalized = cartesian.normalized;
 
             double lat_rad = Math.Asin(normalized.z);
-            double lon_rad = Math.Asin(normalized.y);
+            double lon_rad = Math.Acos(normalized.x / Math.Cos(lat_rad)) * Math.Sign(normalized.y);
 
             return new LatLonCoord { Lat_Rad = lat_rad, Lon_Rad = lon_rad, Alt = altitude };
         }
