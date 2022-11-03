@@ -58,9 +58,9 @@ namespace loki_bms_csharp
             DrawDebug = false;
 
             TrackDatabase.Initialize(1000);
-            var FndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0, Alt = 0 },heading: Math.PI/4, speed: 1);
-            var HosTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = -0.0001, Lon_Degrees = 0, Alt = 0 }, heading: Math.PI / 4, speed: 1);
-            var PndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = -0.0001, Alt = 0 }, heading: Math.PI / 4, speed: 1);
+            var FndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0, Alt = 0 },heading: Math.PI/4, speed: 50);
+            var HosTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = -0.0001, Lon_Degrees = 0, Alt = 0 }, heading: Math.PI / 4, speed: 50);
+            var PndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = -0.0001, Alt = 0 }, heading: Math.PI / 4, speed: 50);
 
             FndTrack.FFS = FriendFoeStatus.KnownFriend;
             HosTrack.FFS = FriendFoeStatus.Hostile;
@@ -95,7 +95,7 @@ namespace loki_bms_csharp
             var renderer = new ScopeRenderer(args, UserData.UpdateCameraMatrix());
             renderer.SetVerticalSize(UserData.VerticalFOV);
 
-            renderer.DrawCircle((0, 0, 0), 6378137, SKColor.FromHsl(215, 30, 8));
+            renderer.DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, SKColor.FromHsl(215, 30, 8));
 
             if (DrawDebug) renderer.DrawAxisLines();
 

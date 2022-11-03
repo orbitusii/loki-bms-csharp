@@ -63,7 +63,7 @@ namespace loki_bms_csharp
         public static TangentMatrix UpdateCameraMatrix ()
         {
             CameraMatrix = TangentMatrix.FromLatLon(ViewPosition);
-            CameraMatrix.SetOrigin(CameraMatrix.Out * 6378137);
+            CameraMatrix.SetOrigin(CameraMatrix.Out * Conversions.EarthRadius);
 
             return CameraMatrix;
         }
