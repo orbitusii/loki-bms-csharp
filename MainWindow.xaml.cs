@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using loki_bms_csharp.Database;
 using loki_bms_csharp.UserInterface;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
@@ -52,6 +53,14 @@ namespace loki_bms_csharp
             ScopeCanvas.PaintSurface += OnPaintSurface;
             DrawDebug = true;
 
+            TrackDatabase.Initialize(1000);
+            var FndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0, Alt = 0 },heading: Math.PI/4, speed: 1);
+            var HosTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = -0.0001, Lon_Degrees = 0, Alt = 0 }, heading: Math.PI / 4, speed: 1);
+            var PndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = -0.0001, Alt = 0 }, heading: Math.PI / 4, speed: 1);
+
+            FndTrack.FFS = FriendFoeStatus.KnownFriend;
+            HosTrack.FFS = FriendFoeStatus.Hostile;
+
             EndInit();
         }
 
@@ -84,11 +93,11 @@ namespace loki_bms_csharp
             var renderer = new ScopeRenderer(args, camMatrix);
             renderer.VerticalSize = Math.Pow(2, alt) * 200;
 
-            renderer.DrawCircle((0, 0, 0), 6378137, SKColors.DarkGray);
+            renderer.DrawCircle((0, 0, 0), 6378137, SKColor.FromHsl(185, 30, 8));
 
             if (DrawDebug) renderer.DrawAxisLines();
 
-
+            renderer.DrawFromDatabase();
         }
 
         public (double LA, double LO, double AL) GetLatLonAltSliders()
