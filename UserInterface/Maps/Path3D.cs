@@ -13,6 +13,7 @@ namespace loki_bms_csharp.UserInterface.Maps
         public SKPath GetScreenSpacePath (MathL.TangentMatrix cameraMatrix)
         {
             SKPoint[] sKPoints = new SKPoint[Points.Length];
+            int numBehind = 0;
 
             for (int i = 0; i < Points.Length; i++)
             {
@@ -24,16 +25,24 @@ namespace loki_bms_csharp.UserInterface.Maps
                 }
                 else
                 {
-                    float actualY = (float)(screenSpace.normalized.y * MathL.Conversions.EarthRadius);
-                    float actualZ = (float)(screenSpace.normalized.z * MathL.Conversions.EarthRadius);
+                    numBehind++;
+
+                    Vector64 atEdge = (0, screenSpace.y, screenSpace.z);
+                    atEdge = atEdge.normalized;
+                    float actualY = (float)atEdge.y;
+                    float actualZ = (float)atEdge.z;
 
                     sKPoints[i] = new SKPoint(actualY, actualZ);
                 }
             }
 
             SKPath path = new SKPath();
-            path.AddPoly(sKPoints);
             path.FillType = SKPathFillType.Winding;
+
+            if (numBehind < Points.Length)
+            {
+                path.AddPoly(sKPoints);
+            }
 
             return path;
         }

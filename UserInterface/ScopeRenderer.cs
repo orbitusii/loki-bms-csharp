@@ -147,7 +147,7 @@ namespace loki_bms_csharp.UserInterface
             screenMatrix.ScaleY = screenMatrix.ScaleX;
 
             SKPaint landPaint = new SKPaint { Color = SKColor.FromHsl(0,0,30), Style = SKPaintStyle.Fill, StrokeWidth = 3 };
-            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Drawing {MapData.CachedPaths.Length} Landmasses...");
+            //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Drawing {MapData.CachedPaths.Length} Landmasses...");
 
             foreach (SKPath path in MapData.CachedPaths)
             {
@@ -160,7 +160,7 @@ namespace loki_bms_csharp.UserInterface
                 }
             }
 
-            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Done!");
+            //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Done!");
         }
 
         public SKPoint GetScreenPoint (Vector64 screenPos)
