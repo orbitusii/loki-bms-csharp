@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace loki_bms_csharp.Database
 {
-    public class TrackFile : IReturnData
+    public class TrackFile : IKinematicData
     {
         public Vector64 RawPosition { get; private set; }
         public Vector64 Position { get; set; }
@@ -49,7 +49,7 @@ namespace loki_bms_csharp.Database
             OldestHistory = Timestamp;
         }
 
-        public void AddNewData (IReturnData data)
+        public void AddNewData (IKinematicData data, IFFData[] codes)
         {
             RawPosition = data.Position;
             Position = data.Position;
@@ -57,7 +57,7 @@ namespace loki_bms_csharp.Database
             Velocity = data.Velocity;
 
             IFFTypes = IFFType.None;
-            IFFCodes = data.IFFCodes;
+            IFFCodes = codes;
             foreach (var code in IFFCodes)
             {
                 IFFTypes = IFFTypes & code.Type;

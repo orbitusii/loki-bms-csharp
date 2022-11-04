@@ -128,7 +128,7 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        public void DrawSingleItem (IReturnData track, SKPaint brush)
+        public void DrawSingleItem (IKinematicData track, SKPaint brush)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
 
