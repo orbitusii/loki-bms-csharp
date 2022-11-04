@@ -54,11 +54,11 @@ namespace loki_bms_csharp.UserInterface
 
         public void DrawLine (Vector64 from, Vector64 to, SKColor color, float width)
         {
-            Vector64 localFrom = CameraMatrix.PointToTangentSpace(from) * PixelsPerUnit;
-            Vector64 localTo = CameraMatrix.PointToTangentSpace(to) * PixelsPerUnit;
+            Vector64 localFrom = CameraMatrix.PointToTangentSpace(from);
+            Vector64 localTo = CameraMatrix.PointToTangentSpace(to);
 
-            SKPoint ptFrom = new SKPoint((float)localFrom.y + Width / 2, (float)localFrom.z + Height/2);
-            SKPoint ptTo = new SKPoint((float)localTo.y + Width / 2, (float)localTo.z + Height / 2);
+            SKPoint ptFrom = GetScreenPoint(localFrom);
+            SKPoint ptTo = GetScreenPoint(localTo);
 
             SKPaint stroke = new SKPaint
             {
@@ -72,10 +72,10 @@ namespace loki_bms_csharp.UserInterface
 
         public void DrawRay (Vector64 from, Vector64 towards, double length, SKColor color, float width = 3, bool isRelativeToScreen = false)
         {
-            Vector64 localFrom = CameraMatrix.PointToTangentSpace(from) * PixelsPerUnit;
+            Vector64 localFrom = CameraMatrix.PointToTangentSpace(from);
             Vector64 localTo = CameraMatrix.PointToTangentSpace(towards) * length * (isRelativeToScreen ? Height : PixelsPerUnit);
 
-            SKPoint ptFrom = new SKPoint((float)localFrom.y + Width / 2, (float)localFrom.z + Height / 2);
+            SKPoint ptFrom = GetScreenPoint(localFrom);
             SKPoint ptTo = new SKPoint((float)localTo.y + Width / 2, (float)localTo.z + Height / 2);
 
             SKPaint stroke = new SKPaint
@@ -133,7 +133,7 @@ namespace loki_bms_csharp.UserInterface
 
             if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius)
             {
-                SKPoint canvasPos = GetScreenPoint(screenPos * PixelsPerUnit);
+                SKPoint canvasPos = GetScreenPoint(screenPos);
 
                 Canvas.DrawCircle(canvasPos, 4, brush);
             }
@@ -141,7 +141,9 @@ namespace loki_bms_csharp.UserInterface
 
         public SKPoint GetScreenPoint (Vector64 screenPos)
         {
-            return new SKPoint((float)screenPos.y + Width / 2, (float)screenPos.z + Height / 2);
+            Vector64 scaled = screenPos * PixelsPerUnit;
+
+            return new SKPoint((float)scaled.y + Width / 2, (float)scaled.z + Height / 2);
         }
     }
 }
