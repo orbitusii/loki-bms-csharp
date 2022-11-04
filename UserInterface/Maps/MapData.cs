@@ -84,6 +84,8 @@ namespace loki_bms_csharp.UserInterface.Maps
                 }
             }
 
+            Paths3D = paths.ToArray();
+
             return;
         }
 
@@ -116,12 +118,17 @@ namespace loki_bms_csharp.UserInterface.Maps
 
         public static void CacheSKPaths (MathL.TangentMatrix cameraMatrix)
         {
+            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Caching map data paths for drawing...");
+
             SKPath[] cached = new SKPath[Paths3D.Length];
 
             for (int i = 0; i < Paths3D.Length; i++)
             {
-                foreach
+                cached[i] = Paths3D[i].GetScreenSpacePath(cameraMatrix);
             }
+
+            CachedPaths = cached;
+            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Done!");
         }
     }
 }
