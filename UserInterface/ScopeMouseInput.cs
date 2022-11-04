@@ -32,17 +32,21 @@ namespace loki_bms_csharp.UserInterface
             if(CheckDoubleClick(e))
             {
                 Vector64 clickPoint = clickToScreenPoint(e.GetPosition(UserData.MainWindow.ScopeCanvas));
-                Vector64 WorldOrigin = UserData.CameraMatrix.PointToTangentSpace((0, 0, 0));
 
-                double r = MathL.Conversions.EarthRadius;
-                double rawIntersect = Math.Sqrt(r * r - clickPoint.y * clickPoint.y - clickPoint.z * clickPoint.z);
+                if (clickPoint.magnitude <= MathL.Conversions.EarthRadius)
+                {
+                    Vector64 WorldOrigin = UserData.CameraMatrix.PointToTangentSpace((0, 0, 0));
 
-                Vector64 WorldIntersectPos = UserData.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, clickPoint.y, clickPoint.z));
+                    double r = MathL.Conversions.EarthRadius;
+                    double rawIntersect = Math.Sqrt(r * r - clickPoint.y * clickPoint.y - clickPoint.z * clickPoint.z);
 
-                //TrackDatabase.UncorrelatedData[0].Position = WorldIntersectPos;
+                    Vector64 WorldIntersectPos = UserData.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, clickPoint.y, clickPoint.z));
 
-                LatLonCoord newCenter = MathL.Conversions.XYZToLL(WorldIntersectPos, r);
-                UserData.UpdateViewPosition(newCenter);
+                    //TrackDatabase.UncorrelatedData[0].Position = WorldIntersectPos;
+
+                    LatLonCoord newCenter = MathL.Conversions.XYZToLL(WorldIntersectPos, r);
+                    UserData.UpdateViewPosition(newCenter);
+                }
             }
         }
 
