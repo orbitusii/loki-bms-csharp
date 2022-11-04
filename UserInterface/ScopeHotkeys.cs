@@ -33,14 +33,12 @@ namespace loki_bms_csharp.UserInterface
 
                 if (isSetZoom)
                 {
-                    //ZoomPreset preset = new ZoomPreset(UserData.ViewCenter, UserData.ZoomIncrement); 
-                    //RubberBandZoom[pressedNumber] = preset;
+                    ZoomPreset preset = new ZoomPreset(UserData.ViewCenter, UserData.ZoomIncrement);
+                    UserData.SetViewPreset(pressedNumber, preset);
                 }
                 else
                 {
-                    //ZoomPreset preset = RubberBandZoom[pressedNumber];
-                    //UserData.UpdateViewPosition(preset.Center);
-                    //UserData.SetZoom(preset.Zoom);
+                    UserData.SnapToView(pressedNumber);
                 }
             }
         }

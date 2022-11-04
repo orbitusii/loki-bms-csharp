@@ -18,6 +18,7 @@ namespace loki_bms_csharp
                 return Math.Pow(2, ZoomIncrement) * 200;
             }
         }
+        private static UserInterface.ZoomPreset[] ZoomPresets = new UserInterface.ZoomPreset[10];
 
         public static DateTime StartupTime = DateTime.Now;
         public static double RunTime
@@ -26,6 +27,32 @@ namespace loki_bms_csharp
             {
                 return (DateTime.Now - StartupTime).TotalSeconds;
             }
+        }
+
+        public static void SetViewPreset (int index, UserInterface.ZoomPreset preset)
+        {
+            try
+            {
+                ZoomPresets[index] = preset;
+            }
+            catch
+            {
+                return;
+            }
+        }
+
+        public static bool SnapToView (int index)
+        {
+            UserInterface.ZoomPreset preset = ZoomPresets[index];
+            if (preset == null)
+            {
+                return false;
+            }
+
+            UpdateViewPosition(preset.Center);
+            SetZoom(preset.Zoom);
+
+            return true;
         }
 
         public static LatLonCoord UpdateViewPosition (LatLonCoord newView)
