@@ -9,7 +9,7 @@ namespace loki_bms_csharp
     {
         public static MainWindow MainWindow;
         public static LatLonCoord ViewCenter { get; private set; }
-        public delegate void ViewCenterChangedCallback(MathL.TangentMatrix mat);
+        public delegate void ViewCenterChangedCallback(TangentMatrix mat);
         public static ViewCenterChangedCallback OnViewCenterChanged;
 
         public static TangentMatrix CameraMatrix { get; private set; }

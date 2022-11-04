@@ -4,10 +4,11 @@ using System.Text;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using loki_bms_csharp.Database;
+using loki_bms_csharp.UserInterface.Maps;
 
 namespace loki_bms_csharp.UserInterface
 {
-    class ScopeRenderer
+    class ScopeRenderer: IDisposable
     {
         public SKImageInfo Info { get; private set; }
         public int Width
@@ -139,11 +140,38 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
+        public void DrawLandmassGeometry ()
+        {
+            SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
+            screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
+            screenMatrix.ScaleY = screenMatrix.ScaleX;
+
+            SKPaint landPaint = new SKPaint { Color = SKColor.FromHsl(0,0,30), Style = SKPaintStyle.Fill, StrokeWidth = 3 };
+            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Drawing {MapData.CachedPaths.Length} Landmasses...");
+
+            foreach (SKPath path in MapData.CachedPaths)
+            {
+                using (SKPath clone = new SKPath(path))
+                {
+                    clone.Transform(screenMatrix);
+
+                    //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: path starts at {clone.Points[2]}");
+                    Canvas.DrawPath(clone, landPaint);
+                }
+            }
+
+            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Done!");
+        }
+
         public SKPoint GetScreenPoint (Vector64 screenPos)
         {
             Vector64 scaled = screenPos * PixelsPerUnit;
 
             return new SKPoint((float)scaled.y + Width / 2, (float)scaled.z + Height / 2);
+        }
+
+        public void Dispose ()
+        {
         }
     }
 }

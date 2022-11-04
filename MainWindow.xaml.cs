@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -49,6 +50,16 @@ namespace loki_bms_csharp
 
             BeginInit();
 
+            try
+            {
+                UserInterface.Maps.MapData.LoadAllGeometry();
+                UserData.OnViewCenterChanged += UserInterface.Maps.MapData.CacheSKPaths;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Failed opening WorldLandGeometry: " + e.Message);
+            }
+
             UserData.MainWindow = this;
             UserData.UpdateViewPosition(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0 });
             UserData.SetZoom(16);
@@ -92,14 +103,17 @@ namespace loki_bms_csharp
 
         private void OnPaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args)
         {
-            var renderer = new ScopeRenderer(args, UserData.UpdateCameraMatrix());
-            renderer.SetVerticalSize(UserData.VerticalFOV);
+            using(var renderer = new ScopeRenderer(args, UserData.CameraMatrix))
+            {
+                renderer.SetVerticalSize(UserData.VerticalFOV);
 
-            renderer.DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, SKColor.FromHsl(215, 30, 8));
+                renderer.DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, SKColor.FromHsl(215, 30, 8));
+                renderer.DrawLandmassGeometry();
 
-            if (DrawDebug) renderer.DrawAxisLines();
+                if (DrawDebug) renderer.DrawAxisLines();
 
-            renderer.DrawFromDatabase();
+                renderer.DrawFromDatabase();
+            }
         }
 
         public LatLonCoord GetLatLonAltSliders()
