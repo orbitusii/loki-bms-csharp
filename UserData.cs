@@ -9,6 +9,9 @@ namespace loki_bms_csharp
     {
         public static MainWindow MainWindow;
         public static LatLonCoord ViewCenter { get; private set; }
+        public delegate void ViewCenterChangedCallback(MathL.TangentMatrix mat);
+        public static ViewCenterChangedCallback OnViewCenterChanged;
+
         public static TangentMatrix CameraMatrix { get; private set; }
         public static double ZoomIncrement = 16;
         public static double VerticalFOV
@@ -58,6 +61,9 @@ namespace loki_bms_csharp
         public static LatLonCoord UpdateViewPosition (LatLonCoord newView)
         {
             ViewCenter = new LatLonCoord { Lat_Rad = newView.Lat_Rad, Lon_Rad = newView.Lon_Rad, Alt = 0 };
+
+            UpdateCameraMatrix();
+            OnViewCenterChanged(CameraMatrix);
 
             return ViewCenter;
         }
