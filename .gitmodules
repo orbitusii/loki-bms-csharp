@@ -1,0 +1,3 @@
+[submodule "dcs-grpc"]
+	path = dcs-grpc
+	url = https://github.com/DCS-gRPC/csharp-bindings.git
