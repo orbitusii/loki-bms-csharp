@@ -130,24 +130,34 @@ namespace loki_bms_csharp
             RenderClock.Stop();
         }
 
-        private void ScopeCanvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            ScopeMouseInput.ProcessScrollWheel(e);
+            ScopeHotkeys.OnKeyDown(e);
         }
 
-        private void ScopeCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            ScopeMouseInput.ProcessMouseClick(e);
+            ScopeHotkeys.OnKeyUp(e);
         }
 
-        private void PrimaryDisplay_KeyDown(object sender, KeyEventArgs e)
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            ScopeHotkeys.ProcessKeyDown(e);
+            ScopeMouseInput.OnMouseDown(e);
         }
 
-        private void PrimaryDisplay_KeyUp(object sender, KeyEventArgs e)
+        private void OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            ScopeHotkeys.ProcessKeyUp(e);
+            ScopeMouseInput.OnMouseUp(e);
+        }
+
+        private void OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            ScopeMouseInput.OnMouseWheel(e);
+        }
+
+        private void OnMouseMove(object sender, MouseEventArgs e)
+        {
+            ScopeMouseInput.OnMouseMove(e);
         }
     }
 }

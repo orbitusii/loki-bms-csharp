@@ -11,7 +11,7 @@ namespace loki_bms_csharp.UserInterface
         private static DateTime rubberBandDown;
         private static int heldKey = -1;
 
-        public static void ProcessKeyDown(KeyEventArgs e)
+        public static void OnKeyDown(KeyEventArgs e)
         {
             if((int)e.Key >= (int)Key.D0 && (int)e.Key <= (int)Key.D9 && (int)e.Key != heldKey)
             {
@@ -21,7 +21,7 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        public static void ProcessKeyUp(KeyEventArgs e)
+        public static void OnKeyUp(KeyEventArgs e)
         {
             if ((int)e.Key >= (int)Key.D0 && (int)e.Key <= (int)Key.D9)
             {
