@@ -9,6 +9,15 @@ namespace loki_bms_csharp.MathL
         public const double ToRadians = Math.PI / 180;
         public const double ToDegrees = 1 / ToRadians;
         public const double EarthRadius = 6378137.0; // Meters
+        public static double EarthCircumference
+        {
+            get
+            {
+                return 2 * Math.PI * EarthRadius;
+            }
+        }
+
+        public const double MetersToNM = 5.399568e-4;
 
         /// <summary>
         /// Converts a Vector64 coordinate in world space to a LatLonCoord representing its position on the surface of a sphere
