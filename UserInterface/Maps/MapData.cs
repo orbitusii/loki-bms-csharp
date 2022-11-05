@@ -31,7 +31,9 @@ namespace loki_bms_csharp.UserInterface.Maps
         {
             System.Diagnostics.Debug.WriteLine("Attempting to deserialize WorldLandGeometry");
 
-            XDocument doc = XDocument.Parse(Properties.Resources.WorldGeometry);
+            byte[] resourceData = Properties.Resources.WorldLandmasses;
+
+            XDocument doc = XDocument.Parse(Encoding.UTF8.GetString(resourceData));
 
             string viewBox = doc.Root.Attribute("viewBox").Value;
             imageSize = ParseImageSize(viewBox);

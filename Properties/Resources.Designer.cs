@@ -61,14 +61,12 @@ namespace loki_bms_csharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
-        ///&lt;!DOCTYPE svg PUBLIC &quot;-//W3C//DTD SVG 1.1//EN&quot; &quot;http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd&quot;&gt;
-        ///&lt;svg width=&quot;100%&quot; height=&quot;100%&quot; viewBox=&quot;0 0 5400 2700&quot; version=&quot;1.1&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot; xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot; xml:space=&quot;preserve&quot; xmlns:serif=&quot;http://www.serif.com/&quot; style=&quot;fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;&quot;&gt;
-        ///    &lt;g id=&quot;Artboard1&quot; transform=&quot;matrix(1.00013,0,0,1.00012,0, [rest of string was truncated]&quot;;.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static string WorldGeometry {
+        internal static byte[] WorldLandmasses {
             get {
-                return ResourceManager.GetString("WorldGeometry", resourceCulture);
+                object obj = ResourceManager.GetObject("WorldLandmasses", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }
