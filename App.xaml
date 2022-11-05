@@ -5,9 +5,10 @@
              xmlns:local="clr-namespace:loki_bms_csharp"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <SolidColorBrush x:Key="SuperDarkGray" Color="#1A1A1F"/>
-        <SolidColorBrush x:Key="VeryDarkGray" Color="#20202f"/>
-        <SolidColorBrush x:Key="MidGray" Color="#AFAFCF"/>
+        <SolidColorBrush x:Key="SuperDarkGray" Color="#1A1A1C"/>
+        <SolidColorBrush x:Key="VeryDarkGray" Color="#1C1C1F"/>
+        <SolidColorBrush x:Key="ButtonOverGray" Color="#1F1F2A"/>
+        <SolidColorBrush x:Key="MidGray" Color="#454550"/>
         <SolidColorBrush x:Key="OffWhite" Color="#DFDFDF"/>
         <SolidColorBrush x:Key="SkyBG" Color="#000000"/>
         <SolidColorBrush x:Key="Ocean" Color="#111155"/>
@@ -16,10 +17,31 @@
         <Style x:Key="WindowTheme" TargetType="Window">
             <Setter Property="Background" Value="{StaticResource SuperDarkGray}"/>
         </Style>
-        <Style TargetType="Button">
+        <Style TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{StaticResource VeryDarkGray}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource OffWhite}"/>
             <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Background="{StaticResource VeryDarkGray}"
+                                BorderBrush="{StaticResource MidGray}"
+                                BorderThickness="1">
+                            </Border>
+                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        Value="{StaticResource ButtonOverGray}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
