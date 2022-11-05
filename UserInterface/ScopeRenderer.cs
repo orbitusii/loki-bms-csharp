@@ -89,6 +89,39 @@ namespace loki_bms_csharp.UserInterface
             Canvas.DrawLine(ptFrom, ptTo, stroke);
         }
 
+        public void DrawMeasureLine (Vector64 from, Vector64 to, SKColor color, float width)
+        {
+            double angle = Vector64.AngleBetween(from, to);
+            double arcLength = MathL.Conversions.EarthRadius * angle;
+
+            if (arcLength < 100) return;
+
+            double circumferenceFraction = Math.Round(arcLength / MathL.Conversions.EarthCircumference * 72);
+
+            Vector64 segment_start = from;
+
+            for (int i = 1; i < (int)circumferenceFraction; i++)
+            {
+                double t = i / circumferenceFraction;
+                Vector64 segment_end = Vector64.Slerp(from, to, t);
+
+                DrawLine(segment_start, segment_end, color, width);
+
+                segment_start = segment_end;
+            }
+            DrawLine(segment_start, to, color, width);
+
+            SKPoint textPoint = GetScreenPoint(CameraMatrix.PointToTangentSpace(to)) + new SKPoint(10, -10);
+            SKPaint paint = new SKPaint
+            {
+                Color = SKColors.White,
+                Style = SKPaintStyle.StrokeAndFill,
+
+            };
+
+            Canvas.DrawText($"{Math.Round(arcLength * MathL.Conversions.MetersToNM,1)} NM", textPoint, paint);
+        }
+
         public void DrawCircle(Vector64 center, double radius, SKColor color, bool isRadiusInWorldUnits = true)
         {
             if (isRadiusInWorldUnits)

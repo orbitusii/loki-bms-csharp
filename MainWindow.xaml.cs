@@ -112,6 +112,11 @@ namespace loki_bms_csharp
 
                 if (DrawDebug) renderer.DrawAxisLines();
 
+                if(ScopeMouseInput.ClickState == MouseClickState.Left)
+                {
+                    renderer.DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.clickDragPoint, SKColors.White, 1);
+                }
+
                 renderer.DrawFromDatabase();
             }
         }
