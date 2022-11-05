@@ -123,13 +123,12 @@ namespace loki_bms_csharp.UserInterface
                 worldPos = UserData.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, camPoint.y, camPoint.z));
             }
             else {
-                worldPos = Vector64.zero;
-                /*Vector64 atEdge = (0, camPoint.y, camPoint.z);
+                Vector64 atEdge = (0, camPoint.y, camPoint.z);
                 atEdge = atEdge.normalized;
                 float actualY = (float)atEdge.y;
                 float actualZ = (float)atEdge.z;
 
-                worldPos = new Vector64(0, actualY, -actualZ).normalized * MathL.Conversions.EarthRadius;*/
+                worldPos = new Vector64(0, actualY, -actualZ).normalized * MathL.Conversions.EarthRadius;
             }
 
             return worldPos;
