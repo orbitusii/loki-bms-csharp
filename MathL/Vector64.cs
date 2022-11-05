@@ -69,6 +69,12 @@ public struct Vector64
         return AngleBetween(this, to);
     }
 
+    /// <summary>
+    /// The angle, in radians, between two Vectors (assuming the pivot is (0,0,0))
+    /// </summary>
+    /// <param name="from"></param>
+    /// <param name="to"></param>
+    /// <returns></returns>
     public static double AngleBetween (Vector64 from, Vector64 to)
     {
         var dot = Dot(from, to);
@@ -195,6 +201,21 @@ public struct Vector64
 
         return minAll;
     }
+
+    public static Vector64 Slerp (Vector64 from, Vector64 to, double t)
+    {
+        double angle = AngleBetween(from, to);
+        var p0_numerator = Math.Sin((1 - t) * angle);
+        var p1_numerator = Math.Sin(t * angle);
+
+        var sine = Math.Sin(angle);
+
+        var p0 = from * p0_numerator;
+        var p1 = to * p1_numerator;
+
+        return (p0 + p1) / sine;
+    }
+
     public static Vector64 operator +(Vector64 left, Vector64 right)
     {
         return new Vector64(left.x + right.x, left.y + right.y, left.z + right.z);
