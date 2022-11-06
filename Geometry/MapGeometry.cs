@@ -74,7 +74,7 @@ namespace loki_bms_csharp.Geometry
         public static PathSVG ExtractRawPath (XElement element)
         {
             var parent = element.Parent;
-            string pathName = parent.Attribute("id") != null ? parent.Attribute("id").Value : element.Attribute("id").Value;
+            string pathName = element.Attribute("id") != null ? element.Attribute("id").Value : parent.Attribute("id")?.Value;
 
             string data = element.Attribute("d").Value;
 
@@ -106,7 +106,7 @@ namespace loki_bms_csharp.Geometry
             Point[] points = path.GetPoints();
             Vector64[] points3D = new Vector64[points.Length];
 
-            System.Diagnostics.Debug.WriteLine(path.name + " " + points.Length);
+            System.Diagnostics.Debug.WriteLine(path.name + ": " + points.Length + " points");
 
             for (int i = 0; i < points.Length; i++)
             {
