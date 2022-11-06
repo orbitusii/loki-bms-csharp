@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using loki_bms_csharp.MathL;
 using loki_bms_csharp.Settings;
+using loki_bms_csharp.Geometry;
 
 namespace loki_bms_csharp
 {
@@ -10,11 +11,16 @@ namespace loki_bms_csharp
     {
         public static MainWindow MainWindow;
         public static ViewSettings ViewSettings;
+        public static MapGeometry WorldLandmasses;
 
         public static void Initialize (MainWindow window)
         {
             MainWindow = window;
             LoadViewSettings();
+
+            string landSVG = Encoding.UTF8.GetString(Properties.Resources.WorldLandmasses);
+            WorldLandmasses = MapGeometry.LoadGeometryFromFile(landSVG);
+            ViewSettings.OnViewCenterChanged += WorldLandmasses.CachePaths;
         }
 
         public static void LoadViewSettings ()

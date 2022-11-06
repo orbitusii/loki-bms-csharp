@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SkiaSharp;
 
-namespace loki_bms_csharp.UserInterface.Maps
+namespace loki_bms_csharp.Geometry
 {
     public class Path3D
     {

@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace loki_bms_csharp.UserInterface.Maps
+namespace loki_bms_csharp.Geometry
 {
     public class PathSVG
     {

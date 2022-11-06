@@ -10,45 +10,55 @@ using System.Xml.Serialization;
 using System.Windows;
 using SkiaSharp;
 
-namespace loki_bms_csharp.UserInterface.Maps
+namespace loki_bms_csharp.Geometry
 {
-    public static class MapData
+    public class MapGeometry
     {
-        public static System.Windows.Size imageSize;
-        public static PathSVG[] RawPaths;
-        public static Path3D[] Paths3D;
+        public Size imageSize;
+        public Path3D[] Paths3D;
 
-        public static SKPath[] CachedPaths;
+        public SKPath[] CachedPaths;
 
-        public static void LoadAllGeometry ()
+        public static MapGeometry LoadGeometryFromFile (string fileContents)
         {
-            GetPathsFromSVG();
+            (Size size, PathSVG[] paths) = UnpackSVG(fileContents);
 
-            ConvertGeometryTo3D();
+            MapGeometry newData = new MapGeometry
+            {
+                imageSize = size,
+                Paths3D = ConvertGeometryTo3D(paths, size),
+            };
+
+            return newData;
         }
 
-        public static void GetPathsFromSVG()
+        public void CachePaths(MathL.TangentMatrix cameraMatrix)
+        {
+            CachedPaths = ConvertToSKPaths(Paths3D, cameraMatrix);
+        }
+
+        public static (Size size, PathSVG[] paths) UnpackSVG(string source)
         {
             System.Diagnostics.Debug.WriteLine("Attempting to deserialize WorldLandGeometry");
 
             byte[] resourceData = Properties.Resources.WorldLandmasses;
 
-            XDocument doc = XDocument.Parse(Encoding.UTF8.GetString(resourceData));
+            XDocument doc = XDocument.Parse(source);
 
             string viewBox = doc.Root.Attribute("viewBox").Value;
-            imageSize = ParseImageSize(viewBox);
+            var imageSize = ParseImageSize(viewBox);
 
             var matches = doc.Root.Descendants().Where(x => x.Name == "{http://www.w3.org/2000/svg}path").ToArray();
-            RawPaths = new PathSVG[matches.Length];
+            var paths = new PathSVG[matches.Length];
 
             for (int i = 0; i < matches.Length; i++)
             {
-                RawPaths[i] = ExtractRawPath(matches[i]);
+                paths[i] = ExtractRawPath(matches[i]);
 
-                System.Diagnostics.Debug.WriteLine($"New Landmass PathSVG: {RawPaths[i].name}");
+                System.Diagnostics.Debug.WriteLine($"New Landmass PathSVG: {paths[i].name}");
             }
             
-            return;
+            return (imageSize, paths);
         }
 
         public static Size ParseImageSize (string viewBox)
@@ -71,27 +81,27 @@ namespace loki_bms_csharp.UserInterface.Maps
             return new PathSVG { name = pathName, data = data };
         }
 
-        public static void ConvertGeometryTo3D ()
+        public static Path3D[] ConvertGeometryTo3D (PathSVG[] originals, Size imageSize)
         {
             List<Path3D> paths = new List<Path3D>(0);
 
-            foreach(var pathsvg in RawPaths)
+            foreach(var pathsvg in originals)
             {
                 PathSVG[] subpaths = pathsvg.Subdivide();
 
                 foreach(var subpath in subpaths)
                 {
-                    Path3D convertedPath = ConvertPath(subpath);
+                    Path3D convertedPath = ConvertPath(subpath, imageSize);
                     paths.Add(convertedPath);
                 }
             }
 
-            Paths3D = paths.ToArray();
+            Path3D[] pathsArray = paths.ToArray();
 
-            return;
+            return pathsArray;
         }
 
-        private static Path3D ConvertPath (PathSVG path)
+        private static Path3D ConvertPath (PathSVG path, Size imageSize)
         {
             Point[] points = path.GetPoints();
             Vector64[] points3D = new Vector64[points.Length];
@@ -100,14 +110,14 @@ namespace loki_bms_csharp.UserInterface.Maps
 
             for (int i = 0; i < points.Length; i++)
             {
-                LatLonCoord latLon = PointToLatLon(points[i]);
+                LatLonCoord latLon = PointToLatLon(points[i], imageSize);
                 points3D[i] = MathL.Conversions.LLToXYZ(latLon);
             }
 
             return new Path3D { Name = path.name, Points = points3D };
         }
 
-        public static LatLonCoord PointToLatLon (Point point)
+        public static LatLonCoord PointToLatLon (Point point, Size imageSize)
         {
             double percentDown = point.Y / imageSize.Height;
             double percentAcross = point.X / imageSize.Width;
@@ -118,19 +128,19 @@ namespace loki_bms_csharp.UserInterface.Maps
             return new LatLonCoord { Lat_Degrees = Lat, Lon_Degrees = Lon };
         }
 
-        public static void CacheSKPaths (MathL.TangentMatrix cameraMatrix)
+        public static SKPath[] ConvertToSKPaths (Path3D[] paths, MathL.TangentMatrix cameraMatrix)
         {
             System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Caching map data paths for drawing...");
 
-            SKPath[] cached = new SKPath[Paths3D.Length];
+            SKPath[] cached = new SKPath[paths.Length];
 
-            for (int i = 0; i < Paths3D.Length; i++)
+            for (int i = 0; i < paths.Length; i++)
             {
-                cached[i] = Paths3D[i].GetScreenSpacePath(cameraMatrix);
+                cached[i] = paths[i].GetScreenSpacePath(cameraMatrix);
             }
 
-            CachedPaths = cached;
             System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Done!");
+            return cached;
         }
     }
 }
