@@ -1,38 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using loki_bms_csharp.MathL;
 
-namespace loki_bms_csharp
+namespace loki_bms_csharp.Settings
 {
-    public static class UserData
+    public class ViewSettings
     {
-        public static MainWindow MainWindow;
-        public static LatLonCoord ViewCenter { get; private set; }
+        public bool Debug;
+        public LatLonCoord ViewCenter { get; private set; }
         public delegate void ViewCenterChangedCallback(TangentMatrix mat);
-        public static ViewCenterChangedCallback OnViewCenterChanged;
+        public ViewCenterChangedCallback OnViewCenterChanged;
 
-        public static TangentMatrix CameraMatrix { get; private set; }
-        public static double ZoomIncrement = 16;
-        public static double VerticalFOV
+        public TangentMatrix CameraMatrix { get; private set; }
+        public double ZoomIncrement = 16;
+        public double VerticalFOV
         {
-            get
-            {
-                return Math.Pow(2, ZoomIncrement) * 200;
-            }
+            get => Math.Pow(2, ZoomIncrement) * 200;
         }
-        private static UserInterface.ZoomPreset[] ZoomPresets = new UserInterface.ZoomPreset[10];
+        private UserInterface.ZoomPreset[] ZoomPresets = new UserInterface.ZoomPreset[10];
 
-        public static DateTime StartupTime = DateTime.Now;
-        public static double RunTime
+        public DateTime StartupTime = DateTime.Now;
+        public double RunTime
         {
-            get
-            {
-                return (DateTime.Now - StartupTime).TotalSeconds;
-            }
+            get => (DateTime.Now - StartupTime).TotalSeconds;
         }
 
-        public static void SetViewPreset (int index, UserInterface.ZoomPreset preset)
+        public void SetViewPreset(int index, UserInterface.ZoomPreset preset)
         {
             try
             {
@@ -44,7 +40,7 @@ namespace loki_bms_csharp
             }
         }
 
-        public static bool SnapToView (int index)
+        public bool SnapToView(int index)
         {
             UserInterface.ZoomPreset preset = ZoomPresets[index];
             if (preset == null)
@@ -58,7 +54,7 @@ namespace loki_bms_csharp
             return true;
         }
 
-        public static LatLonCoord UpdateViewPosition (LatLonCoord newView)
+        public LatLonCoord UpdateViewPosition(LatLonCoord newView)
         {
             ViewCenter = new LatLonCoord { Lat_Rad = newView.Lat_Rad, Lon_Rad = newView.Lon_Rad, Alt = 0 };
 
@@ -73,10 +69,10 @@ namespace loki_bms_csharp
         /// </summary>
         /// <param name="Level">The zoom level to use. Will be clamped between 0 and 16.</param>
         /// <returns>Resulting Vertical Field of View</returns>
-        public static double SetZoom (double Level)
+        public double SetZoom(double Level)
         {
             ZoomIncrement = Math.Clamp(Level, 0, 16);
-            MainWindow.Zoom_Slider.Value = Level;
+            ProgramData.MainWindow.Zoom_Slider.Value = Level;
             return VerticalFOV;
         }
 
@@ -85,7 +81,7 @@ namespace loki_bms_csharp
         /// </summary>
         /// <param name="FOV">The Vertical FOV, in meters, to use for the new Zoom increment</param>
         /// <returns>The new Zoom increment (between 0 and 16)</returns>
-        public static double SetZoomByFOV (double FOV)
+        public double SetZoomByFOV(double FOV)
         {
             FOV /= 200;
 
@@ -93,7 +89,7 @@ namespace loki_bms_csharp
             return ZoomIncrement;
         }
 
-        public static TangentMatrix UpdateCameraMatrix ()
+        public TangentMatrix UpdateCameraMatrix()
         {
             CameraMatrix = TangentMatrix.FromLatLon(ViewCenter);
             CameraMatrix.SetOrigin(CameraMatrix.Out * Conversions.EarthRadius);
