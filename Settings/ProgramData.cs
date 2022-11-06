@@ -16,7 +16,7 @@ namespace loki_bms_csharp
         public static ViewSettings ViewSettings;
         public static MapGeometry WorldLandmasses;
         public static MapGeometry DCSMaps;
-        public static List<Database.DataSource> Sources;
+        public static List<Database.DataSource> DataSources;
 
         public static string AppDataPath;
         private static string Delimiter = "\\";
@@ -31,14 +31,14 @@ namespace loki_bms_csharp
             Debug.WriteLine($"[PROGRAM]: AppData at {AppDataPath}");
 
             ViewSettings = LoadViewSettings(AppDataPath + "Views.xml");
-            Sources = LoadDataSources(AppDataPath + "DataSources.xml");
+            DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
 
             Debug.Write("Data Sources: ");
-            foreach (var source in Sources)
+            foreach (var source in DataSources)
             {
                 Debug.Write($"{source.Name}, Active = {source._active}; ");
             }
-            Debug.WriteLine($"Total: {Sources.Count}");
+            Debug.WriteLine($"Total: {DataSources.Count}");
 
             LoadPermanentMapData();
         }
@@ -48,7 +48,7 @@ namespace loki_bms_csharp
             SaveViewSettings(AppDataPath + "Views.xml");
             SaveDataSources(AppDataPath + "DataSources.xml");
 
-            foreach (var source in Sources)
+            foreach (var source in DataSources)
             {
                 source.Deactivate();
             }
@@ -124,7 +124,7 @@ namespace loki_bms_csharp
 
             try
             {
-                ser.Serialize(stream, new DataSourceDoc { Items = Sources.ToArray() });
+                ser.Serialize(stream, new DataSourceDoc { Items = DataSources.ToArray() });
                 return true;
             }
             catch

@@ -4,6 +4,7 @@ using RurouniJones.Dcs.Grpc.V0.Mission;
 using RurouniJones.Dcs.Grpc.V0.Net;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -13,13 +14,15 @@ namespace loki_bms_csharp.Database
     public class DataSource
     {
         [XmlAttribute]
-        public string Name = "New Data Source";
+        public string Name { get; set; } = "New Data Source";
         [XmlAttribute]
-        public string Address = "127.0.0.1";
+        public string Address { get; set; } = "127.0.0.1";
         [XmlAttribute]
-        public string Port = "50051";
+        public string Port { get; set; } = "50051";
 
-        internal bool _active = false;
+        private bool _active = false;
+
+        [XmlAttribute]
         public bool Active
         {
             get => _active;
@@ -27,16 +30,6 @@ namespace loki_bms_csharp.Database
             {
                 if (value) _ = Activate();
                 else Deactivate();
-            }
-        }
-
-        [XmlAttribute]
-        public string ActiveByDefault
-        {
-            get => _active.ToString();
-            set
-            {
-                _active = bool.TryParse(value, out bool v) ? v : false;
             }
         }
 
@@ -60,36 +53,36 @@ namespace loki_bms_csharp.Database
         {
             if (Active) return;
 
+            Debug.WriteLine($"Activating DataSource {Name}");
+
             _active = true;
-            using (cancelTokenSource = new CancellationTokenSource())
+            cancelTokenSource = new CancellationTokenSource();
+            try
             {
-                try
+                var MissionClient = new MissionService.MissionServiceClient(Channel);
+                var HookClient = new HookService.HookServiceClient(Channel);
+                var NetClient = new NetService.NetServiceClient(Channel);
+
+                //var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
+                var units = MissionClient.StreamUnits(new StreamUnitsRequest { PollRate = 10, MaxBackoff = 30 });
+
+                var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
+
+                Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: checking mission name: {missionName?.Name}\n");
+
+                //NetClient.SendChat(new SendChatRequest { Coalition = RurouniJones.Dcs.Grpc.V0.Common.Coalition.All, Message = "A LOKI BMS instance is now watching your server" });
+
+                while (await units.ResponseStream.MoveNext(cancelTokenSource.Token))
                 {
-                    var MissionClient = new MissionService.MissionServiceClient(Channel);
-                    var HookClient = new HookService.HookServiceClient(Channel);
-                    var NetClient = new NetService.NetServiceClient(Channel);
+                    var unit = units.ResponseStream.Current;
 
-                    //var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
-                    var units = MissionClient.StreamUnits(new StreamUnitsRequest { PollRate = 10, MaxBackoff = 30 });
-
-                    var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
-
-                    System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: checking mission name: {missionName?.Name}\n");
-
-                    //NetClient.SendChat(new SendChatRequest { Coalition = RurouniJones.Dcs.Grpc.V0.Common.Coalition.All, Message = "A LOKI BMS instance is now watching your server" });
-
-                    while (await units.ResponseStream.MoveNext(cancelTokenSource.Token))
-                    {
-                        var unit = units.ResponseStream.Current;
-
-                        System.Diagnostics.Debug.WriteLine($"\tUnit Name = {unit.Unit.Callsign}");
-                        //if (unit.Unit != null) break;
-                    }
+                    Debug.WriteLine($"\tUnit Name = {unit.Unit.Callsign}");
+                    //if (unit.Unit != null) break;
                 }
-                catch (Exception e)
-                {
-                    System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: failed to get data from {Address}:{Port}: {e.Message}");
-                }
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: failed to get data from {Address}:{Port}: {e.Message}\n\t{e.StackTrace}");
             }
         }
 
@@ -97,9 +90,11 @@ namespace loki_bms_csharp.Database
         {
             if (!Active) return;
 
+            //Debug.WriteLine($"Deactivating DataSource {Name}");
+
             _active = false;
             cancelTokenSource.Cancel();
-            System.Diagnostics.Debug.WriteLine("Deactivated this data source");
+            Debug.WriteLine($"Deactivated DataSource {Name}");
         }
     }
 }
