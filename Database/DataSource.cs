@@ -17,12 +17,17 @@ namespace loki_bms_csharp.Database
         [XmlAttribute]
         public string Address = "127.0.0.1";
         [XmlAttribute]
-        public int Port = 50051;
+        public string Port = "50051";
 
         internal bool _active = false;
         public bool Active
         {
             get => _active;
+            set
+            {
+                if (value) _ = Activate();
+                else Deactivate();
+            }
         }
 
         [XmlAttribute]
@@ -44,7 +49,7 @@ namespace loki_bms_csharp.Database
 
         public DataSource () { }
 
-        public DataSource(string address = "127.0.0.1", int port = 50051)
+        public DataSource(string address = "127.0.0.1", string port = "50051")
         {
             Address = address;
             Port = port;
