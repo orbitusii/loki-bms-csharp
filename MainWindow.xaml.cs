@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
-using System.Text;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
-using loki_bms_csharp.Database;
+﻿using loki_bms_csharp.Database;
 using loki_bms_csharp.UserInterface;
 using SkiaSharp;
-using SkiaSharp.Views.WPF;
+using System;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace loki_bms_csharp
 {
@@ -68,8 +56,8 @@ namespace loki_bms_csharp
             HosTrack.FFS = FriendFoeStatus.Hostile;
             PndTrack.FFS = FriendFoeStatus.AssumedFriend;
 
-            DataSource = new DataSource();
-            _ = DataSource.Activate();
+            //DataSource = new DataSource();
+            //_ = DataSource.Activate();
 
             EndInit();
         }
@@ -141,7 +129,7 @@ namespace loki_bms_csharp
         private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             RenderClock.Stop();
-            DataSource.Deactivate();
+            ProgramData.Shutdown();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)

@@ -3,30 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using loki_bms_csharp.MathL;
 
 namespace loki_bms_csharp.Settings
 {
+    [XmlRoot("ViewSettings")]
     public class ViewSettings
     {
+        [XmlIgnore]
         public bool Debug;
-        public LatLonCoord ViewCenter { get; private set; }
-        public delegate void ViewCenterChangedCallback(TangentMatrix mat);
-        public ViewCenterChangedCallback OnViewCenterChanged;
 
+        [XmlElement]
+        public LatLonCoord ViewCenter { get; set; }
+        [XmlIgnore]
         public TangentMatrix CameraMatrix { get; private set; }
+
+        [XmlElement("Zoom")]
         public double ZoomIncrement = 16;
         public double VerticalFOV
         {
             get => Math.Pow(2, ZoomIncrement) * 200;
         }
-        private UserInterface.ZoomPreset[] ZoomPresets = new UserInterface.ZoomPreset[10];
 
+        [XmlArray]
+        public UserInterface.ZoomPreset[] ZoomPresets { get; set; } = new UserInterface.ZoomPreset[10];
+
+        [XmlIgnore]
         public DateTime StartupTime = DateTime.Now;
+        [XmlIgnore]
         public double RunTime
         {
             get => (DateTime.Now - StartupTime).TotalSeconds;
         }
+
+        public delegate void ViewCenterChangedCallback(TangentMatrix mat);
+        [XmlIgnore]
+        public ViewCenterChangedCallback OnViewCenterChanged;
 
         public void SetViewPreset(int index, UserInterface.ZoomPreset preset)
         {
