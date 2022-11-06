@@ -16,11 +16,15 @@ namespace loki_bms_csharp
         public static void Initialize (MainWindow window)
         {
             MainWindow = window;
+
             LoadViewSettings();
 
             string landSVG = Encoding.UTF8.GetString(Properties.Resources.WorldLandmasses);
             WorldLandmasses = MapGeometry.LoadGeometryFromFile(landSVG);
+            WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
+
             ViewSettings.OnViewCenterChanged += WorldLandmasses.CachePaths;
+
         }
 
         public static void LoadViewSettings ()

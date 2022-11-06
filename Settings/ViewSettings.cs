@@ -59,7 +59,11 @@ namespace loki_bms_csharp.Settings
             ViewCenter = new LatLonCoord { Lat_Rad = newView.Lat_Rad, Lon_Rad = newView.Lon_Rad, Alt = 0 };
 
             UpdateCameraMatrix();
-            OnViewCenterChanged(CameraMatrix);
+            try
+            {
+                OnViewCenterChanged(CameraMatrix);
+            }
+            catch { }
 
             return ViewCenter;
         }
@@ -72,7 +76,19 @@ namespace loki_bms_csharp.Settings
         public double SetZoom(double Level)
         {
             ZoomIncrement = Math.Clamp(Level, 0, 16);
-            ProgramData.MainWindow.Zoom_Slider.Value = Level;
+            ProgramData.MainWindow.Zoom_Slider.Value = ZoomIncrement;
+            return VerticalFOV;
+        }
+
+        /// <summary>
+        /// Moves the View's Zoom level by amount delta
+        /// </summary>
+        /// <param name="delta">change in zoom level</param>
+        /// <returns></returns>
+        public double IncrementZoom (double delta)
+        {
+            ZoomIncrement = Math.Clamp(ZoomIncrement + delta, 0, 16);
+            ProgramData.MainWindow.Zoom_Slider.Value = ZoomIncrement;
             return VerticalFOV;
         }
 
