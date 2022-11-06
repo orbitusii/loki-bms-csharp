@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
              xmlns:local="clr-namespace:loki_bms_csharp"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Windows/MainWindow.xaml">
     <Application.Resources>
         <SolidColorBrush x:Key="SuperDarkGray" Color="#1A1A1C"/>
         <SolidColorBrush x:Key="VeryDarkGray" Color="#1C1C1F"/>
-        <SolidColorBrush x:Key="ButtonOverGray" Color="#1F1F2A"/>
+        <SolidColorBrush x:Key="ButtonOverGray" Color="#252535"/>
         <SolidColorBrush x:Key="MidGray" Color="#454550"/>
         <SolidColorBrush x:Key="OffWhite" Color="#DFDFDF"/>
         <SolidColorBrush x:Key="SkyBG" Color="#000000"/>
@@ -25,7 +25,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid>
-                            <Border Background="{StaticResource VeryDarkGray}"
+                            <Border Background="{TemplateBinding Background}"
                                 BorderBrush="{StaticResource MidGray}"
                                 BorderThickness="1">
                             </Border>
@@ -48,6 +48,19 @@
         </Style>
         <Style x:Key="ScopeWindow" TargetType="Canvas">
             <Setter Property="Background" Value="{StaticResource SkyBG}"/>
+        </Style>
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="{StaticResource SuperDarkGray}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
+            <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource VeryDarkGray}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
+            <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
         </Style>
     </Application.Resources>
 </Application>

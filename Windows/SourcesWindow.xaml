@@ -1,0 +1,34 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:loki_bms_csharp"
+        xmlns:Database="clr-namespace:loki_bms_csharp.Database" x:Name="SourcesWin" x:Class="loki_bms_csharp.SourceWindow"
+        mc:Ignorable="d"
+        Title="Data Sources" Height="200" Width="450"
+        Style="{StaticResource WindowTheme}" Loaded="SourcesWin_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ListBox x:Name="NamesListBox" SelectionChanged="OnSelectionChanged" />
+        <Grid x:Name="SourceDetails" Grid.Column="1">
+            <Grid.DataContext>
+                <Database:DataSource/>
+            </Grid.DataContext>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0*"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <CheckBox Content="Active" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,79,0,0" Grid.ColumnSpan="2" IsChecked="{Binding Active, BindsDirectlyToSource=True, FallbackValue=False, Mode=TwoWay}" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Width="70" FlowDirection="RightToLeft"/>
+            <TextBox x:Name="NameBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="65,10,0,0" Text="{Binding Name, BindsDirectlyToSource=True, FallbackValue=Name, Mode=TwoWay, NotifyOnSourceUpdated=True}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" SourceUpdated="OnSourceUpdated"/>
+            <TextBox x:Name="AddressBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="65,33,0,0" Text="{Binding Address, BindsDirectlyToSource=True, FallbackValue=127.0.0.1, Mode=TwoWay}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140"/>
+            <Label Content="Name" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
+            <Label Content="Address" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
+            <Label Content="Port" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,56,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
+            <TextBox x:Name="PortBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="65,56,0,0" Text="{Binding Port, BindsDirectlyToSource=True, FallbackValue=50051, Mode=TwoWay}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140"/>
+        </Grid>
+    </Grid>
+</Window>

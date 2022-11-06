@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         
         <StackPanel Orientation="Horizontal" Grid.Row="0">
-            <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1" />
+            <Button x:Name="SourceMenuButton" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1" Content="SRC" Click="SourceMenuButton_Click" />
             <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
             <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
             <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
