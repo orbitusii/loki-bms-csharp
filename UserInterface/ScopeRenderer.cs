@@ -46,6 +46,17 @@ namespace loki_bms_csharp.UserInterface
             Canvas.Clear(SKColors.Black);
         }
 
+        public void DrawEarth()
+        {
+            DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, SKColor.FromHsl(215, 30, 8));
+
+            SKPaint landPaint = new SKPaint { Color = SKColor.Parse("#303030"), Style = SKPaintStyle.Fill };
+            SKPaint mapsPaint = new SKPaint { Color = SKColor.Parse("#505050"), Style = SKPaintStyle.Stroke, StrokeWidth = 1 };
+
+            DrawWorldGeometry(ProgramData.WorldLandmasses, landPaint);
+            DrawWorldGeometry(ProgramData.DCSMaps, mapsPaint);
+        }
+
         public void DrawAxisLines()
         {
             DrawRay((0, 0, 0), (0, 0, 1), 0.25, SKColors.Blue, 3, true);
@@ -120,15 +131,6 @@ namespace loki_bms_csharp.UserInterface
             };
 
             Canvas.DrawText($"{Math.Round(arcLength * MathL.Conversions.MetersToNM,1)} NM", textPoint, paint);
-        }
-
-        public void DrawEarth ()
-        {
-            DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, SKColor.FromHsl(215, 30, 8));
-
-            SKPaint landPaint = new SKPaint { Color = SKColor.Parse("#303030"), Style = SKPaintStyle.Fill };
-
-            DrawWorldGeometry(ProgramData.WorldLandmasses, landPaint);
         }
 
         public void DrawCircle(Vector64 center, double radius, SKColor color, bool isRadiusInWorldUnits = true)

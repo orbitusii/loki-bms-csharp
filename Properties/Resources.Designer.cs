@@ -63,6 +63,16 @@ namespace loki_bms_csharp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] DCSMapExtents {
+            get {
+                object obj = ResourceManager.GetObject("DCSMapExtents", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] WorldLandmasses {
             get {
                 object obj = ResourceManager.GetObject("WorldLandmasses", resourceCulture);

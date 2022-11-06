@@ -15,6 +15,7 @@ namespace loki_bms_csharp
         public static MainWindow MainWindow;
         public static ViewSettings ViewSettings;
         public static MapGeometry WorldLandmasses;
+        public static MapGeometry DCSMaps;
         public static List<Database.DataSource> Sources;
 
         public static string AppDataPath;
@@ -39,11 +40,7 @@ namespace loki_bms_csharp
             }
             Debug.WriteLine($"Total: {Sources.Count}");
 
-            string landSVG = Encoding.UTF8.GetString(Properties.Resources.WorldLandmasses);
-            WorldLandmasses = MapGeometry.LoadGeometryFromFile(landSVG);
-            WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
-
-            ViewSettings.OnViewCenterChanged += WorldLandmasses.CachePaths;
+            LoadPermanentMapData();
         }
 
         public static void Shutdown ()
@@ -134,6 +131,24 @@ namespace loki_bms_csharp
             {
                 return false;
             }
+        }
+
+        public static void LoadPermanentMapData ()
+        {
+            string landSVG = Encoding.UTF8.GetString(Properties.Resources.WorldLandmasses);
+            WorldLandmasses = MapGeometry.LoadGeometryFromFile(landSVG);
+            WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
+
+            string mapSVG = Encoding.UTF8.GetString(Properties.Resources.DCSMapExtents);
+            DCSMaps = MapGeometry.LoadGeometryFromFile(mapSVG);
+            foreach (var path in DCSMaps.Paths3D)
+            {
+                path.ConformToSurface = true;
+            }
+            DCSMaps.CachePaths(ViewSettings.CameraMatrix);
+
+            ViewSettings.OnViewCenterChanged += WorldLandmasses.CachePaths;
+            ViewSettings.OnViewCenterChanged += DCSMaps.CachePaths;
         }
     }
 
