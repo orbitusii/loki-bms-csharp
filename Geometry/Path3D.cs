@@ -9,10 +9,11 @@ namespace loki_bms_csharp.Geometry
     {
         public string Name = "New Path";
         public Vector64[] Points;
+        public bool ConformToSurface = false;
 
         public SKPath GetScreenSpacePath (MathL.TangentMatrix cameraMatrix)
         {
-            SKPoint[] sKPoints = new SKPoint[Points.Length];
+            List<SKPoint> sKPoints = new List<SKPoint>(0);
             int numBehind = 0;
 
             for (int i = 0; i < Points.Length; i++)
@@ -21,7 +22,17 @@ namespace loki_bms_csharp.Geometry
 
                 if(Math.Abs(screenSpace.x) <= MathL.Conversions.EarthRadius)
                 {
-                    sKPoints[i] = new SKPoint((float)screenSpace.y, (float)screenSpace.z);
+                    if(ConformToSurface && i > 0)
+                    {
+                        var slerped = BetweenPoints(Points[i - 1], Points[i], 5);
+                        cameraMatrix.PointsToTangentSpace(slerped);
+
+                        sKPoints.AddRange(ToSKPoints(slerped));
+                    }
+                    else
+                    {
+                        sKPoints.Add(ToSKPoint(screenSpace));
+                    }
                 }
                 else
                 {
@@ -32,7 +43,7 @@ namespace loki_bms_csharp.Geometry
                     float actualY = (float)atEdge.y;
                     float actualZ = (float)atEdge.z;
 
-                    sKPoints[i] = new SKPoint(actualY, actualZ);
+                    sKPoints.Add(new SKPoint(actualY, actualZ));
                 }
             }
 
@@ -41,10 +52,43 @@ namespace loki_bms_csharp.Geometry
 
             if (numBehind < Points.Length)
             {
-                path.AddPoly(sKPoints);
+                path.AddPoly(sKPoints.ToArray());
             }
 
             return path;
+        }
+
+        public static SKPoint[] ToSKPoints(Vector64[] points)
+        {
+            List<SKPoint> converted = new List<SKPoint>();
+
+            foreach(var vec in points)
+            {
+                converted.Add(ToSKPoint(vec));
+            }
+
+            return converted.ToArray();
+        }
+
+        public static SKPoint ToSKPoint (Vector64 point)
+        {
+            return new SKPoint((float)point.y, (float)point.z);
+        }
+
+        public Vector64[] BetweenPoints (Vector64 from, Vector64 to, int steps)
+        {
+            Vector64[] points = new Vector64[steps + 1];
+            points[0] = from;
+            points[steps] = to;
+
+            for (int i = 1; i < steps; i++)
+            {
+                double t = (double)i / steps;
+
+                points[i] = Vector64.Slerp(from, to, t);
+            }
+
+            return points;
         }
     }
 }

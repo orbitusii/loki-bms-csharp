@@ -108,6 +108,14 @@ namespace loki_bms_csharp.MathL
             return cosecant;
         }
 
+        public void PointsToTangentSpace (Vector64[] vectors)
+        {
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                vectors[i] = PointToTangentSpace(vectors[i]);
+            }
+        }
+
         /// <summary>
         /// Gets a Point in this TangentMatrix's space from World space.
         /// Used for Points where relative position matters.
