@@ -4,7 +4,7 @@ using System.Text;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using loki_bms_csharp.Database;
-using loki_bms_csharp.UserInterface.Maps;
+using loki_bms_csharp.UserInterface;
 
 namespace loki_bms_csharp.UserInterface
 {
@@ -122,6 +122,15 @@ namespace loki_bms_csharp.UserInterface
             Canvas.DrawText($"{Math.Round(arcLength * MathL.Conversions.MetersToNM,1)} NM", textPoint, paint);
         }
 
+        public void DrawEarth ()
+        {
+            DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, SKColor.FromHsl(215, 30, 8));
+
+            SKPaint landPaint = new SKPaint { Color = SKColor.Parse("#303030"), Style = SKPaintStyle.Fill };
+
+            DrawWorldGeometry(ProgramData.WorldLandmasses, landPaint);
+        }
+
         public void DrawCircle(Vector64 center, double radius, SKColor color, bool isRadiusInWorldUnits = true)
         {
             if (isRadiusInWorldUnits)
@@ -173,23 +182,23 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        public void DrawLandmassGeometry ()
+        public void DrawWorldGeometry (Geometry.MapGeometry mapData, SKPaint paint)
         {
             SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
             screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
             screenMatrix.ScaleY = screenMatrix.ScaleX;
 
-            SKPaint landPaint = new SKPaint { Color = SKColor.FromHsl(0,0,30), Style = SKPaintStyle.Fill, StrokeWidth = 3 };
             //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Drawing {MapData.CachedPaths.Length} Landmasses...");
 
-            foreach (SKPath path in MapData.CachedPaths)
+            foreach (SKPath path in mapData.CachedPaths)
             {
+                if (Canvas.QuickReject(path)) continue;
+
                 using (SKPath clone = new SKPath(path))
                 {
                     clone.Transform(screenMatrix);
 
-                    //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: path starts at {clone.Points[2]}");
-                    Canvas.DrawPath(clone, landPaint);
+                    Canvas.DrawPath(clone, paint);
                 }
             }
 

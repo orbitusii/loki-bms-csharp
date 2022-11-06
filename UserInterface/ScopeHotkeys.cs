@@ -10,37 +10,53 @@ namespace loki_bms_csharp.UserInterface
         public static double RubberBandSetTime = 0.75;
         private static DateTime rubberBandDown;
         private static int heldKey = -1;
-
-        public static void OnKeyDown(KeyEventArgs e)
+        private static ref Settings.ViewSettings ViewSettings
         {
+            get => ref ProgramData.ViewSettings;
+        }
+
+        public static InputData OnKeyDown(KeyEventArgs e)
+        {
+            int key = -1;
+
             if((int)e.Key >= (int)Key.D0 && (int)e.Key <= (int)Key.D9 && (int)e.Key != heldKey)
             {
                 rubberBandDown = DateTime.Now;
                 heldKey = (int)e.Key;
+                key = heldKey;
                 System.Diagnostics.Debug.WriteLine("Rubber Band check...");
             }
+
+            return new KeyboardInputData { ZoomPreset = key, RequiresRedraw = false };
         }
 
-        public static void OnKeyUp(KeyEventArgs e)
+        public static InputData OnKeyUp(KeyEventArgs e)
         {
+            bool redraw = false;
+            int key = -1;
+            bool zoomSet = false;
+
             if ((int)e.Key >= (int)Key.D0 && (int)e.Key <= (int)Key.D9)
             {
                 heldKey = -1;
-                int pressedNumber = (int)e.Key - 34;
+                key = (int)e.Key - 34;
+                redraw = true;
 
-                bool isSetZoom = (DateTime.Now - rubberBandDown).TotalSeconds >= RubberBandSetTime;
-                System.Diagnostics.Debug.WriteLine($"Rubber Band {(isSetZoom? "set":"recalled")} preset {pressedNumber}");
+                zoomSet = (DateTime.Now - rubberBandDown).TotalSeconds >= RubberBandSetTime;
+                System.Diagnostics.Debug.WriteLine($"Rubber Band {(zoomSet ? "set":"recalled")} preset {key}");
 
-                if (isSetZoom)
+                if (zoomSet)
                 {
-                    ZoomPreset preset = new ZoomPreset(UserData.ViewCenter, UserData.ZoomIncrement);
-                    UserData.SetViewPreset(pressedNumber, preset);
+                    ZoomPreset preset = new ZoomPreset(ViewSettings.ViewCenter, ViewSettings.ZoomIncrement);
+                    ViewSettings.SetViewPreset(key, preset);
                 }
                 else
                 {
-                    UserData.SnapToView(pressedNumber);
+                    ViewSettings.SnapToView(key);
                 }
             }
+
+            return new KeyboardInputData { RequiresRedraw = redraw, ZoomPreset = key, ZoomPresetChanged = zoomSet };
         }
     }
 }

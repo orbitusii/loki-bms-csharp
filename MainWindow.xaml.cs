@@ -51,19 +51,9 @@ namespace loki_bms_csharp
 
             BeginInit();
 
-            try
-            {
-                UserInterface.Maps.MapData.LoadAllGeometry();
-                UserData.OnViewCenterChanged += UserInterface.Maps.MapData.CacheSKPaths;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Failed opening WorldLandGeometry: " + e.Message);
-            }
+            ProgramData.Initialize(this);
 
-            UserData.MainWindow = this;
-            UserData.UpdateViewPosition(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0 });
-            UserData.SetZoom(16);
+            ref Settings.ViewSettings viewSettings = ref ProgramData.ViewSettings;
 
             ConfigureClock();
             ScopeCanvas.PaintSurface += OnPaintSurface;
@@ -102,17 +92,33 @@ namespace loki_bms_csharp
                     Debug.WriteLine("Missed a frame due to an exception!\n" + e.Message);
                 }
             };
-            RenderClock.Start();
+            //RenderClock.Start();
+        }
+
+        public void Redraw ()
+        {
+            try
+            {
+                Dispatcher.Invoke(delegate ()
+                {
+                    ScopeCanvas.InvalidateVisual();
+                }, System.Windows.Threading.DispatcherPriority.Render);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Missed a frame draw due to an exception!\n" + e.Message);
+            }
         }
 
         private void OnPaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args)
         {
-            using(var renderer = new ScopeRenderer(args, UserData.CameraMatrix))
+            using(var renderer = new ScopeRenderer(args, ProgramData.ViewSettings.CameraMatrix))
             {
-                renderer.SetVerticalSize(UserData.VerticalFOV);
+                renderer.SetVerticalSize(ProgramData.ViewSettings.VerticalFOV);
 
-                renderer.DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, SKColor.FromHsl(215, 30, 8));
-                renderer.DrawLandmassGeometry();
+                renderer.DrawEarth();
+                //renderer.DrawGeometry();
+                renderer.DrawFromDatabase();
 
                 if (DrawDebug) renderer.DrawAxisLines();
 
@@ -120,8 +126,6 @@ namespace loki_bms_csharp
                 {
                     renderer.DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.clickDragPoint, SKColors.White, 1);
                 }
-
-                renderer.DrawFromDatabase();
             }
         }
 
@@ -142,32 +146,41 @@ namespace loki_bms_csharp
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            ScopeHotkeys.OnKeyDown(e);
+            CheckForRedraw(ScopeHotkeys.OnKeyDown(e));
+
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            ScopeHotkeys.OnKeyUp(e);
+            CheckForRedraw(ScopeHotkeys.OnKeyUp(e));
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            ScopeMouseInput.OnMouseDown(e);
+            CheckForRedraw(ScopeMouseInput.OnMouseDown(e));
         }
 
         private void OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            ScopeMouseInput.OnMouseUp(e);
+            CheckForRedraw(ScopeMouseInput.OnMouseUp(e));
         }
 
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            ScopeMouseInput.OnMouseWheel(e);
+            CheckForRedraw(ScopeMouseInput.OnMouseWheel(e));
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            ScopeMouseInput.OnMouseMove(e);
+            CheckForRedraw(ScopeMouseInput.OnMouseMove(e));
+        }
+
+        private void CheckForRedraw (InputData dat)
+        {
+            if(dat.RequiresRedraw)
+            {
+                Redraw();
+            }
         }
     }
 }

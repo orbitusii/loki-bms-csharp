@@ -84,6 +84,7 @@ namespace loki_bms_csharp.Database
             {
                 lock(track) track.UpdateVisual(dt);
             }
+            ProgramData.MainWindow.Redraw();
         }
     }
 }

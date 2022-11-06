@@ -18,37 +18,47 @@ namespace loki_bms_csharp.UserInterface
         public static Vector64 clickStartPoint { get; private set; }
         public static Vector64 clickDragPoint { get; private set; }
         public static Vector64 clickEndPoint { get; private set; }
-
-        public static void OnMouseWheel(MouseWheelEventArgs e)
+        private static ref Settings.ViewSettings ViewSettings
         {
-            SKElement canvas = UserData.MainWindow.ScopeCanvas;
+            get => ref ProgramData.ViewSettings;
+        }
+
+        public static InputData OnMouseWheel(MouseWheelEventArgs e)
+        {
+            SKElement canvas = ProgramData.MainWindow.ScopeCanvas;
 
             Point mousePos = e.GetPosition(canvas);
             SKSize size = canvas.CanvasSize;
             if (mousePos.X >= 0 && mousePos.X <= size.Width && mousePos.Y >= 0 && mousePos.Y < size.Height)
             {
                 int change = Math.Sign(e.Delta);
-                UserData.SetZoom(UserData.ZoomIncrement - change);
+                ViewSettings.IncrementZoom(-change);
             }
+
+            return new MouseInputData { RequiresRedraw = true, MouseButtons = ClickState };
         }
 
-        public static void OnMouseDown (MouseButtonEventArgs e)
+        public static InputData OnMouseDown (MouseButtonEventArgs e)
         {
             ClickState = (MouseClickState)(GetButtonValue(e.ChangedButton) | (int)ClickState);
 
-            Point screenPt = e.GetPosition(UserData.MainWindow.ScopeCanvas);
+            Point screenPt = e.GetPosition(ProgramData.MainWindow.ScopeCanvas);
 
             clickStartPoint = clickToPointOnEarth(screenPt);
             clickDragPoint = clickStartPoint;
+            bool redraw = false;
 
             if(ClickState == MouseClickState.Left && CheckDoubleClick())
             {
+                redraw = true;
                 RecenterCamera(clickToScreenPoint(screenPt));
             }
             else if (ClickState == (MouseClickState)5)
             {
                 System.Diagnostics.Debug.WriteLine("Left-Right Click Combo fired");
             }
+
+            return new MouseInputData { DoubleClicked = true, RequiresRedraw = redraw, MouseButtons = ClickState };
         }
 
         public static bool CheckDoubleClick()
@@ -72,24 +82,24 @@ namespace loki_bms_csharp.UserInterface
         {
             if (screenClickPt.magnitude <= MathL.Conversions.EarthRadius)
             {
-                Vector64 WorldOrigin = UserData.CameraMatrix.PointToTangentSpace((0, 0, 0));
+                Vector64 WorldOrigin = ViewSettings.CameraMatrix.PointToTangentSpace((0, 0, 0));
 
                 double r = MathL.Conversions.EarthRadius;
                 double rawIntersect = Math.Sqrt(r * r - screenClickPt.y * screenClickPt.y - screenClickPt.z * screenClickPt.z);
 
-                Vector64 WorldIntersectPos = UserData.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, screenClickPt.y, screenClickPt.z));
+                Vector64 WorldIntersectPos = ViewSettings.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, screenClickPt.y, screenClickPt.z));
 
                 //TrackDatabase.UncorrelatedData[0].Position = WorldIntersectPos;
 
                 LatLonCoord newCenter = MathL.Conversions.XYZToLL(WorldIntersectPos, r);
-                UserData.UpdateViewPosition(newCenter);
+                ViewSettings.UpdateViewPosition(newCenter);
             }
         }
 
-        public static void OnMouseUp(MouseButtonEventArgs e)
+        public static InputData OnMouseUp(MouseButtonEventArgs e)
         {
             int buttonValue = GetButtonValue(e.ChangedButton);
-            clickEndPoint = clickToPointOnEarth(e.GetPosition(UserData.MainWindow.ScopeCanvas));
+            clickEndPoint = clickToPointOnEarth(e.GetPosition(ProgramData.MainWindow.ScopeCanvas));
 
             var prevClick = ClickState;
             ClickState = (MouseClickState)(buttonValue ^ (int)ClickState);
@@ -98,37 +108,39 @@ namespace loki_bms_csharp.UserInterface
             {
                 System.Diagnostics.Debug.WriteLine("Left-right click combo lost");
             }
+
+            return new MouseInputData { MouseButtons = ClickState, RequiresRedraw = true };
         }
 
-        public static void OnMouseMove(MouseEventArgs e)
+        public static InputData OnMouseMove(MouseEventArgs e)
         {
             if (ClickState != MouseClickState.None)
             {
-                clickDragPoint = clickToPointOnEarth(e.GetPosition(UserData.MainWindow.ScopeCanvas));
+                clickDragPoint = clickToPointOnEarth(e.GetPosition(ProgramData.MainWindow.ScopeCanvas));
             }
+
+            return new MouseInputData { MouseButtons = ClickState, RequiresRedraw = true };
         }
 
         private static Vector64 clickToPointOnEarth (Point pt)
         {
             Vector64 camPoint = clickToScreenPoint(pt);
             Vector64 worldPos;
+            Vector64 WorldOrigin = ViewSettings.CameraMatrix.PointToTangentSpace((0, 0, 0));
+
+            double r = MathL.Conversions.EarthRadius;
+            double rawIntersect = Math.Sqrt(r * r - camPoint.y * camPoint.y - camPoint.z * camPoint.z);
+
 
             if (camPoint.magnitude <= MathL.Conversions.EarthRadius)
             {
-                Vector64 WorldOrigin = UserData.CameraMatrix.PointToTangentSpace((0, 0, 0));
-
-                double r = MathL.Conversions.EarthRadius;
-                double rawIntersect = Math.Sqrt(r * r - camPoint.y * camPoint.y - camPoint.z * camPoint.z);
-
-                worldPos = UserData.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, camPoint.y, camPoint.z));
+                worldPos = ViewSettings.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, camPoint.y, camPoint.z));
             }
             else {
                 Vector64 atEdge = (0, camPoint.y, camPoint.z);
-                atEdge = atEdge.normalized;
-                float actualY = (float)atEdge.y;
-                float actualZ = (float)atEdge.z;
+                atEdge = atEdge.normalized * MathL.Conversions.EarthRadius;
 
-                worldPos = new Vector64(0, actualY, -actualZ).normalized * MathL.Conversions.EarthRadius;
+                worldPos = ViewSettings.CameraMatrix.PointToWorldSpace((WorldOrigin.x, atEdge.y, atEdge.z));
             }
 
             return worldPos;
@@ -136,12 +148,12 @@ namespace loki_bms_csharp.UserInterface
 
         private static Vector64 clickToScreenPoint(Point pt)
         {
-            SKSize size = UserData.MainWindow.ScopeCanvas.CanvasSize;
+            SKSize size = ProgramData.MainWindow.ScopeCanvas.CanvasSize;
 
             double y = pt.X - size.Width / 2;
             double z = pt.Y - size.Height / 2;
 
-            return new Vector64(0, y, z) * UserData.VerticalFOV / size.Height;
+            return new Vector64(0, y, z) * ViewSettings.VerticalFOV / size.Height;
         }
 
         public static int GetButtonValue(MouseButton b)
