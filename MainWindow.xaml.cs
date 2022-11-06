@@ -43,6 +43,7 @@ namespace loki_bms_csharp
             get { return 1000 / FPS; }
         }
         private System.Timers.Timer RenderClock;
+        public DataSource DataSource;
 
         public MainWindow()
         {
@@ -76,6 +77,9 @@ namespace loki_bms_csharp
             FndTrack.FFS = FriendFoeStatus.KnownFriend;
             HosTrack.FFS = FriendFoeStatus.Hostile;
             PndTrack.FFS = FriendFoeStatus.AssumedFriend;
+
+            DataSource = new DataSource();
+            _ = DataSource.Activate();
 
             EndInit();
         }
@@ -133,6 +137,7 @@ namespace loki_bms_csharp
         private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             RenderClock.Stop();
+            DataSource.Deactivate();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
