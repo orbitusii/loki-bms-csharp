@@ -39,7 +39,7 @@ namespace loki_bms_csharp.Geometry
 
         public static (Size size, PathSVG[] paths) UnpackSVG(string source)
         {
-            System.Diagnostics.Debug.WriteLine("Attempting to deserialize WorldLandGeometry");
+            System.Diagnostics.Debug.WriteLine("Attempting to deserialize geometry from an SVG");
 
             byte[] resourceData = Properties.Resources.WorldLandmasses;
 
@@ -74,7 +74,7 @@ namespace loki_bms_csharp.Geometry
         public static PathSVG ExtractRawPath (XElement element)
         {
             var parent = element.Parent;
-            string pathName = parent.Attribute("id").Value;
+            string pathName = parent.Attribute("id") != null ? parent.Attribute("id").Value : element.Attribute("id").Value;
 
             string data = element.Attribute("d").Value;
 
