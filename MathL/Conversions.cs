@@ -58,7 +58,7 @@ namespace loki_bms_csharp.MathL
         /// Gets the velocity of an object tangent 
         /// </summary>
         /// <param name="latLon"></param>
-        /// <param name="heading"></param>
+        /// <param name="heading">Heading, in clockwise radians from true North</param>
         /// <param name="speed"></param>
         /// <param name="verticalSpeed"></param>
         /// <returns></returns>
@@ -75,16 +75,22 @@ namespace loki_bms_csharp.MathL
             return toWorldSpace;
         }
 
-        public static (double speed, double vertSpeed, double heading) GetSurfaceMotion(Vector64 cartesian, Vector64 velocity)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="velocity"></param>
+        /// <returns>Speed in m/s, vertical speed in m/s, heading in clockwise radians</returns>
+        public static (double speed, double vertSpeed, double heading) GetSurfaceMotion(Vector64 position, Vector64 velocity)
         {
-            TangentMatrix mat = TangentMatrix.FromXYZ(cartesian);
+            TangentMatrix mat = TangentMatrix.FromXYZ(position);
 
-            Vector64 toLocalSpace = mat.VectorToTangentSpace(velocity);
+            Vector64 vel_surface = mat.VectorToTangentSpace(velocity);
 
-            double heading = Math.Asin(toLocalSpace.normalized.y);
-            double vertSpeed = toLocalSpace.x;
+            double heading = Math.Asin(vel_surface.normalized.y);
+            double vertSpeed = vel_surface.x;
 
-            Vector64 pureTangent = (0, toLocalSpace.y, toLocalSpace.z);
+            Vector64 pureTangent = (0, vel_surface.y, vel_surface.z);
             double speed = pureTangent.magnitude;
 
             return (speed, vertSpeed, heading);
