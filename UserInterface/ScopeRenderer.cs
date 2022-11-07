@@ -123,14 +123,17 @@ namespace loki_bms_csharp.UserInterface
             DrawLine(segment_start, to, color, width);
 
             SKPoint textPoint = GetScreenPoint(CameraMatrix.PointToTangentSpace(to)) + new SKPoint(10, -10);
-            SKPaint paint = new SKPaint
+            var surfaceData = MathL.Conversions.GetSurfaceMotion(from, to - from);
+            double heading = Math.Round(surfaceData.heading * MathL.Conversions.ToDegrees, 0);
+
+            SKPaint paint = new SKPaint(new SKFont(SKTypeface.Default, 16))
             {
                 Color = SKColors.White,
                 Style = SKPaintStyle.StrokeAndFill,
 
             };
 
-            Canvas.DrawText($"{Math.Round(arcLength * MathL.Conversions.MetersToNM,1)} NM", textPoint, paint);
+            Canvas.DrawText($"{heading:000}/{Math.Round(arcLength * MathL.Conversions.MetersToNM,0)} NM", textPoint, paint);
         }
 
         public void DrawCircle(Vector64 center, double radius, SKColor color, bool isRadiusInWorldUnits = true)

@@ -91,8 +91,14 @@ namespace loki_bms_csharp.MathL
             TangentMatrix mat = TangentMatrix.FromXYZ(position);
 
             Vector64 vel_surface = mat.VectorToTangentSpace(velocity);
+            vel_surface -= (vel_surface.x, 0, 0);
 
-            double heading = Math.Asin(vel_surface.normalized.y);
+            double heading = Math.Acos(-vel_surface.normalized.z);
+            if(vel_surface.y < 0)
+            {
+                heading *= -1;
+                heading += Math.PI * 2;
+            }
             double vertSpeed = vel_surface.x;
 
             Vector64 pureTangent = (0, vel_surface.y, vel_surface.z);
