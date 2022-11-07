@@ -26,7 +26,6 @@ namespace loki_bms_csharp
         public static void Initialize(MainWindow window)
         {
             MainWindow = window;
-            SrcWindow = new SourceWindow();
 
             AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"{Delimiter}Loki-BMS{Delimiter}";
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
@@ -48,7 +47,7 @@ namespace loki_bms_csharp
 
         public static void Shutdown ()
         {
-            SrcWindow.Close();
+            SrcWindow?.Close();
 
             SaveViewSettings(AppDataPath + "Views.xml");
             SaveDataSources(AppDataPath + "DataSources.xml");
