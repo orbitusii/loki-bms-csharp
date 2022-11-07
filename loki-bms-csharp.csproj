@@ -6,6 +6,7 @@
     <RootNamespace>loki_bms_csharp</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>LOKI Icon.ico</ApplicationIcon>
+    <AssemblyName>LOKI BMS</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

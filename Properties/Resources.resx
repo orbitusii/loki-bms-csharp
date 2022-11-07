@@ -121,6 +121,10 @@
   <data name="DCSMapExtents" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\DCSMapExtents.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="SVGPathRegex" xml:space="preserve">
+    <value>(\bid=["](?&lt;name&gt;\w{1,32})["]\s){0,1}\bd=["](?&lt;path&gt;.{5,})["]\s</value>
+    <comment>Regex used to pull a path from some SVG file</comment>
+  </data>
   <data name="WorldLandmasses" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\worldlandmasses.svg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

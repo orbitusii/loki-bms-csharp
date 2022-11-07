@@ -71,6 +71,15 @@ namespace loki_bms_csharp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (\bid=[&quot;](?&lt;name&gt;\w{1,32})[&quot;]\s){0,1}\bd=[&quot;](?&lt;path&gt;.{5,})[&quot;]\s.
+        /// </summary>
+        internal static string SVGPathRegex {
+            get {
+                return ResourceManager.GetString("SVGPathRegex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] WorldLandmasses {
