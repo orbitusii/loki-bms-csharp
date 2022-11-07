@@ -19,6 +19,10 @@ namespace loki_bms_csharp.Database
         public string Address { get; set; } = "127.0.0.1";
         [XmlAttribute]
         public string Port { get; set; } = "50051";
+        [XmlAttribute]
+        public string PollRate { get; set; } = "10";
+        [XmlAttribute]
+        public string SlowPollrate { get; set; } = "30";
 
         private bool _active = false;
 
@@ -31,6 +35,11 @@ namespace loki_bms_csharp.Database
                 if (value) Activate();
                 else Deactivate();
             }
+        }
+        [XmlIgnore]
+        public bool CanEditPollRate
+        {
+            get => !_active;
         }
 
         [XmlIgnore]
@@ -70,7 +79,10 @@ namespace loki_bms_csharp.Database
 
                 var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
 
-                var units = MissionClient.StreamUnits(new StreamUnitsRequest { PollRate = 10, MaxBackoff = 30 });
+                uint pr = uint.Parse(PollRate);
+                uint spr = uint.Parse(SlowPollrate);
+
+                var units = MissionClient.StreamUnits(new StreamUnitsRequest { PollRate = pr, MaxBackoff = spr });
 
                 Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: checking mission name: {missionName?.Name}");
 
@@ -87,6 +99,7 @@ namespace loki_bms_csharp.Database
             catch (Exception e)
             {
                 Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: failed to get data from {Address}:{Port}: {e.Message}\n\t{e.StackTrace}");
+                Deactivate();
             }
         }
 

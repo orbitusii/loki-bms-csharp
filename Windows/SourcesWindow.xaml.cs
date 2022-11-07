@@ -22,10 +22,6 @@ namespace loki_bms_csharp
         public SourceWindow()
         {
             InitializeComponent();
-
-            BeginInit();
-
-            EndInit();
         }
 
         private void SourcesWin_Loaded(object sender, RoutedEventArgs e)
@@ -57,6 +53,16 @@ namespace loki_bms_csharp
                 NamesListBox.SelectedIndex = fallbackIndex;
                 SourceDetails.DataContext = ProgramData.DataSources[fallbackIndex];
             }
+        }
+
+        private void CheckBox_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+            BlockableDetails.GetBindingExpression(IsEnabledProperty).UpdateTarget();
+        }
+
+        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ProgramData.SrcWindow = null;
         }
     }
 }
