@@ -66,7 +66,7 @@ namespace loki_bms_csharp.Database
             if (Channel == null) Channel = GrpcChannel.ForAddress($"http://{Address}:{Port}");
             cancelTokenSource = new CancellationTokenSource();
 
-            Task t = Task.Run(StreamData);
+            Task t = Task.Run(StreamData); //TODO: add reconnect attempts
         }
 
         public async Task StreamData ()
@@ -109,7 +109,7 @@ namespace loki_bms_csharp.Database
 
             LatLonCoord positLL = new LatLonCoord { Lat_Degrees = position.Lat, Lon_Degrees = position.Lon };
             Vector64 posXYZ = MathL.Conversions.LLToXYZ(positLL, MathL.Conversions.EarthRadius);
-            //Debug.WriteLine($"Data for {unit.Callsign}: {positLL} => {posXYZ}");
+            //Debug.WriteLine($"Data for {unit.Callsign}: {unit.Speed}");
 
             double speed = unit.Speed;
             double heading = unit.Heading * MathL.Conversions.ToRadians;

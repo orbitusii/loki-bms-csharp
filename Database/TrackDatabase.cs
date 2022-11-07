@@ -14,7 +14,8 @@ namespace loki_bms_csharp.Database
         private static short _itn = 1;
 
         public static List<TrackFile> LiveTracks;
-        public static List<TrackDatum> RawData;
+        public static List<TrackDatum> ProcessedData;
+        public static List<TrackDatum> FreshData;
 
         public static Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> ColorByFFS =
             new Dictionary<FriendFoeStatus, SkiaSharp.SKPaint>()
@@ -36,7 +37,8 @@ namespace loki_bms_csharp.Database
         public static void Initialize (float tickRate = 100)
         {
             LiveTracks = new List<TrackFile>();
-            RawData = new List<TrackDatum>();
+            ProcessedData = new List<TrackDatum>();
+            FreshData = new List<TrackDatum>();
 
             LastUpdate = DateTime.Now;
 
@@ -49,12 +51,29 @@ namespace loki_bms_csharp.Database
 
                 try
                 {
-                    
-                    UpdateTracks(dt);
+                    lock (FreshData)
+                    {
+                        PullNewData();
+
+                        lock (LiveTracks)
+                        {
+                            UpdateTracks(dt);
+                        }
+
+                        ProcessedData.AddRange(FreshData);
+                        FreshData.Clear();
+
+                        lock (ProcessedData)
+                        {
+                            PurgeOldData();
+                        }
+                    }
+
+                    ProgramData.MainWindow.Redraw();
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{DateTime.UtcNow:h:mm:ss.fff} Missed a Database tick! Exception: {e.Message}");
+                    System.Diagnostics.Debug.WriteLine($"{DateTime.UtcNow:h:mm:ss.fff} Missed a Database tick! Exception: {e.Message}\n\t{e.StackTrace}");
                 }
             };
             UpdateClock.Start();
@@ -65,13 +84,15 @@ namespace loki_bms_csharp.Database
             Vector64 posit = Conversions.LLToXYZ(latLon, Conversions.EarthRadius);
             Vector64 vel = Conversions.GetTangentVelocity(latLon, heading, speed, vertSpeed);
 
+            var newTN = new TrackNumber.Internal { Value = NextITN };
+
             TrackFile newTrack = new TrackFile(
+                newTN,
                 posit,
                 vel,
                 new IFFData[0],
                 type: trackType);
 
-            TrackNumber newTN = new TrackNumber.Internal { Value = NextITN };
 
             LiveTracks.Add(newTrack);
 
@@ -80,74 +101,92 @@ namespace loki_bms_csharp.Database
 
         public static TrackFile InitiateTrack (Vector64 position, Vector64 velocity, TrackType trackType = TrackType.Sim)
         {
+            var newTN = new TrackNumber.Internal { Value = NextITN };
+
             TrackFile newTrack = new TrackFile(
+                newTN,
                 position,
                 velocity,
                 new IFFData[0],
                 type: trackType);
 
-            TrackNumber newTN = new TrackNumber.Internal { Value = NextITN };
 
             LiveTracks.Add(newTrack);
 
             return newTrack;
         }
 
+        public static void PullNewData ()
+        {
+            foreach (var src in ProgramData.DataSources)
+            {
+                if (src.Active)
+                {
+                    FreshData.AddRange(src.PullData().Values);
+                }
+            }
+        }
+
         public static void UpdateTracks (float dt)
         {
-            DateTime now = DateTime.Now;
-
-            foreach(var src in ProgramData.DataSources)
+            for (int i = 0; i < FreshData.Count; i++)
             {
-                if(src.Active)
-                {
-                    RawData.AddRange(src.PullData().Values);
-                }
-            }
+                var datum = FreshData[i];
 
-            List<TrackDatum> oldData = new List<TrackDatum>();
-
-            for (int i = 0; i < RawData.Count; i++)
-            {
-                var datum = RawData[i];
-
-                if(!Correlate_ByETN(datum))
+                if (!Correlate_ByETN(datum))
                 {
                     var newTrack = InitiateTrack(datum.Position, datum.Velocity, TrackType.External);
-                }
-
-                if((now - datum.Timestamp).TotalSeconds > MaxDatumAge)
-                {
-                    oldData.Add(datum);
+                    newTrack.TrackNumbers.Add(datum.ID);          
                 }
             }
-
-            foreach(var old in oldData)
-            {
-                RawData.Remove(old);
-            }
-
+            
             //System.Diagnostics.Debug.WriteLine($"Updating Tracks with dt={dt}");
             foreach (var track in LiveTracks)
             {
-                lock (track) track.UpdateVisual(dt);
+                track.UpdateVisual(dt);
             }
-
-            ProgramData.MainWindow.Redraw();
         }
 
         private static bool Correlate_ByETN (TrackDatum datum)
         {
-            var existingTrack = LiveTracks.Find(x => x.TrackNumbers.Any(tn => tn.Equals(datum.ID)));
-
-            if(existingTrack != null)
+            var query = from TrackFile track in LiveTracks where track.TrackNumbers.Contains(datum.ID) select track;
+            try
             {
-                existingTrack.AddNewData(datum, new IFFData[0]);
+                if (query.ToArray().Length > 0)
+                {
+                    var existingTrack = query.ToArray()[0];
 
-                return true;
+                    if (existingTrack != null)
+                    {
+                        existingTrack.AddNewData(datum, new IFFData[0]);
+
+                        return true;
+                    }
+                }
             }
+            catch { }
 
             return false;
+        }
+
+        public static void PurgeOldData()
+        {
+            DateTime now = DateTime.Now;
+
+            List<TrackDatum> oldData = new List<TrackDatum>();
+
+            for (int i = 0; i < ProcessedData.Count; i++)
+            {
+                if ((now - ProcessedData[i].Timestamp).TotalSeconds > MaxDatumAge)
+                {
+                    oldData.Add(ProcessedData[i]);
+                }
+            }
+
+            foreach (var old in oldData)
+            {
+                ProcessedData.Remove(old);
+            }
         }
     }
 }

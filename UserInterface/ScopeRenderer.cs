@@ -161,10 +161,10 @@ namespace loki_bms_csharp.UserInterface
                 //Base symbol
                 DrawSingleItem(track, brush, 6);
                 //Velocity leader
-                DrawLine(track.Position, track.Position + track.Velocity, SKColors.White, 1);
+                DrawLine(track.Position, track.Position + track.Velocity * 10, SKColors.White, 1);
             }
 
-            foreach(var datum in TrackDatabase.RawData)
+            foreach(var datum in TrackDatabase.ProcessedData)
             {
                 DrawSingleItem(datum, TrackDatabase.DatumBrush, 2);
             }
