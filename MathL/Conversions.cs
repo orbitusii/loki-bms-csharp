@@ -72,6 +72,11 @@ namespace loki_bms_csharp.MathL
 
             Vector64 toWorldSpace = mat.VectorToWorldSpace((vx, vy, vz));
 
+            if(double.IsNaN(vx) || double.IsNaN(vy) || double.IsNaN(vz))
+            {
+                return Vector64.zero;
+            }
+
             return toWorldSpace;
         }
 

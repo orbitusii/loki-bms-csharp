@@ -40,7 +40,8 @@ public struct Vector64
     {
         get
         {
-            return this / magnitude;
+            if (SquareMagnitude == 0) return this;
+            else return this / magnitude;
         }
     }
 
