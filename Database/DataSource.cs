@@ -28,17 +28,16 @@ namespace loki_bms_csharp.Database
             get => _active;
             set
             {
-                if (value) _ = Activate();
+                if (value) Activate();
                 else Deactivate();
             }
         }
 
         [XmlIgnore]
         public GrpcChannel Channel;// = GrpcChannel.ForAddress("127.0.0.1:50051");
-        [XmlIgnore]
+
         private CancellationTokenSource cancelTokenSource;
-        [XmlIgnore]
-        public Dictionary<string, TrackDatum> UpdatedData;
+        private Dictionary<string, TrackDatum> UpdatedData = new Dictionary<string, TrackDatum>();
 
         public DataSource () { }
 
@@ -49,41 +48,74 @@ namespace loki_bms_csharp.Database
             Channel = GrpcChannel.ForAddress($"http://{Address}:{Port}");
         }
 
-        public async Task Activate ()
+        public void Activate ()
         {
             if (Active) return;
 
-            Debug.WriteLine($"Activating DataSource {Name}");
-
             _active = true;
+            Debug.WriteLine($"Activating DataSource {Name}");
+            if (Channel == null) Channel = GrpcChannel.ForAddress($"http://{Address}:{Port}");
             cancelTokenSource = new CancellationTokenSource();
+
+            Task t = Task.Run(StreamData);
+        }
+
+        public async Task StreamData ()
+        {
             try
             {
                 var MissionClient = new MissionService.MissionServiceClient(Channel);
                 var HookClient = new HookService.HookServiceClient(Channel);
                 var NetClient = new NetService.NetServiceClient(Channel);
 
-                //var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
-                var units = MissionClient.StreamUnits(new StreamUnitsRequest { PollRate = 10, MaxBackoff = 30 });
-
                 var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
 
-                Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: checking mission name: {missionName?.Name}\n");
+                var units = MissionClient.StreamUnits(new StreamUnitsRequest { PollRate = 10, MaxBackoff = 30 });
 
-                //NetClient.SendChat(new SendChatRequest { Coalition = RurouniJones.Dcs.Grpc.V0.Common.Coalition.All, Message = "A LOKI BMS instance is now watching your server" });
+                Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: checking mission name: {missionName?.Name}");
 
                 while (await units.ResponseStream.MoveNext(cancelTokenSource.Token))
                 {
                     var unit = units.ResponseStream.Current;
 
-                    Debug.WriteLine($"\tUnit Name = {unit.Unit.Callsign}");
-                    //if (unit.Unit != null) break;
+                    if (unit.Unit != null)
+                    {
+                        UpdatedData[unit.Unit.Callsign] = ConvertFromDCSTrack(unit.Unit);
+                    }
                 }
             }
             catch (Exception e)
             {
                 Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: failed to get data from {Address}:{Port}: {e.Message}\n\t{e.StackTrace}");
             }
+        }
+
+        private TrackDatum ConvertFromDCSTrack (RurouniJones.Dcs.Grpc.V0.Common.Unit unit)
+        {
+            var position = unit.Position;
+            LatLonCoord positLL = new LatLonCoord { Lat_Degrees = position.Lat, Lon_Degrees = position.Lon };
+            Vector64 posXYZ = MathL.Conversions.LLToXYZ(positLL, MathL.Conversions.EarthRadius);
+            //Debug.WriteLine($"Data for {unit.Callsign}: {positLL} => {posXYZ}");
+
+            return new TrackDatum { Position = posXYZ, Timestamp = DateTime.Now };
+        }
+
+        public Dictionary<string, TrackDatum> PullData(bool clearQueue = true)
+        {
+            if(UpdatedData.Count > 0)
+            {
+                lock(UpdatedData)
+                {
+                    Dictionary<string, TrackDatum> latest = new Dictionary<string, TrackDatum>(UpdatedData);
+
+                    if (clearQueue)
+                        UpdatedData.Clear();
+
+                    return latest;
+                }
+            }
+
+            return new Dictionary<string, TrackDatum>(0);
         }
 
         public void Deactivate ()
