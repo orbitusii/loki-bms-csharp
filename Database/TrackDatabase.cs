@@ -14,7 +14,7 @@ namespace loki_bms_csharp.Database
         private static short _itn = 1;
 
         public static Dictionary<TrackNumber, TrackFile> LiveTracks;
-        public static List<TrackDatum> UncorrelatedData;
+        public static List<TrackDatum> RawData;
 
         public static Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> ColorByFFS =
             new Dictionary<FriendFoeStatus, SkiaSharp.SKPaint>()
@@ -31,11 +31,12 @@ namespace loki_bms_csharp.Database
 
         private static System.Timers.Timer UpdateClock;
         private static DateTime LastUpdate;
+        private static float MaxDatumAge = 30;
         
         public static void Initialize (float tickRate = 100)
         {
             LiveTracks = new Dictionary<TrackNumber, TrackFile>();
-            UncorrelatedData = new List<TrackDatum>();
+            RawData = new List<TrackDatum>();
 
             LastUpdate = DateTime.Now;
 
@@ -79,11 +80,38 @@ namespace loki_bms_csharp.Database
 
         public static void UpdateTracks (float dt)
         {
+            DateTime now = DateTime.Now;
+
+            foreach(var src in ProgramData.DataSources)
+            {
+                if(src.Active)
+                {
+                    RawData.AddRange(src.PullData().Values);
+                }
+            }
+
             //System.Diagnostics.Debug.WriteLine($"Updating Tracks with dt={dt}");
             foreach(var track in LiveTracks.Values)
             {
                 lock(track) track.UpdateVisual(dt);
             }
+
+            List<TrackDatum> oldData = new List<TrackDatum>();
+
+            for (int i = 0; i < RawData.Count; i++)
+            {
+                var datum = RawData[i];
+                if((now - datum.Timestamp).TotalSeconds > MaxDatumAge)
+                {
+                    oldData.Add(datum);
+                }
+            }
+
+            foreach(var old in oldData)
+            {
+                RawData.Remove(old);
+            }
+
             ProgramData.MainWindow.Redraw();
         }
     }

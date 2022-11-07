@@ -173,9 +173,8 @@ namespace loki_bms_csharp
 
         private void SourceMenuButton_Click(object sender, RoutedEventArgs e)
         {
-            SourceWindow srcWin = new SourceWindow();
-
-            srcWin.Show();
+            ProgramData.SrcWindow.Show();
+            ProgramData.SrcWindow.Focus();
         }
     }
 }

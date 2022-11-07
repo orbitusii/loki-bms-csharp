@@ -41,13 +41,22 @@ namespace loki_bms_csharp
 
         private void OnSourceUpdated(object sender, DataTransferEventArgs e)
         {
-            UpdateContext();
+            int fallbackIndex = NamesListBox.SelectedIndex;
+            UpdateContext(fallbackIndex);
         }
 
-        private void UpdateContext ()
+        private void UpdateContext (int fallbackIndex = 0)
         {
             NamesListBox.ItemsSource = ProgramData.DataSources.Select(x => x.Name);
-            SourceDetails.DataContext = ProgramData.DataSources[NamesListBox.SelectedIndex] ?? new Database.DataSource();
+            try
+            {
+                SourceDetails.DataContext = ProgramData.DataSources[NamesListBox.SelectedIndex] ?? new Database.DataSource();
+            }
+            catch
+            {
+                NamesListBox.SelectedIndex = fallbackIndex;
+                SourceDetails.DataContext = ProgramData.DataSources[fallbackIndex];
+            }
         }
     }
 }

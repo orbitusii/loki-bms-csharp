@@ -13,6 +13,8 @@ namespace loki_bms_csharp
     public static class ProgramData
     {
         public static MainWindow MainWindow;
+        public static SourceWindow SrcWindow;
+
         public static ViewSettings ViewSettings;
         public static MapGeometry WorldLandmasses;
         public static MapGeometry DCSMaps;
@@ -24,6 +26,7 @@ namespace loki_bms_csharp
         public static void Initialize(MainWindow window)
         {
             MainWindow = window;
+            SrcWindow = new SourceWindow();
 
             AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"{Delimiter}Loki-BMS{Delimiter}";
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
@@ -36,7 +39,7 @@ namespace loki_bms_csharp
             Debug.Write("Data Sources: ");
             foreach (var source in DataSources)
             {
-                Debug.Write($"{source.Name}, Active = {source._active}; ");
+                Debug.Write($"{source.Name}, Active = {source.Active}; ");
             }
             Debug.WriteLine($"Total: {DataSources.Count}");
 
@@ -45,6 +48,8 @@ namespace loki_bms_csharp
 
         public static void Shutdown ()
         {
+            SrcWindow.Close();
+
             SaveViewSettings(AppDataPath + "Views.xml");
             SaveDataSources(AppDataPath + "DataSources.xml");
 

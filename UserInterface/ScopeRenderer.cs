@@ -161,18 +161,18 @@ namespace loki_bms_csharp.UserInterface
                 SKPaint brush = TrackDatabase.ColorByFFS[track.FFS];
 
                 //Base symbol
-                DrawSingleItem(track, brush);
+                DrawSingleItem(track, brush, 6);
                 //Velocity leader
                 DrawLine(track.Position, track.Position + track.Velocity, SKColors.White, 1);
             }
 
-            foreach(var datum in TrackDatabase.UncorrelatedData)
+            foreach(var datum in TrackDatabase.RawData)
             {
-                DrawSingleItem(datum, TrackDatabase.DatumBrush);
+                DrawSingleItem(datum, TrackDatabase.DatumBrush, 2);
             }
         }
 
-        public void DrawSingleItem (IKinematicData track, SKPaint brush)
+        public void DrawSingleItem (IKinematicData track, SKPaint brush, float size = 4)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
 
@@ -180,7 +180,7 @@ namespace loki_bms_csharp.UserInterface
             {
                 SKPoint canvasPos = GetScreenPoint(screenPos);
 
-                Canvas.DrawCircle(canvasPos, 4, brush);
+                Canvas.DrawCircle(canvasPos, size, brush);
             }
         }
 
