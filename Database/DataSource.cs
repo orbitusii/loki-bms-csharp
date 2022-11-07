@@ -106,11 +106,17 @@ namespace loki_bms_csharp.Database
         private TrackDatum ConvertFromDCSTrack (RurouniJones.Dcs.Grpc.V0.Common.Unit unit)
         {
             var position = unit.Position;
+
             LatLonCoord positLL = new LatLonCoord { Lat_Degrees = position.Lat, Lon_Degrees = position.Lon };
             Vector64 posXYZ = MathL.Conversions.LLToXYZ(positLL, MathL.Conversions.EarthRadius);
             //Debug.WriteLine($"Data for {unit.Callsign}: {positLL} => {posXYZ}");
 
-            return new TrackDatum { Position = posXYZ, Timestamp = DateTime.Now };
+            double speed = unit.Speed;
+            double heading = unit.Heading * MathL.Conversions.ToRadians;
+
+            Vector64 vel = MathL.Conversions.GetTangentVelocity(positLL, heading, speed);
+
+            return new TrackDatum { ID = new TrackNumber.External { Value = (short)unit.Id }, Position = posXYZ, Velocity = vel, Timestamp = DateTime.Now };
         }
 
         public Dictionary<string, TrackDatum> PullData(bool clearQueue = true)

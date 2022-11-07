@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using loki_bms_csharp.MathL;
 
 namespace loki_bms_csharp.Database
@@ -13,7 +13,7 @@ namespace loki_bms_csharp.Database
         }
         private static short _itn = 1;
 
-        public static Dictionary<TrackNumber, TrackFile> LiveTracks;
+        public static List<TrackFile> LiveTracks;
         public static List<TrackDatum> RawData;
 
         public static Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> ColorByFFS =
@@ -35,7 +35,7 @@ namespace loki_bms_csharp.Database
         
         public static void Initialize (float tickRate = 100)
         {
-            LiveTracks = new Dictionary<TrackNumber, TrackFile>();
+            LiveTracks = new List<TrackFile>();
             RawData = new List<TrackDatum>();
 
             LastUpdate = DateTime.Now;
@@ -71,9 +71,24 @@ namespace loki_bms_csharp.Database
                 new IFFData[0],
                 type: trackType);
 
-            TrackNumber newTN = new TrackNumber(intl: NextITN);
+            TrackNumber newTN = new TrackNumber.Internal { Value = NextITN };
 
-            LiveTracks.Add(newTN, newTrack);
+            LiveTracks.Add(newTrack);
+
+            return newTrack;
+        }
+
+        public static TrackFile InitiateTrack (Vector64 position, Vector64 velocity, TrackType trackType = TrackType.Sim)
+        {
+            TrackFile newTrack = new TrackFile(
+                position,
+                velocity,
+                new IFFData[0],
+                type: trackType);
+
+            TrackNumber newTN = new TrackNumber.Internal { Value = NextITN };
+
+            LiveTracks.Add(newTrack);
 
             return newTrack;
         }
@@ -90,17 +105,17 @@ namespace loki_bms_csharp.Database
                 }
             }
 
-            //System.Diagnostics.Debug.WriteLine($"Updating Tracks with dt={dt}");
-            foreach(var track in LiveTracks.Values)
-            {
-                lock(track) track.UpdateVisual(dt);
-            }
-
             List<TrackDatum> oldData = new List<TrackDatum>();
 
             for (int i = 0; i < RawData.Count; i++)
             {
                 var datum = RawData[i];
+
+                if(!Correlate_ByETN(datum))
+                {
+                    var newTrack = InitiateTrack(datum.Position, datum.Velocity, TrackType.External);
+                }
+
                 if((now - datum.Timestamp).TotalSeconds > MaxDatumAge)
                 {
                     oldData.Add(datum);
@@ -112,7 +127,27 @@ namespace loki_bms_csharp.Database
                 RawData.Remove(old);
             }
 
+            //System.Diagnostics.Debug.WriteLine($"Updating Tracks with dt={dt}");
+            foreach (var track in LiveTracks)
+            {
+                lock (track) track.UpdateVisual(dt);
+            }
+
             ProgramData.MainWindow.Redraw();
+        }
+
+        private static bool Correlate_ByETN (TrackDatum datum)
+        {
+            var existingTrack = LiveTracks.Find(x => x.TrackNumbers.Any(tn => tn.Equals(datum.ID)));
+
+            if(existingTrack != null)
+            {
+                existingTrack.AddNewData(datum, new IFFData[0]);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

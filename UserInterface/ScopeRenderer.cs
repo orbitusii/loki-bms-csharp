@@ -154,10 +154,8 @@ namespace loki_bms_csharp.UserInterface
 
         public void DrawFromDatabase ()
         {
-            foreach(TrackNumber tn in TrackDatabase.LiveTracks.Keys)
+            foreach(TrackFile track in TrackDatabase.LiveTracks)
             {
-                TrackFile track = TrackDatabase.LiveTracks[tn];
-
                 SKPaint brush = TrackDatabase.ColorByFFS[track.FFS];
 
                 //Base symbol

@@ -6,6 +6,7 @@ namespace loki_bms_csharp.Database
 {
     public class TrackFile : IKinematicData
     {
+        public List<TrackNumber> TrackNumbers { get; set; }
         public Vector64 RawPosition { get; private set; }
         public Vector64 Position { get; set; }
         public Vector64 Velocity { get; private set; }
@@ -94,12 +95,12 @@ namespace loki_bms_csharp.Database
             Vector64 forwardAxis = Velocity.normalized;
 
             double arcLength = Velocity.magnitude * dt;
-            double angle = arcLength / MathL.Conversions.EarthRadius;
+            double angle = arcLength / Position.magnitude;
 
             double sine = Math.Sin(angle);
             double cosine = Math.Cos(angle);
 
-            Position += MathL.Conversions.EarthRadius * (forwardAxis * sine
+            Position += Position.magnitude * (forwardAxis * sine
                 - outAxis * (1 - cosine));
 
             Velocity += arcLength * (-(1 - cosine) * forwardAxis - sine * outAxis);

@@ -39,6 +39,8 @@ namespace loki_bms_csharp
 
             BeginInit();
 
+            TrackNumber.Test();
+
             ProgramData.Initialize(this);
 
             ref Settings.ViewSettings viewSettings = ref ProgramData.ViewSettings;
