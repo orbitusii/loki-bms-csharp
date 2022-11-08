@@ -45,18 +45,18 @@ namespace loki_bms_csharp
 
             ref Settings.ViewSettings viewSettings = ref ProgramData.ViewSettings;
 
-            ConfigureClock();
+            //ConfigureClock();
             ScopeCanvas.PaintSurface += OnPaintSurface;
             DrawDebug = false;
 
             TrackDatabase.Initialize(1000);
-            var FndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0, Alt = 0 },heading: Math.PI/4, speed: 50);
-            var HosTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = -0.0001, Lon_Degrees = 0, Alt = 0 }, heading: Math.PI / 2, speed: 50);
-            var PndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = -0.0001, Alt = 0 }, heading: Math.PI * 3 / 4, speed: 50);
+           //var FndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0, Alt = 0 },heading: Math.PI/4, speed: 50);
+           //var HosTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = -0.0001, Lon_Degrees = 0, Alt = 0 }, heading: Math.PI / 2, speed: 50);
+           //var PndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = -0.0001, Alt = 0 }, heading: Math.PI * 3 / 4, speed: 50);
 
-            FndTrack.FFS = FriendFoeStatus.KnownFriend;
-            HosTrack.FFS = FriendFoeStatus.Hostile;
-            PndTrack.FFS = FriendFoeStatus.AssumedFriend;
+            //FndTrack.FFS = FriendFoeStatus.KnownFriend;
+            //HosTrack.FFS = FriendFoeStatus.Hostile;
+            //PndTrack.FFS = FriendFoeStatus.AssumedFriend;
 
             //DataSource = new DataSource();
             //_ = DataSource.Activate();
@@ -82,7 +82,7 @@ namespace loki_bms_csharp
                     Debug.WriteLine("Missed a frame due to an exception!\n" + e.Message);
                 }
             };
-            //RenderClock.Start();
+            RenderClock.Start();
         }
 
         public void Redraw ()
@@ -130,7 +130,7 @@ namespace loki_bms_csharp
 
         private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            RenderClock.Stop();
+            //RenderClock.Stop();
             ProgramData.Shutdown();
         }
 
