@@ -8,10 +8,12 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.Windows;
+using System.ComponentModel;
 
 namespace loki_bms_csharp.Database
 {
-    public class DataSource
+    public class DataSource: INotifyPropertyChanged
     {
         [XmlAttribute]
         public string Name { get; set; } = "New Data Source";
@@ -26,6 +28,15 @@ namespace loki_bms_csharp.Database
 
         [XmlElement]
         public TrackNumberRange TNRange { get; set; } = new TrackNumberRange { TNMin = -1, TNMax = -1 };
+        
+        [XmlElement]
+        public string DataSymbol { get; set; }
+        [XmlAttribute("Color")]
+        public string DataColor { get; set; }
+        public SkiaSharp.SKColor GetSKColor
+        {
+            get => SkiaSharp.SKColor.TryParse(DataColor, out var color) ? color : SkiaSharp.SKColors.White;
+        }
 
         // TODO: make this value reflect properly on SourcesWindow when it fails to connect
         private bool _active = false;
@@ -37,6 +48,7 @@ namespace loki_bms_csharp.Database
             {
                 if (value) Activate();
                 else Deactivate();
+
             }
         }
         [XmlIgnore]
@@ -47,10 +59,21 @@ namespace loki_bms_csharp.Database
 
         [XmlIgnore]
         public GrpcChannel Channel;// = GrpcChannel.ForAddress("127.0.0.1:50051");
+        private int MaxReconnectAttempts = 5;
+        private float ReconnectDelay = 5;
+        private int CurrentReconnectAttempts;
+
 
         private CancellationTokenSource cancelTokenSource;
         private Dictionary<string, TrackDatum> UpdatedData = new Dictionary<string, TrackDatum>();
-        
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged (string PropertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+        }
+
         public DataSource () { }
 
         public DataSource(string address = "127.0.0.1", string port = "50051")
@@ -65,11 +88,38 @@ namespace loki_bms_csharp.Database
             if (Active) return;
 
             _active = true;
+            OnPropertyChanged("Active");
+            OnPropertyChanged("CanEditPollRate");
+
             Debug.WriteLine($"Activating DataSource {Name}");
             if (Channel == null) Channel = GrpcChannel.ForAddress($"http://{Address}:{Port}");
             cancelTokenSource = new CancellationTokenSource();
 
-            Task t = Task.Run(StreamData); //TODO: add reconnect attempts
+            Task t = Task.Run(TryStream); //TODO: add reconnect attempts
+        }
+
+        public void TryStream ()
+        {
+            CurrentReconnectAttempts = 1;
+            while(CurrentReconnectAttempts <= MaxReconnectAttempts)
+            {
+                try
+                {
+                    var HookClient = new HookService.HookServiceClient(Channel);
+                    var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
+                    Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource \"{Name}\"]: Connected to {Address}:{Port}! Mission: {missionName?.Name}");
+
+                    CurrentReconnectAttempts = 1;
+                    _ = StreamData();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource \"{Name}\"]: Failed to connect to {Address}:{Port}! Attempt {CurrentReconnectAttempts}/{MaxReconnectAttempts} Error: {e.Message}\n\t{e.StackTrace}");
+                    CurrentReconnectAttempts++;
+                    Thread.Sleep((int)(1000 * ReconnectDelay));
+                }
+            }
+            Deactivate();
         }
 
         public async Task StreamData ()
@@ -77,17 +127,12 @@ namespace loki_bms_csharp.Database
             try
             {
                 var MissionClient = new MissionService.MissionServiceClient(Channel);
-                var HookClient = new HookService.HookServiceClient(Channel);
                 var NetClient = new NetService.NetServiceClient(Channel);
-
-                var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
 
                 uint pr = uint.Parse(PollRate);
                 uint spr = uint.Parse(SlowPollrate);
 
                 var units = MissionClient.StreamUnits(new StreamUnitsRequest { PollRate = pr, MaxBackoff = spr });
-
-                Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: checking mission name: {missionName?.Name}");
 
                 while (await units.ResponseStream.MoveNext(cancelTokenSource.Token))
                 {
@@ -101,8 +146,8 @@ namespace loki_bms_csharp.Database
             }
             catch (Exception e)
             {
-                Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource]: failed to get data from {Address}:{Port}: {e.Message}\n\t{e.StackTrace}");
-                Deactivate();
+                Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource \"{Name}\"]: failed to get data from {Address}:{Port}: {e.Message}\n\t{e.StackTrace}");
+                //Deactivate();
             }
         }
 
@@ -147,6 +192,9 @@ namespace loki_bms_csharp.Database
             //Debug.WriteLine($"Deactivating DataSource {Name}");
 
             _active = false;
+            OnPropertyChanged("Active");
+            OnPropertyChanged("CanEditPollRate");
+
             cancelTokenSource.Cancel();
             Debug.WriteLine($"Deactivated DataSource {Name}");
         }
