@@ -25,21 +25,18 @@
             <Button x:Name="AddSourceButton_Copy" Content="-" HorizontalAlignment="Left" Margin="31,0,0,0" Grid.Row="1" VerticalAlignment="Center" Width="16" Height="16" FontWeight="Bold" VerticalContentAlignment="Center" Padding="0,0,0,3" Click="ClickRemoveSourceButton"/>
 
         </Grid>
-        <Grid x:Name="SourceDetails" Grid.Column="1">
+        <Grid x:Name="SourceDetails" Grid.Column="1" DataContext="{Binding SelectedItem, ElementName=NamesListBox}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="55"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="0"/>
             </Grid.RowDefinitions>
-            <Grid.DataContext>
-                <Database:DataSource/>
-            </Grid.DataContext>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <CheckBox Content="Active" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="65,10,0,0" IsChecked="{Binding Active, BindsDirectlyToSource=True, FallbackValue=False, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Width="70" FlowDirection="LeftToRight" SourceUpdated="CheckBox_SourceUpdated" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="NameBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="65,33,0,0" Text="{Binding Name, BindsDirectlyToSource=True, FallbackValue=Name, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" SourceUpdated="OnSourceUpdated" Height="18"/>
+            <TextBox x:Name="NameBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="65,33,0,0" Text="{Binding Name, BindsDirectlyToSource=True, FallbackValue=Name, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Height="18"/>
             <Label Content="Name" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
 
             <Grid x:Name="BlockableDetails" Grid.Row="1" Grid.Column="1" Width="Auto" IsEnabled="{Binding CanEditPollRate, BindsDirectlyToSource=True, Mode=OneWay, NotifyOnSourceUpdated=True}">

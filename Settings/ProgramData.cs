@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -22,7 +23,8 @@ namespace loki_bms_csharp
         public static List<SVGPath> DataSymbols { get; private set; }
 
         public static ViewSettings ViewSettings;
-        public static List<Database.DataSource> DataSources;
+
+        public static ObservableCollection<Database.DataSource> DataSources;
 
         public static string AppDataPath;
         private static string Delimiter = "\\";
@@ -139,7 +141,7 @@ namespace loki_bms_csharp
             }
         }
 
-        public static List<Database.DataSource> LoadDataSources(string filePath)
+        public static ObservableCollection<Database.DataSource> LoadDataSources(string filePath)
         {
             if (File.Exists(filePath))
             {
@@ -151,12 +153,12 @@ namespace loki_bms_csharp
 
                 if (foundSources.Items.Length > 0)
                 {
-                    return new List<Database.DataSource>(foundSources.Items);
+                    return new ObservableCollection<Database.DataSource>(foundSources.Items);
                 }
             }
 
 
-            return new List<Database.DataSource> { new Database.DataSource() };
+            return new ObservableCollection<Database.DataSource> { new Database.DataSource() };
         }
 
         public static void Shutdown ()
@@ -199,7 +201,7 @@ namespace loki_bms_csharp
 
             try
             {
-                ser.Serialize(stream, new DataSourceDoc { Items = DataSources.ToArray() });
+                ser.Serialize(stream, new DataSourceDoc { Items = new List<Database.DataSource>(DataSources).ToArray() });
                 return true;
             }
             catch

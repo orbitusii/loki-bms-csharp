@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,32 +28,6 @@ namespace loki_bms_csharp
         private void SourcesWin_Loaded(object sender, RoutedEventArgs e)
         {
             NamesListBox.SelectedIndex = 0;
-            UpdateContext();
-        }
-
-        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            UpdateContext();
-        }
-
-        private void OnSourceUpdated(object sender, DataTransferEventArgs e)
-        {
-            int fallbackIndex = NamesListBox.SelectedIndex;
-            UpdateContext(fallbackIndex);
-        }
-
-        private void UpdateContext (int fallbackIndex = 0)
-        {
-            //NamesListBox.ItemsSource = ProgramData.DataSources.Select(x => x.Name);
-            try
-            {
-                SourceDetails.DataContext = ProgramData.DataSources[NamesListBox.SelectedIndex] ?? new Database.DataSource();
-            }
-            catch
-            {
-                NamesListBox.SelectedIndex = fallbackIndex;
-                SourceDetails.DataContext = ProgramData.DataSources[fallbackIndex];
-            }
         }
 
         private void CheckBox_SourceUpdated(object sender, DataTransferEventArgs e)
@@ -102,6 +77,11 @@ namespace loki_bms_csharp
             {
                 ProgramData.DataSources.RemoveAt(NamesListBox.SelectedIndex);
             }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+
+        private void SelectSymbolList (object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
