@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using loki_bms_csharp.MathL;
 using loki_bms_csharp.Settings;
 using loki_bms_csharp.Geometry;
+using System.Reflection;
 
 namespace loki_bms_csharp
 {
@@ -139,12 +140,14 @@ namespace loki_bms_csharp
 
         public static void LoadPermanentMapData ()
         {
-            string landSVG = Encoding.UTF8.GetString(Properties.Resources.WorldLandmasses);
-            WorldLandmasses = MapGeometry.LoadGeometryFromFile(landSVG);
+            Assembly execAssy = Assembly.GetExecutingAssembly();
+
+            Stream Landmasses = execAssy.GetManifestResourceStream("loki_bms_csharp.Resources.WorldLandmasses.svg");
+            WorldLandmasses = MapGeometry.LoadGeometryFromStream(Landmasses);
             WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
 
-            string mapSVG = Encoding.UTF8.GetString(Properties.Resources.DCSMapExtents);
-            DCSMaps = MapGeometry.LoadGeometryFromFile(mapSVG);
+            Stream mapBounds = execAssy.GetManifestResourceStream("loki_bms_csharp.Resources.DCSMapExtents.svg");
+            DCSMaps = MapGeometry.LoadGeometryFromStream(mapBounds);
             foreach (var path in DCSMaps.Paths3D)
             {
                 path.ConformToSurface = true;

@@ -4,14 +4,20 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace loki_bms_csharp.Geometry
+namespace loki_bms_csharp.Geometry.SVG
 {
-    public class PathSVG
+    public class SVGPath
     {
-        public string name;
-        public string data;
+        [XmlAttribute("id")]
+        public string name { get; set; }
+        [XmlAttribute("d")]
+        public string data { get; set; }
+        [XmlAttribute("style")]
+        public string style { get; set; }
 
+        [XmlIgnore]
         public char delimiter = 'Z';
+        [XmlIgnore]
         public string[] Subpaths
         {
             get
@@ -25,14 +31,14 @@ namespace loki_bms_csharp.Geometry
             }
         }
 
-        public PathSVG[] Subdivide (char nextDelim = 'L')
+        public SVGPath[] Subdivide (char nextDelim = 'L')
         {
             var _subpaths = Subpaths;
-            PathSVG[] paths = new PathSVG[_subpaths.Length];
+            SVGPath[] paths = new SVGPath[_subpaths.Length];
 
             for (int i = 0; i < _subpaths.Length; i++)
             {
-                paths[i] = new PathSVG { name = $"{this.name}_{i}", data = _subpaths[i], delimiter = nextDelim };
+                paths[i] = new SVGPath { name = $"{this.name}_{i}", data = _subpaths[i], delimiter = nextDelim };
             }
 
             return paths;

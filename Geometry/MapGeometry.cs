@@ -1,4 +1,5 @@
-﻿using System;
+﻿using loki_bms_csharp.Geometry.SVG;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,9 +20,9 @@ namespace loki_bms_csharp.Geometry
 
         public SKPath[] CachedPaths;
 
-        public static MapGeometry LoadGeometryFromFile (string fileContents)
+        public static MapGeometry LoadGeometryFromStream (Stream source)
         {
-            (Size size, PathSVG[] paths) = UnpackSVG(fileContents);
+            (Size size, SVGPath[] paths) = UnpackSVG(source);
 
             MapGeometry newData = new MapGeometry
             {
@@ -37,28 +38,39 @@ namespace loki_bms_csharp.Geometry
             CachedPaths = ConvertToSKPaths(Paths3D, cameraMatrix);
         }
 
-        public static (Size size, PathSVG[] paths) UnpackSVG(string source)
+        public static (Size size, SVGPath[] paths) UnpackSVG(Stream source)
         {
             System.Diagnostics.Debug.WriteLine("Attempting to deserialize geometry from an SVG");
 
-            byte[] resourceData = Properties.Resources.WorldLandmasses;
+            XmlSerializer ser = new XmlSerializer(typeof(SVGDoc));
 
-            XDocument doc = XDocument.Parse(source);
+            SVGDoc svg = (SVGDoc)ser.Deserialize(source);
+            Size imageSize = ParseImageSize(svg.viewBox);
 
-            string viewBox = doc.Root.Attribute("viewBox").Value;
-            var imageSize = ParseImageSize(viewBox);
+            List<SVGPath> paths = new List<SVGPath>(0);
 
-            var matches = doc.Root.Descendants().Where(x => x.Name == "{http://www.w3.org/2000/svg}path").ToArray();
-            var paths = new PathSVG[matches.Length];
-
-            for (int i = 0; i < matches.Length; i++)
+            if (svg.paths != null)
             {
-                paths[i] = ExtractRawPath(matches[i]);
-
-                System.Diagnostics.Debug.WriteLine($"New Landmass PathSVG: {paths[i].name}");
+                foreach (SVGPath path in svg.paths)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Found path {path.name}");
+                    paths.Add(path);
+                }
             }
-            
-            return (imageSize, paths);
+            if(svg.groups != null)
+            {
+
+                foreach(SVGGroup group in svg.groups)
+                {
+                    foreach(SVGPath g_p in group.paths)
+                    {
+                        paths.Add(g_p);
+                    }
+                }
+            }
+
+            return (imageSize, paths.ToArray());
+
         }
 
         public static Size ParseImageSize (string viewBox)
@@ -71,23 +83,23 @@ namespace loki_bms_csharp.Geometry
             return new Size(width, height);
         }
 
-        public static PathSVG ExtractRawPath (XElement element)
+        public static SVGPath ExtractRawPath (XElement element)
         {
             var parent = element.Parent;
             string pathName = element.Attribute("id") != null ? element.Attribute("id").Value : parent.Attribute("id")?.Value;
 
             string data = element.Attribute("d").Value;
 
-            return new PathSVG { name = pathName, data = data };
+            return new SVGPath { name = pathName, data = data };
         }
 
-        public static Path3D[] ConvertGeometryTo3D (PathSVG[] originals, Size imageSize)
+        public static Path3D[] ConvertGeometryTo3D (SVGPath[] originals, Size imageSize)
         {
             List<Path3D> paths = new List<Path3D>(0);
 
             foreach(var pathsvg in originals)
             {
-                PathSVG[] subpaths = pathsvg.Subdivide();
+                SVGPath[] subpaths = pathsvg.Subdivide();
 
                 foreach(var subpath in subpaths)
                 {
@@ -101,7 +113,7 @@ namespace loki_bms_csharp.Geometry
             return pathsArray;
         }
 
-        private static Path3D ConvertPath (PathSVG path, Size imageSize)
+        private static Path3D ConvertPath (SVGPath path, Size imageSize)
         {
             Point[] points = path.GetPoints();
             Vector64[] points3D = new Vector64[points.Length];
