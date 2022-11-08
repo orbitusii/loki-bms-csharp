@@ -30,16 +30,4 @@ namespace loki_bms_csharp.Geometry.SVG
         [XmlElement("g")]
         public SVGGroup[] groups;
     }
-
-    public class SVGGroup
-    {
-        [XmlAttribute("id")]
-        public string name;
-
-        [XmlAnyAttribute]
-        public string[] extraAttributes;
-
-        [XmlElement("path")]
-        public SVGPath[] paths;
-    }
 }
