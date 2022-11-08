@@ -8,7 +8,7 @@ using loki_bms_csharp.UserInterface;
 
 namespace loki_bms_csharp.UserInterface
 {
-    class ScopeRenderer: IDisposable
+    public class ScopeRenderer: IDisposable
     {
         public SKImageInfo Info { get; private set; }
         public int Width
@@ -157,7 +157,15 @@ namespace loki_bms_csharp.UserInterface
 
         public void DrawFromDatabase ()
         {
-            foreach(TrackFile track in TrackDatabase.LiveTracks)
+            if(ProgramData.ViewSettings.ZoomIncrement <= 10)
+            {
+                foreach (var datum in TrackDatabase.ProcessedData)
+                {
+                    DrawDatum(datum, TrackDatabase.DatumBrush);
+                }
+            }
+
+            foreach (TrackFile track in TrackDatabase.LiveTracks)
             {
                 SKPaint brush = TrackDatabase.ColorByFFS[track.FFS];
 
@@ -166,10 +174,21 @@ namespace loki_bms_csharp.UserInterface
                 //Velocity leader
                 DrawLine(track.Position, track.Position + track.Velocity * 10, SKColors.White, 1);
             }
+        }
 
-            foreach(var datum in TrackDatabase.ProcessedData)
+        public void DrawDatum (TrackDatum datum, SKPaint brush)
+        {
+            Vector64 screenPos = CameraMatrix.PointToTangentSpace(datum.Position);
+
+            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius)
             {
-                DrawSingleItem(datum, TrackDatabase.DatumBrush, 2);
+                var canvasPos = GetScreenPoint(screenPos);
+
+                var path = new SKPath(datum.Origin.GetSKPath) ?? new SKPath();
+                var paint = datum.Origin.GetSKPaint ?? new SKPaint { Color = SKColors.Coral };
+                path.Transform(SKMatrix.CreateScaleTranslation(2, 2, canvasPos.X, canvasPos.Y));
+
+                Canvas.DrawPath(path, paint);
             }
         }
 

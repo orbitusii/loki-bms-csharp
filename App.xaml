@@ -13,6 +13,7 @@
         <SolidColorBrush x:Key="SkyBG" Color="#000000"/>
         <SolidColorBrush x:Key="Ocean" Color="#111155"/>
         <SolidColorBrush x:Key="Ground" Color="#333333"/>
+        <SolidColorBrush x:Key="ColorTest" Color="#66dd00"/>
 
         <!--#region Default Styles-->
         <Style TargetType="{x:Type Button}">

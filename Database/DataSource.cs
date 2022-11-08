@@ -37,9 +37,9 @@ namespace loki_bms_csharp.Database
 
         [XmlElement]
         public TrackNumberRange TNRange { get; set; } = new TrackNumberRange { TNMin = -1, TNMax = -1 };
-        
+
         [XmlAttribute]
-        public string DataSymbol { get; set; }
+        public string DataSymbol { get; set; } = "LineVert";
         [XmlAttribute("Color")]
         public string DataColor { get; set; } = "#dd6600";
         public SkiaSharp.SKPath GetSKPath => ProgramData.DataSymbols.Find(x => x.name == DataSymbol)?.SKPath;
@@ -52,7 +52,7 @@ namespace loki_bms_csharp.Database
                 if(_paintCached == null)
                 {
                     var color = SkiaSharp.SKColor.TryParse(DataColor, out var _parsed) ? _parsed : SkiaSharp.SKColors.White;
-                    _paintCached = new SkiaSharp.SKPaint { Style = SkiaSharp.SKPaintStyle.Stroke, StrokeWidth = 1, Color = color };
+                    _paintCached = new SkiaSharp.SKPaint { Style = SkiaSharp.SKPaintStyle.Stroke, StrokeWidth = 2, Color = color };
                 }
 
                 return _paintCached;
