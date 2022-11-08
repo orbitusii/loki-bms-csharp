@@ -59,8 +59,10 @@ namespace loki_bms_csharp.Database
 
         [XmlIgnore]
         public GrpcChannel Channel;// = GrpcChannel.ForAddress("127.0.0.1:50051");
-        private int MaxReconnectAttempts = 5;
-        private float ReconnectDelay = 5;
+        [XmlAttribute]
+        public int MaxReconnectAttempts = 5;
+        [XmlAttribute]
+        public float ReconnectDelay = 5;
         private int CurrentReconnectAttempts;
 
 
@@ -95,13 +97,13 @@ namespace loki_bms_csharp.Database
             if (Channel == null) Channel = GrpcChannel.ForAddress($"http://{Address}:{Port}");
             cancelTokenSource = new CancellationTokenSource();
 
-            Task t = Task.Run(TryStream); //TODO: add reconnect attempts
+            Task t = Task.Run(TryStream, cancelTokenSource.Token); //TODO: add reconnect attempts
         }
 
-        public void TryStream ()
+        public async Task TryStream ()
         {
             CurrentReconnectAttempts = 1;
-            while(CurrentReconnectAttempts <= MaxReconnectAttempts)
+            while(Active)
             {
                 try
                 {
@@ -110,16 +112,19 @@ namespace loki_bms_csharp.Database
                     Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource \"{Name}\"]: Connected to {Address}:{Port}! Mission: {missionName?.Name}");
 
                     CurrentReconnectAttempts = 1;
-                    _ = StreamData();
+                    await StreamData();
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource \"{Name}\"]: Failed to connect to {Address}:{Port}! Attempt {CurrentReconnectAttempts}/{MaxReconnectAttempts} Error: {e.Message}\n\t{e.StackTrace}");
-                    CurrentReconnectAttempts++;
+                    Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource \"{Name}\"]: Failed to connect to {Address}:{Port}! Attempt {CurrentReconnectAttempts}/{MaxReconnectAttempts} Error: {e.Message}");
+                    if (++CurrentReconnectAttempts > MaxReconnectAttempts)
+                    {
+                        Deactivate();
+                        return;
+                    }
                     Thread.Sleep((int)(1000 * ReconnectDelay));
                 }
             }
-            Deactivate();
         }
 
         public async Task StreamData ()
