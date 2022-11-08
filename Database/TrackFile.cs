@@ -82,7 +82,7 @@ namespace loki_bms_csharp.Database
 
             ConformalMove(dt);
 
-            if(DateTime.UtcNow - NewestHistory > TimeSpan.FromSeconds(10))
+            /*if(DateTime.UtcNow - NewestHistory > TimeSpan.FromSeconds(10))
             {
                 History.Add(Position);
                 NewestHistory = DateTime.UtcNow;
@@ -90,8 +90,8 @@ namespace loki_bms_csharp.Database
             if(DateTime.UtcNow - OldestHistory > TimeSpan.FromSeconds(60) || History.Count > 6)
             {
                 History.RemoveAt(0);
-                OldestHistory += TimeSpan.FromSeconds(10);
-            }
+                OldestHistory += DateTime.UtcNow - OldestHistory;
+            }*/
         }
 
         public void ConformalMove (float dt)
