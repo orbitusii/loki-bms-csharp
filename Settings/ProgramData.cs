@@ -48,10 +48,13 @@ namespace loki_bms_csharp
 
             foreach (Database.DataSource source in DataSources)
             {
-                if(source.TNRange.TNMin < 0)
+                if(source.TNRange == null || source.TNRange.TNMin < 0)
                 {
-                    source.TNRange.TNMin = (short)(1000 * DataSources.IndexOf(source));
-                    source.TNRange.TNMax = (short)(source.TNRange.TNMin + 500);
+                    source.TNRange = new Database.TrackNumberRange
+                    {
+                        TNMin = (short)(1000 * DataSources.IndexOf(source)),
+                        TNMax = (short)(source.TNRange.TNMin + 500)
+                    };
                 }
             }
 
