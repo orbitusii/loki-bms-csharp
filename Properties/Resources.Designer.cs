@@ -61,6 +61,15 @@ namespace loki_bms_csharp.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (?&lt;lon&gt;\d+[.]*\d*),(?&lt;lat&gt;\d+[.]*\d*),(?&lt;alt&gt;\d+[.]*\d*).
+        /// </summary>
+        internal static string KMLCoordRegex {
+            get {
+                return ResourceManager.GetString("KMLCoordRegex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;path (\bid=[&quot;](?&lt;name&gt;.{1,32})[&quot;]\s){0,1}\bd=[&quot;](?&lt;path&gt;.{5,})[&quot;]\s.{0,}/&gt;.
         /// </summary>
         internal static string SVGPathRegex {
