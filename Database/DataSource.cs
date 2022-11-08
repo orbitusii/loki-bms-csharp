@@ -24,8 +24,8 @@ namespace loki_bms_csharp.Database
         [XmlAttribute]
         public string SlowPollrate { get; set; } = "30";
 
+        // TODO: make this value reflect properly on SourcesWindow when it fails to connect
         private bool _active = false;
-
         [XmlAttribute]
         public bool Active
         {

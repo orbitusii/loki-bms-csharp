@@ -14,9 +14,7 @@
         <SolidColorBrush x:Key="Ocean" Color="#111155"/>
         <SolidColorBrush x:Key="Ground" Color="#333333"/>
 
-        <Style x:Key="WindowTheme" TargetType="Window">
-            <Setter Property="Background" Value="{StaticResource SuperDarkGray}"/>
-        </Style>
+        <!--#region Default Styles-->
         <Style TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{StaticResource VeryDarkGray}"/>
             <Setter Property="BorderBrush" Value="{StaticResource OffWhite}"/>
@@ -46,9 +44,6 @@
         <Style TargetType="Label">
             <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
         </Style>
-        <Style x:Key="ScopeWindow" TargetType="Canvas">
-            <Setter Property="Background" Value="{StaticResource SkyBG}"/>
-        </Style>
         <Style TargetType="ListBox">
             <Setter Property="Background" Value="{StaticResource SuperDarkGray}"/>
             <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
@@ -62,5 +57,57 @@
             <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
             <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
         </Style>
+        <!--#endregion-->
+
+        <!--#region Explicit Styles-->
+        <Style x:Key="WindowTheme" TargetType="Window">
+            <Setter Property="Background" Value="{StaticResource SuperDarkGray}"/>
+        </Style>
+        <Style x:Key="ScopeWindow" TargetType="Canvas">
+            <Setter Property="Background" Value="{StaticResource SkyBG}"/>
+        </Style>
+        <!--#endregion-->
+
+        <!--#region Data Templates-->
+        <DataTemplate x:Key="DataSourceList" DataType="classes:DataSource">
+            <Border BorderBrush="{StaticResource MidGray}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Content="{Binding Path=Name}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="DataSymbolTemplate" DataType="classes:DataSymbol">
+            <Border BorderBrush="{StaticResource MidGray}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="16"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Viewbox Grid.Row="0">
+                        <Path Data="{Binding Path=data}" Stroke="White" Width="3" Margin="1">
+                            <Path.LayoutTransform>
+                                <TranslateTransform X="1" Y="1"/>
+                            </Path.LayoutTransform>
+                            <Path.RenderTransform>
+                                <TranslateTransform X="1" Y="1"/>
+                            </Path.RenderTransform>
+                        </Path>
+                    </Viewbox>
+                    <Label Grid.Column="1" Content="{Binding Path=name}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <!--#endregion-->
     </Application.Resources>
 </Application>

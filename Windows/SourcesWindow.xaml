@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:loki_bms_csharp"
-        xmlns:Database="clr-namespace:loki_bms_csharp.Database" x:Name="SourcesWin" x:Class="loki_bms_csharp.SourceWindow"
+        xmlns:Database="clr-namespace:loki_bms_csharp.Database" xmlns:Geometry="clr-namespace:loki_bms_csharp.Geometry" x:Name="SourcesWin" x:Class="loki_bms_csharp.SourceWindow"
         mc:Ignorable="d"
-        Title="Data Sources" Height="200" Width="532"
+        Title="Data Sources" Height="400" Width="550"
         Style="{StaticResource WindowTheme}" Loaded="SourcesWin_Loaded" Closing="OnClosing">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -14,11 +14,22 @@
             <ColumnDefinition Width="225"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListBox x:Name="NamesListBox" SelectionChanged="OnSelectionChanged" />
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="NamesListBox" SelectionChanged="OnSelectionChanged" ItemTemplate="{DynamicResource DataSourceList}" DataContext="{Binding Source={x:Static local:ProgramData.DataSources}, BindsDirectlyToSource=True, Mode=OneWay}" ItemsSource="{Binding BindsDirectlyToSource=True, Mode=OneWay}"/>
+            <Button x:Name="AddSourceButton" Content="+" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.Row="1" VerticalAlignment="Center" Width="16" Height="16" FontWeight="Bold" VerticalContentAlignment="Center" Padding="0,0,0,3" Click="ClickAddSourceButton"/>
+            <Button x:Name="AddSourceButton_Copy" Content="-" HorizontalAlignment="Left" Margin="31,0,0,0" Grid.Row="1" VerticalAlignment="Center" Width="16" Height="16" FontWeight="Bold" VerticalContentAlignment="Center" Padding="0,0,0,3" Click="ClickRemoveSourceButton"/>
+
+        </Grid>
         <Grid x:Name="SourceDetails" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="55"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="0"/>
             </Grid.RowDefinitions>
             <Grid.DataContext>
                 <Database:DataSource/>
@@ -28,20 +39,21 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <CheckBox Content="Active" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="65,10,0,0" IsChecked="{Binding Active, BindsDirectlyToSource=True, FallbackValue=False, Mode=TwoWay, NotifyOnSourceUpdated=True}" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Width="70" FlowDirection="LeftToRight" SourceUpdated="CheckBox_SourceUpdated" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="NameBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="65,33,0,0" Text="{Binding Name, BindsDirectlyToSource=True, FallbackValue=Name, Mode=TwoWay, NotifyOnSourceUpdated=True}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" SourceUpdated="OnSourceUpdated" Height="18"/>
+            <TextBox x:Name="NameBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="65,33,0,0" Text="{Binding Name, BindsDirectlyToSource=True, FallbackValue=Name, Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" SourceUpdated="OnSourceUpdated" Height="18"/>
             <Label Content="Name" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
 
             <Grid x:Name="BlockableDetails" Grid.Row="1" Grid.Column="1" Width="Auto" IsEnabled="{Binding CanEditPollRate, BindsDirectlyToSource=True, Mode=OneWay}">
                 <Label Content="Address" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
-                <TextBox x:Name="AddressBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="64,1,0,0" Text="{Binding Address, BindsDirectlyToSource=True, FallbackValue=127.0.0.1, Mode=TwoWay}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Grid.Row="1" Height="18"/>
+                <TextBox x:Name="AddressBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="64,1,0,0" Text="{Binding Address, BindsDirectlyToSource=True, FallbackValue=127.0.0.1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Grid.Row="1" Height="18"/>
                 <Label Content="Port" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,24,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
-                <TextBox x:Name="PortBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="64,24,0,0" Text="{Binding Port, BindsDirectlyToSource=True, FallbackValue=50051, Mode=TwoWay}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Grid.Row="1" Height="18"/>
+                <TextBox x:Name="PortBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="64,24,0,0" Text="{Binding Port, BindsDirectlyToSource=True, FallbackValue=50051, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Grid.Row="1" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
                 <Label Content="Polling" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
-                <TextBox x:Name="Poll_Normal" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="134,47,0,0" Text="{Binding PollRate, BindsDirectlyToSource=True, FallbackValue=50051}" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" Grid.Row="1" Height="18"/>
+                <TextBox x:Name="Poll_Normal" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="134,47,0,0" Text="{Binding PollRate, BindsDirectlyToSource=True, FallbackValue=10, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" Grid.Row="1" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
                 <Label Content="Normal" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="80,47,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
-                <TextBox x:Name="Poll_Slow" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="134,70,0,0" Text="{Binding SlowPollrate, BindsDirectlyToSource=True, FallbackValue=30, StringFormat=\{0:D\}}" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" Grid.Row="1" Height="18"/>
+                <TextBox x:Name="Poll_Slow" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="134,70,0,0" Text="{Binding SlowPollrate, BindsDirectlyToSource=True, FallbackValue=30, Mode=TwoWay, StringFormat=\{0:D\}, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" Grid.Row="1" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
                 <Label Content="Slow" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="80,70,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
             </Grid>
         </Grid>
+        <ListBox x:Name="SymbolPickerList" Grid.Column="2" ItemTemplate="{DynamicResource DataSymbolTemplate}" DataContext="{Binding Source={x:Static local:ProgramData.DataSymbols}}" ItemsSource="{Binding Mode=OneWay}"/>
     </Grid>
 </Window>

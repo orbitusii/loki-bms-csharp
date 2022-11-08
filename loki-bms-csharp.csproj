@@ -10,11 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\DataSymbols.svg" />
     <None Remove="Resources\DCSMapExtents.svg" />
     <None Remove="Resources\WorldLandmasses.svg" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\DataSymbols.svg" />
     <EmbeddedResource Include="Resources\DCSMapExtents.svg" />
     <EmbeddedResource Include="Resources\WorldLandmasses.svg" />
   </ItemGroup>

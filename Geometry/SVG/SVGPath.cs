@@ -16,6 +16,18 @@ namespace loki_bms_csharp.Geometry.SVG
         public string style { get; set; }
 
         [XmlIgnore]
+        private SkiaSharp.SKPath _skpath;
+        public SkiaSharp.SKPath SKPath
+        {
+            get
+            {
+                if (_skpath == null) _skpath = SkiaSharp.SKPath.ParseSvgPathData(data);
+
+                return _skpath;
+            }
+        }
+
+        [XmlIgnore]
         public char delimiter = 'Z';
         [XmlIgnore]
         public string[] Subpaths

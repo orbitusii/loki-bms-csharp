@@ -43,7 +43,7 @@ namespace loki_bms_csharp
 
         private void UpdateContext (int fallbackIndex = 0)
         {
-            NamesListBox.ItemsSource = ProgramData.DataSources.Select(x => x.Name);
+            //NamesListBox.ItemsSource = ProgramData.DataSources.Select(x => x.Name);
             try
             {
                 SourceDetails.DataContext = ProgramData.DataSources[NamesListBox.SelectedIndex] ?? new Database.DataSource();
@@ -63,6 +63,45 @@ namespace loki_bms_csharp
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ProgramData.SrcWindow = null;
+        }
+
+        private void ForceTextInputToNumerals(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !TextIsNumeric(e.Text);
+        }
+
+        private void PasteOnlyNumbers(object sender, DataObjectPastingEventArgs e)
+        {
+            if(e.DataObject.GetDataPresent(typeof(string)))
+            {
+                string input = (string)e.DataObject.GetData(typeof(string));
+                if (!TextIsNumeric(input)) e.CancelCommand();
+            }
+            else
+            {
+                e.CancelCommand();
+            }
+        }
+
+        private bool TextIsNumeric (string input)
+        {
+            return input.All(c => char.IsDigit(c));
+        }
+
+        private void ClickAddSourceButton(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ProgramData.DataSources.Add(new Database.DataSource());
+            }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+
+        private void ClickRemoveSourceButton(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ProgramData.DataSources.RemoveAt(NamesListBox.SelectedIndex);
+            }), System.Windows.Threading.DispatcherPriority.Normal);
         }
     }
 }
