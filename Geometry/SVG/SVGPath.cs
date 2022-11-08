@@ -16,14 +16,14 @@ namespace loki_bms_csharp.Geometry.SVG
         public string style { get; set; }
 
         [XmlIgnore]
-        private SkiaSharp.SKPath _skpath;
+        private SkiaSharp.SKPath _cachedPath;
         public SkiaSharp.SKPath SKPath
         {
             get
             {
-                if (_skpath == null) _skpath = SkiaSharp.SKPath.ParseSvgPathData(data);
+                if (_cachedPath == null) _cachedPath = SkiaSharp.SKPath.ParseSvgPathData(data);
 
-                return _skpath;
+                return _cachedPath;
             }
         }
 

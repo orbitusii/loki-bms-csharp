@@ -15,8 +15,17 @@ namespace loki_bms_csharp.Database
 {
     public class DataSource: INotifyPropertyChanged
     {
+        private string _name = "New Data Source";
         [XmlAttribute]
-        public string Name { get; set; } = "New Data Source";
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                OnPropertyChanged("Name");
+            }
+        }
         [XmlAttribute]
         public string Address { get; set; } = "127.0.0.1";
         [XmlAttribute]
@@ -29,13 +38,25 @@ namespace loki_bms_csharp.Database
         [XmlElement]
         public TrackNumberRange TNRange { get; set; } = new TrackNumberRange { TNMin = -1, TNMax = -1 };
         
-        [XmlElement]
+        [XmlAttribute]
         public string DataSymbol { get; set; }
         [XmlAttribute("Color")]
-        public string DataColor { get; set; }
-        public SkiaSharp.SKColor GetSKColor
+        public string DataColor { get; set; } = "#dd6600";
+        public SkiaSharp.SKPath GetSKPath => ProgramData.DataSymbols.Find(x => x.name == DataSymbol)?.SKPath;
+
+        private SkiaSharp.SKPaint _paintCached;
+        public SkiaSharp.SKPaint GetSKPaint
         {
-            get => SkiaSharp.SKColor.TryParse(DataColor, out var color) ? color : SkiaSharp.SKColors.White;
+            get
+            {
+                if(_paintCached == null)
+                {
+                    var color = SkiaSharp.SKColor.TryParse(DataColor, out var _parsed) ? _parsed : SkiaSharp.SKColors.White;
+                    _paintCached = new SkiaSharp.SKPaint { Style = SkiaSharp.SKPaintStyle.Stroke, StrokeWidth = 1, Color = color };
+                }
+
+                return _paintCached;
+            }
         }
 
         // TODO: make this value reflect properly on SourcesWindow when it fails to connect
@@ -169,7 +190,7 @@ namespace loki_bms_csharp.Database
 
             Vector64 vel = MathL.Conversions.GetTangentVelocity(positLL, heading, speed);
 
-            return new TrackDatum { ID = new TrackNumber.External { Value = (short)(unit.Id + TNRange.TNMin) }, Position = posXYZ, Velocity = vel, Timestamp = DateTime.Now };
+            return new TrackDatum { ID = new TrackNumber.External { Value = (short)(unit.Id + TNRange.TNMin) }, Position = posXYZ, Velocity = vel, Timestamp = DateTime.Now, Origin = this };
         }
 
         public Dictionary<string, TrackDatum> PullData(bool clearQueue = true)
