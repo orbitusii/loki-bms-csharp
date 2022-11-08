@@ -46,7 +46,16 @@ namespace loki_bms_csharp
             DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
             //SymbolSettings = LoadSymbolSettings(AppDataPath + "Symbology.xml");
 
-            WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
+            foreach (Database.DataSource source in DataSources)
+            {
+                if(source.TNRange.TNMin < 0)
+                {
+                    source.TNRange.TNMin = (short)(1000 * DataSources.IndexOf(source));
+                    source.TNRange.TNMax = (short)(source.TNRange.TNMin + 500);
+                }
+            }
+
+                WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
             DCSMaps.CachePaths(ViewSettings.CameraMatrix);
 
             ViewSettings.OnViewCenterChanged += WorldLandmasses.CachePaths;
@@ -142,6 +151,7 @@ namespace loki_bms_csharp
                     return new List<Database.DataSource>(foundSources.Items);
                 }
             }
+
 
             return new List<Database.DataSource> { new Database.DataSource() };
         }

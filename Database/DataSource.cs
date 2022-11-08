@@ -24,6 +24,9 @@ namespace loki_bms_csharp.Database
         [XmlAttribute]
         public string SlowPollrate { get; set; } = "30";
 
+        [XmlElement]
+        public TrackNumberRange TNRange { get; set; } = new TrackNumberRange { TNMin = -1, TNMax = -1 };
+
         // TODO: make this value reflect properly on SourcesWindow when it fails to connect
         private bool _active = false;
         [XmlAttribute]
@@ -47,7 +50,7 @@ namespace loki_bms_csharp.Database
 
         private CancellationTokenSource cancelTokenSource;
         private Dictionary<string, TrackDatum> UpdatedData = new Dictionary<string, TrackDatum>();
-
+        
         public DataSource () { }
 
         public DataSource(string address = "127.0.0.1", string port = "50051")
@@ -116,7 +119,7 @@ namespace loki_bms_csharp.Database
 
             Vector64 vel = MathL.Conversions.GetTangentVelocity(positLL, heading, speed);
 
-            return new TrackDatum { ID = new TrackNumber.External { Value = (short)unit.Id }, Position = posXYZ, Velocity = vel, Timestamp = DateTime.Now };
+            return new TrackDatum { ID = new TrackNumber.External { Value = (short)(unit.Id + TNRange.TNMin) }, Position = posXYZ, Velocity = vel, Timestamp = DateTime.Now };
         }
 
         public Dictionary<string, TrackDatum> PullData(bool clearQueue = true)
