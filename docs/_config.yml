@@ -1,0 +1,6 @@
+﻿remote_theme: pages-themes/slate@v0.2.0
+plugins:
+  - jekyll-remove-theme
+
+title: LOKI Battle Management System
+description: A battle management scope for DCS World via DCS-GRPC
