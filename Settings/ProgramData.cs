@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
-using loki_bms_csharp.MathL;
+using loki_bms_csharp.Database;
 using loki_bms_csharp.Settings;
 using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Geometry.SVG;
@@ -21,9 +21,11 @@ namespace loki_bms_csharp
         public static MapGeometry WorldLandmasses;
         public static MapGeometry DCSMaps;
         public static List<SVGPath> DataSymbols { get; private set; }
+        public static Dictionary<TrackCategory, FriendFoeSymbolGroup> TrackSymbols { get; private set; }
+        public static Dictionary<string, SVGPath> SpecTypeSymbols { get; private set; }
 
         public static ViewSettings ViewSettings;
-        public static ObservableCollection<Database.DataSource> DataSources;
+        public static ObservableCollection<DataSource> DataSources;
         // TODO: add source reordering in the SourcesWindow
 
         public static string AppDataPath;
@@ -50,11 +52,11 @@ namespace loki_bms_csharp
             DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
             //SymbolSettings = LoadSymbolSettings(AppDataPath + "Symbology.xml");
 
-            foreach (Database.DataSource source in DataSources)
+            foreach (DataSource source in DataSources)
             {
                 if(source.TNRange == null || source.TNRange.TNMin < 0)
                 {
-                    source.TNRange = new Database.TrackNumberRange
+                    source.TNRange = new TrackNumberRange
                     {
                         TNMin = (short)(1000 * DataSources.IndexOf(source)),
                         TNMax = (short)(source.TNRange.TNMin + 500)
@@ -91,32 +93,38 @@ namespace loki_bms_csharp
 
         public static void LoadSymbology()
         {
-            Stream symbolsStream = execAssy.GetManifestResourceStream(EmbeddedPath + "DataSymbols.svg");
+            DataSymbols = GetPathsFromEmbeddedFile("DataSymbols.svg");
+
+            TrackSymbols = new Dictionary<TrackCategory, FriendFoeSymbolGroup>();
+            TrackSymbols[TrackCategory.None] = new FriendFoeSymbolGroup(GetPathsFromEmbeddedFile("Tracks_General.svg"));
+            TrackSymbols[TrackCategory.Air] = new FriendFoeSymbolGroup(GetPathsFromEmbeddedFile("Tracks_Air.svg"));
+
+
+            SpecTypeSymbols = new Dictionary<string, SVGPath>();
+            // TODO: implement spectype symbols
+        }
+
+        public static List<SVGPath> GetPathsFromEmbeddedFile (string file)
+        {
+            Stream symbolsStream = execAssy.GetManifestResourceStream(EmbeddedPath + file);
             XmlSerializer ser = new XmlSerializer(typeof(SVGDoc));
             SVGDoc svg = (SVGDoc)ser.Deserialize(symbolsStream);
 
-            DataSymbols = new List<SVGPath>(0);
+            List<SVGPath> paths = new List<SVGPath>(0);
 
             if (svg.paths != null)
             {
-                foreach (SVGPath path in svg.paths)
-                {
-                    //System.Diagnostics.Debug.WriteLine($"Found path {path.name}");
-                    DataSymbols.Add(path);
-                }
+                paths.AddRange(svg.paths);
             }
             if (svg.groups != null)
             {
-
                 foreach (SVGGroup group in svg.groups)
                 {
-                    foreach (SVGPath g_p in group.paths)
-                    {
-                        DataSymbols.Add(g_p);
-                    }
+                    paths.AddRange(group.paths);
                 }
             }
 
+            return paths;
         }
 
         public static ViewSettings LoadViewSettings(string filePath)
@@ -143,7 +151,7 @@ namespace loki_bms_csharp
             }
         }
 
-        public static ObservableCollection<Database.DataSource> LoadDataSources(string filePath)
+        public static ObservableCollection<DataSource> LoadDataSources(string filePath)
         {
             if (File.Exists(filePath))
             {
@@ -155,12 +163,12 @@ namespace loki_bms_csharp
 
                 if (foundSources.Items.Length > 0)
                 {
-                    return new ObservableCollection<Database.DataSource>(foundSources.Items);
+                    return new ObservableCollection<DataSource>(foundSources.Items);
                 }
             }
 
 
-            return new ObservableCollection<Database.DataSource> { new Database.DataSource() };
+            return new ObservableCollection<DataSource> { new DataSource() };
         }
 
         public static void Shutdown ()

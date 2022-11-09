@@ -6,12 +6,12 @@
         <rect x="0" y="0" width="32" height="32"/>
     </clipPath>
     <g clip-path="url(#_clip1)">
-        <path id="Trk_Fnd" d="M0,-14C7.727,-14 14,-7.727 14,0C14,3.905 12.398,7.439 9.816,9.979C7.288,12.465 3.822,14 0,14C-7.727,14 -14,7.727 -14,0C-14,-7.727 -7.727,-14 0,-14Z" style="fill:#0024ff;fill-opacity:0.5;stroke:#0024ff;stroke-width:1.33px;"/>
-        <path id="Trk_Asf" d="M-14,0L-7,-12.124L7,-12.124L14,0L7,12.124L-7,12.124L-14,0Z" style="fill:#00ff15;fill-opacity:0.5;stroke:#00ff15;stroke-width:1.33px;"/>
-        <path id="Trk_Neu" d="M-4.62,-14L4.62,-14L4.62,-4.62L14,-4.62L14,4.62L4.62,4.62L4.62,14L-4.62,14L-4.62,4.62L-14,4.62L-14,-4.62L-4.62,-4.62L-4.62,-14Z" style="fill:#a300ff;fill-opacity:0.5;stroke:#a300ff;stroke-width:1.33px;"/>
-        <path id="Trk_Sus" d="M0,-14L13.315,-4.326L8.229,11.326L-8.229,11.326L-13.315,-4.326L0,-14Z" style="fill:#ff8300;fill-opacity:0.5;stroke:#ff8300;stroke-width:1.33px;"/>
-        <path id="Trk_Hos" d="M0,-14L14,0L0,14L-14,0L0,-14Z" style="fill:#ff1400;fill-opacity:0.5;stroke:#ff1400;stroke-width:1.33px;"/>
-        <path id="Trk_Unk" d="M-6.633,-6.633C-6.633,-10.699 -3.661,-14 -0,-14C3.661,-14 6.633,-10.699 6.633,-6.633C10.699,-6.633 14,-3.661 14,0C14,3.661 10.699,6.633 6.633,6.633C6.633,10.699 3.661,14 -0,14C-3.661,14 -6.633,10.699 -6.633,6.633C-10.699,6.633 -14,3.661 -14,0C-14,-3.661 -10.699,-6.633 -6.633,-6.633Z" style="fill:#ffe900;fill-opacity:0.5;stroke:#ffe900;stroke-width:1.33px;"/>
-        <path id="Trk_Pnd" d="M14,-14L-14,-14L-14,14L14,14L14,-14Z" style="fill:#6b6b6b;fill-opacity:0.5;stroke:#6b6b6b;stroke-width:1.33px;"/>
+        <path id="Fnd" d="M0,-14C7.727,-14 14,-7.727 14,0C14,3.905 12.398,7.439 9.816,9.979C7.288,12.465 3.822,14 0,14C-7.727,14 -14,7.727 -14,0C-14,-7.727 -7.727,-14 0,-14Z" style="fill:#0024ff;fill-opacity:0.5;stroke:#0024ff;stroke-width:1.33px;"/>
+        <path id="Asf" d="M-14,0L-7,-12.124L7,-12.124L14,0L7,12.124L-7,12.124L-14,0Z" style="fill:#00ff15;fill-opacity:0.5;stroke:#00ff15;stroke-width:1.33px;"/>
+        <path id="Neu" d="M-4.62,-14L4.62,-14L4.62,-4.62L14,-4.62L14,4.62L4.62,4.62L4.62,14L-4.62,14L-4.62,4.62L-14,4.62L-14,-4.62L-4.62,-4.62L-4.62,-14Z" style="fill:#a300ff;fill-opacity:0.5;stroke:#a300ff;stroke-width:1.33px;"/>
+        <path id="Sus" d="M0,-14L13.315,-4.326L8.229,11.326L-8.229,11.326L-13.315,-4.326L0,-14Z" style="fill:#ff8300;fill-opacity:0.5;stroke:#ff8300;stroke-width:1.33px;"/>
+        <path id="Hos" d="M0,-14L14,0L0,14L-14,0L0,-14Z" style="fill:#ff1400;fill-opacity:0.5;stroke:#ff1400;stroke-width:1.33px;"/>
+        <path id="Unk" d="M-6.633,-6.633C-6.633,-10.699 -3.661,-14 -0,-14C3.661,-14 6.633,-10.699 6.633,-6.633C10.699,-6.633 14,-3.661 14,0C14,3.661 10.699,6.633 6.633,6.633C6.633,10.699 3.661,14 -0,14C-3.661,14 -6.633,10.699 -6.633,6.633C-10.699,6.633 -14,3.661 -14,0C-14,-3.661 -10.699,-6.633 -6.633,-6.633Z" style="fill:#ffe900;fill-opacity:0.5;stroke:#ffe900;stroke-width:1.33px;"/>
+        <path id="Pnd" d="M14,-14L-14,-14L-14,14L14,14L14,-14Z" style="fill:#6b6b6b;fill-opacity:0.5;stroke:#6b6b6b;stroke-width:1.33px;"/>
     </g>
 </svg>
