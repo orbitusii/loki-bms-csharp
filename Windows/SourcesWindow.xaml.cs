@@ -73,15 +73,5 @@ namespace loki_bms_csharp
                 ProgramData.DataSources.RemoveAt(NamesListBox.SelectedIndex);
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
-
-        private void SelectSymbolList(object sender, SelectionChangedEventArgs e)
-        {
-            
-        }
-
-        private void NamesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            SymbolPickerList.DataContext = NamesListBox.SelectedItem;
-        }
     }
 }

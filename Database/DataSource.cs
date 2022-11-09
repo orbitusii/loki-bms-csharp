@@ -40,8 +40,20 @@ namespace loki_bms_csharp.Database
 
         [XmlAttribute]
         public string DataSymbol { get; set; } = "LineVert";
+
+        private string _dataColor = "#dd6600";
         [XmlAttribute("Color")]
-        public string DataColor { get; set; } = "#dd6600";
+        public string DataColor
+        {
+            get => _dataColor;
+            set
+            {
+                _dataColor = value;
+
+                var color = SkiaSharp.SKColor.TryParse(DataColor, out var _parsed) ? _parsed : SkiaSharp.SKColors.White;
+                _paintCached = new SkiaSharp.SKPaint { Style = SkiaSharp.SKPaintStyle.Stroke, StrokeWidth = 2, Color = color };
+            }
+        }
         public SkiaSharp.SKPath GetSKPath => ProgramData.DataSymbols.Find(x => x.name == DataSymbol)?.SKPath;
 
         private SkiaSharp.SKPaint _paintCached;

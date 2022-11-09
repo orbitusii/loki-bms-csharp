@@ -114,6 +114,7 @@
         
         <!--#region Data Converters-->
         <convert:DataSourceSymbolConverter x:Key="DataSymbolConverter"/>
+        <convert:DataSourceColorConverter x:Key="DataSymbolColor"/>
         <!--#endregion-->
     </Application.Resources>
 </Application>
