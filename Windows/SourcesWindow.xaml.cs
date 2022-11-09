@@ -30,11 +30,6 @@ namespace loki_bms_csharp
             NamesListBox.SelectedIndex = 0;
         }
 
-        private void CheckBox_SourceUpdated(object sender, DataTransferEventArgs e)
-        {
-            BlockableDetails.GetBindingExpression(IsEnabledProperty).UpdateTarget();
-        }
-
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ProgramData.SrcWindow = null;
@@ -79,9 +74,14 @@ namespace loki_bms_csharp
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
 
-        private void SelectSymbolList (object sender, RoutedEventArgs e)
+        private void SelectSymbolList(object sender, SelectionChangedEventArgs e)
         {
+            
+        }
 
+        private void NamesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SymbolPickerList.DataContext = NamesListBox.SelectedItem;
         }
     }
 }
