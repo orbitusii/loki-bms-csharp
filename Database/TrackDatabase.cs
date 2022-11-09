@@ -17,19 +17,28 @@ namespace loki_bms_csharp.Database
         public static List<TrackDatum> ProcessedData;
         public static List<TrackDatum> FreshData;
 
-        public static Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> ColorByFFS =
+        public static Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> StrokeByFFS =
             new Dictionary<FriendFoeStatus, SkiaSharp.SKPaint>()
             {
-                {FriendFoeStatus.KnownFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Blue } },
-                {FriendFoeStatus.AssumedFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Green } },
-                {FriendFoeStatus.Neutral, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Purple }  },
-                {FriendFoeStatus.Suspect, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Orange }  },
-                {FriendFoeStatus.Hostile, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Red }  },
-                {FriendFoeStatus.Unknown, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Yellow }  },
-                {FriendFoeStatus.Pending, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Gray }  },
+                {FriendFoeStatus.KnownFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Blue, StrokeWidth = 2 } },
+                {FriendFoeStatus.AssumedFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Green, StrokeWidth = 2 } },
+                {FriendFoeStatus.Neutral, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Purple, StrokeWidth = 2 }  },
+                {FriendFoeStatus.Suspect, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Orange, StrokeWidth = 2 }  },
+                {FriendFoeStatus.Hostile, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Red, StrokeWidth = 2 }  },
+                {FriendFoeStatus.Unknown, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Yellow, StrokeWidth = 2 }  },
+                {FriendFoeStatus.Pending, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Gray, StrokeWidth = 2 }  },
             };
-        public static SkiaSharp.SKPaint DatumBrush = new SkiaSharp.SKPaint { Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.DarkOrange };
-
+        public static Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> FillByFFS =
+            new Dictionary<FriendFoeStatus, SkiaSharp.SKPaint>()
+            {
+                {FriendFoeStatus.KnownFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Blue.WithAlpha(128) } },
+                {FriendFoeStatus.AssumedFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Green.WithAlpha(128) } },
+                {FriendFoeStatus.Neutral, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Purple.WithAlpha(128) }  },
+                {FriendFoeStatus.Suspect, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Orange.WithAlpha(128) }  },
+                {FriendFoeStatus.Hostile, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Red.WithAlpha(128) }  },
+                {FriendFoeStatus.Unknown, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Yellow.WithAlpha(128) }  },
+                {FriendFoeStatus.Pending, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Gray.WithAlpha(128) }  },
+            };
         private static System.Timers.Timer UpdateClock;
         private static DateTime LastUpdate;
         private static float MaxDatumAge = 30;

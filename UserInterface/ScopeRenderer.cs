@@ -161,46 +161,53 @@ namespace loki_bms_csharp.UserInterface
             {
                 foreach (var datum in TrackDatabase.ProcessedData)
                 {
-                    DrawDatum(datum, TrackDatabase.DatumBrush);
+                    DrawDatum(datum);
                 }
             }
 
             foreach (TrackFile track in TrackDatabase.LiveTracks)
             {
-                SKPaint brush = TrackDatabase.ColorByFFS[track.FFS];
+                SKPaint brush = TrackDatabase.StrokeByFFS[track.FFS];
 
                 //Base symbol
-                DrawSingleItem(track, brush, 6);
+                DrawTrack(track, brush, 6);
                 //Velocity leader
-                DrawLine(track.Position, track.Position + track.Velocity * 10, SKColors.White, 1);
+                DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
             }
         }
 
-        public void DrawDatum (TrackDatum datum, SKPaint brush)
+        public void DrawDatum (TrackDatum datum)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(datum.Position);
+            var canvasPos = GetScreenPoint(screenPos);
 
-            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius)
+            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
-                var canvasPos = GetScreenPoint(screenPos);
-
                 var path = new SKPath(datum.Origin.GetSKPath) ?? new SKPath();
                 var paint = datum.Origin.GetSKPaint ?? new SKPaint { Color = SKColors.Coral };
-                path.Transform(SKMatrix.CreateScaleTranslation(2, 2, canvasPos.X, canvasPos.Y));
+                path.Transform(SKMatrix.CreateScaleTranslation(1, 1, canvasPos.X, canvasPos.Y));
 
                 Canvas.DrawPath(path, paint);
             }
         }
 
-        public void DrawSingleItem (IKinematicData track, SKPaint brush, float size = 4)
+        public void DrawTrack (TrackFile track, SKPaint brush, float size = 4)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
+            SKPoint canvasPos = GetScreenPoint(screenPos);
 
-            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius)
+            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
-                SKPoint canvasPos = GetScreenPoint(screenPos);
+                var originalPath = ProgramData.TrackSymbols[track.Category][track.FFS]?.SKPath ?? ProgramData.TrackSymbols[TrackCategory.None][track.FFS].SKPath;
+                var clonedPath = new SKPath(originalPath);
 
-                Canvas.DrawCircle(canvasPos, size, brush);
+                var fillPaint = TrackDatabase.FillByFFS[track.FFS];
+                var strokePaint = TrackDatabase.StrokeByFFS[track.FFS];
+
+                clonedPath.Transform(SKMatrix.CreateScaleTranslation(0.5f, 0.5f, canvasPos.X, canvasPos.Y));
+
+                Canvas.DrawPath(clonedPath, fillPaint);
+                Canvas.DrawPath(clonedPath, strokePaint);
             }
         }
 

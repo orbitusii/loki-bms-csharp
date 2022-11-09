@@ -98,7 +98,8 @@ namespace loki_bms_csharp
             TrackSymbols = new Dictionary<TrackCategory, FriendFoeSymbolGroup>();
             TrackSymbols[TrackCategory.None] = new FriendFoeSymbolGroup(GetPathsFromEmbeddedFile("Tracks_General.svg"));
             TrackSymbols[TrackCategory.Air] = new FriendFoeSymbolGroup(GetPathsFromEmbeddedFile("Tracks_Air.svg"));
-
+            TrackSymbols[TrackCategory.Ship] = new FriendFoeSymbolGroup(new List<SVGPath>());
+            TrackSymbols[TrackCategory.Ground] = new FriendFoeSymbolGroup(new List<SVGPath>());
 
             SpecTypeSymbols = new Dictionary<string, SVGPath>();
             // TODO: implement spectype symbols

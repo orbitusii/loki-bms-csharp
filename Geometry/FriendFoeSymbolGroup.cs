@@ -13,7 +13,16 @@ namespace loki_bms_csharp.Geometry
 
         public FriendFoeSymbolGroup (IEnumerable<SVG.SVGPath> collection)
         {
-            Symbols = new Dictionary<FriendFoeStatus, SVG.SVGPath>();
+            Symbols = new Dictionary<FriendFoeStatus, SVG.SVGPath>()
+            {
+                { FriendFoeStatus.KnownFriend, null },
+                { FriendFoeStatus.AssumedFriend, null },
+                { FriendFoeStatus.Neutral, null },
+                { FriendFoeStatus.Suspect, null },
+                { FriendFoeStatus.Hostile, null },
+                { FriendFoeStatus.Unknown, null },
+                { FriendFoeStatus.Pending, null },
+            };
 
             foreach (SVG.SVGPath p in collection)
             {
@@ -39,7 +48,7 @@ namespace loki_bms_csharp.Geometry
 
         public SVG.SVGPath this[FriendFoeStatus index]
         {
-            get => Symbols[index] ?? new SVG.SVGPath();
+            get => Symbols[index];
         }
     }
 }
