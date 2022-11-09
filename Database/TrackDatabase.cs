@@ -136,7 +136,8 @@ namespace loki_bms_csharp.Database
                 if (!Correlate_ByETN(datum))
                 {
                     var newTrack = InitiateTrack(datum.Position, datum.Velocity, TrackType.External);
-                    newTrack.TrackNumbers.Add(datum.ID);          
+                    newTrack.TrackNumbers.Add(datum.ID);
+                    newTrack.Category = datum.Category;
                 }
             }
             

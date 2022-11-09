@@ -1,4 +1,5 @@
 ﻿using Grpc.Net.Client;
+using RurouniJones.Dcs.Grpc.V0.Common;
 using RurouniJones.Dcs.Grpc.V0.Hook;
 using RurouniJones.Dcs.Grpc.V0.Mission;
 using RurouniJones.Dcs.Grpc.V0.Net;
@@ -200,9 +201,25 @@ namespace loki_bms_csharp.Database
             double speed = unit.Speed;
             double heading = unit.Heading * MathL.Conversions.ToRadians;
 
+            TrackCategory cat = unit.Category switch
+            {
+                GroupCategory.Airplane or GroupCategory.Helicopter => TrackCategory.Air,
+                GroupCategory.Ground or GroupCategory.Train => TrackCategory.Ground,
+                GroupCategory.Ship => TrackCategory.Ship,
+                _ => TrackCategory.None,
+            };
+
             Vector64 vel = MathL.Conversions.GetTangentVelocity(positLL, heading, speed);
 
-            return new TrackDatum { ID = new TrackNumber.External { Value = (short)(unit.Id + TNRange.TNMin) }, Position = posXYZ, Velocity = vel, Timestamp = DateTime.Now, Origin = this };
+            return new TrackDatum
+            {
+                ID = new TrackNumber.External { Value = (short)(unit.Id + TNRange.TNMin) },
+                Position = posXYZ,
+                Velocity = vel,
+                Timestamp = DateTime.Now,
+                Category = cat,
+                Origin = this
+            };
         }
 
         public Dictionary<string, TrackDatum> PullData(bool clearQueue = true)

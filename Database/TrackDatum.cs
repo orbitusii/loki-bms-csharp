@@ -15,5 +15,7 @@ namespace loki_bms_csharp.Database
         public IFFData[] IFFCodes { get; set; }
 
         public DateTime Timestamp { get; set; }
+
+        public TrackCategory Category = TrackCategory.None;
     }
 }

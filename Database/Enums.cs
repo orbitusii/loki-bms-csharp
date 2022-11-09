@@ -23,6 +23,13 @@ namespace loki_bms_csharp.Database
         PPLI = 3,
     }
 
+    public enum TrackCategory
+    {
+        None,
+        Air,
+        Ground,
+        Ship,
+    }
 
     [Flags]
     public enum IFFType

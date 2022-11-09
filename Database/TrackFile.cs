@@ -17,6 +17,7 @@ namespace loki_bms_csharp.Database
         public DateTime Timestamp { get; private set; }
         private bool freshData = false;
         public TrackType TrackType { get; private set; }
+        public TrackCategory Category = TrackCategory.None;
 
         // TrackFile Amplifying Data
         public FriendFoeStatus FFS;
