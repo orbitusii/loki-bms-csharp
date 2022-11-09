@@ -6,11 +6,11 @@
         <rect x="0" y="0" width="32" height="32"/>
     </clipPath>
     <g clip-path="url(#_clip1)">
-        <path id="LineVert" d="M0,-1.5L0,1.5" style="fill:none;stroke:#ff7d00;stroke-width:1.33px;"/>
-        <path id="LineHorz" d="M-1.5,0L1.5,0" style="fill:none;stroke:#ff7d00;stroke-width:1.33px;"/>
-        <path id="DoubleLineVert" d="M-1,-1.5L-1,1.5M1,-1.5L1,1.5" style="fill:#ffa100;fill-opacity:0.5;stroke:#ff7d00;stroke-width:1.33px;"/>
-        <path id="DoubleLineHorz" d="M-1.5,1L1.5,1M-1.5,-1L1.5,-1" style="fill:#ffa100;fill-opacity:0.5;stroke:#ff7d00;stroke-width:1.33px;"/>
-        <path id="LineDiagDown" d="M-1.5,-1.5L1.5,1.5" style="fill:none;stroke:#ff7d00;stroke-width:1.33px;"/>
-        <path id="LineDiagUp" d="M-1.5,1.5L1.5,-1.5" style="fill:none;stroke:#ff7d00;stroke-width:1.33px;"/>
+        <path id="LineVert" d="M0,-3L0,3" style="fill:none;stroke:#ff7d00;stroke-width:1.33px;"/>
+        <path id="LineHorz" d="M-3,0L3,0" style="fill:none;stroke:#ff7d00;stroke-width:1.33px;"/>
+        <path id="DoubleLineVert" d="M-2,-3L-2,3M2,-3L2,3" style="fill:#ffa100;fill-opacity:0.5;stroke:#ff00a4;stroke-width:1.33px;"/>
+        <path id="DoubleLineHorz" d="M-3,2L3,2M-3,-2L3,-2" style="fill:#ffa100;fill-opacity:0.5;stroke:#ff00a4;stroke-width:1.33px;"/>
+        <path id="LineDiagDown" d="M-2.121,-2.121L2.121,2.121" style="fill:none;stroke:#00c226;stroke-width:1.33px;"/>
+        <path id="LineDiagUp" d="M-2.121,2.121L2.121,-2.121" style="fill:none;stroke:#00c226;stroke-width:1.33px;"/>
     </g>
 </svg>

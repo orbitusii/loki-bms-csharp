@@ -23,16 +23,18 @@ namespace loki_bms_csharp
         public static List<SVGPath> DataSymbols { get; private set; }
 
         public static ViewSettings ViewSettings;
-
         public static ObservableCollection<Database.DataSource> DataSources;
+        // TODO: add source reordering in the SourcesWindow
 
         public static string AppDataPath;
+        public static string EmbeddedPath;
         private static string Delimiter = "\\";
         private static Assembly execAssy;
 
         public static void Initialize(MainWindow window)
         {
             execAssy = Assembly.GetExecutingAssembly();
+            EmbeddedPath = "loki_bms_csharp.Resources.";
 
             AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"{Delimiter}Loki-BMS{Delimiter}";
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
@@ -76,10 +78,10 @@ namespace loki_bms_csharp
 
         public static void LoadPermanentMapData()
         {
-            Stream Landmasses = execAssy.GetManifestResourceStream("loki_bms_csharp.Resources.WorldLandmasses.svg");
+            Stream Landmasses = execAssy.GetManifestResourceStream(EmbeddedPath + "WorldLandmasses.svg");
             WorldLandmasses = MapGeometry.LoadGeometryFromStream(Landmasses);
 
-            Stream mapBounds = execAssy.GetManifestResourceStream("loki_bms_csharp.Resources.DCSMapExtents.svg");
+            Stream mapBounds = execAssy.GetManifestResourceStream(EmbeddedPath + "DCSMapExtents.svg");
             DCSMaps = MapGeometry.LoadGeometryFromStream(mapBounds);
             foreach (var path in DCSMaps.Paths3D)
             {
@@ -89,7 +91,7 @@ namespace loki_bms_csharp
 
         public static void LoadSymbology()
         {
-            Stream symbolsStream = execAssy.GetManifestResourceStream("loki_bms_csharp.Resources.DataSymbols.svg");
+            Stream symbolsStream = execAssy.GetManifestResourceStream(EmbeddedPath + "DataSymbols.svg");
             XmlSerializer ser = new XmlSerializer(typeof(SVGDoc));
             SVGDoc svg = (SVGDoc)ser.Deserialize(symbolsStream);
 
