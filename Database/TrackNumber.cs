@@ -6,9 +6,18 @@ namespace loki_bms_csharp.Database
 {
     public abstract class TrackNumber: IEquatable<TrackNumber>
     {
-        public short Value;
+        public string Type => this switch
+        {
+            Internal => "Internal",
+            External => "External",
+            DataLink => "Datalink",
+            _ => "Unknown"
+        };
+        public short Value { get; set; }
 
-        public class Internal: TrackNumber { }
+        public TrackNumber() { }
+
+        public class Internal : TrackNumber { }
         public class External : TrackNumber { }
         public class DataLink : TrackNumber { }
 
