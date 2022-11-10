@@ -24,7 +24,7 @@ namespace loki_bms_csharp.Database
 
         public string Callsign { get; set; }
 
-        public int SpecType { get; set; }
+        public string SpecType { get; set; }
 
         public bool ShowHistory { get; set; }
         public List<Vector64> History { get; private set; }
@@ -33,7 +33,7 @@ namespace loki_bms_csharp.Database
 
         public TrackFile () { }
 
-        public TrackFile(TrackNumber.Internal tn, Vector64 pos, Vector64 vel, IFFData[] codes, FriendFoeStatus _ffs = FriendFoeStatus.Pending, TrackType type = TrackType.Sim, string vcs = "", int spec = 0)
+        public TrackFile(TrackNumber.Internal tn, Vector64 pos, Vector64 vel, IFFData[] codes, FriendFoeStatus _ffs = FriendFoeStatus.Pending, TrackType type = TrackType.Sim, string vcs = "", string spec = "")
         {
             TrackNumbers = new List<TrackNumber>() { tn };
             RawPosition = pos;
