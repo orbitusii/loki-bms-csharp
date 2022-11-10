@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.ComponentModel;
 using System.Text;
 using System.Xml.Serialization;
 using loki_bms_csharp.Database;
@@ -17,7 +18,8 @@ namespace loki_bms_csharp
     {
         public static MainWindow MainWindow;
         public static UserInterface.ScopeRenderer MainScopeRenderer => MainWindow.ScopeRenderer;
-        public static TrackFile SelectedTrack { get; set; }
+
+        public static TrackSelection TrackSelection { get; set; } = new TrackSelection();
 
         public static SourceWindow SrcWindow;
 

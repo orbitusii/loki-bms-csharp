@@ -129,20 +129,19 @@ namespace loki_bms_csharp.UserInterface
 
         public void DrawFromDatabase()
         {
-            if (ProgramData.ViewSettings.ZoomIncrement <= 10)
+            if (ProgramData.ViewSettings.ZoomIncrement <= 9)
             {
-                lock (TrackDatabase.ProcessedData)
+                List<TrackDatum> dataSymbols = new List<TrackDatum>(TrackDatabase.ProcessedData);
+
+                foreach (var datum in dataSymbols)
                 {
-                    foreach (var datum in TrackDatabase.ProcessedData)
-                    {
-                        DrawDatum(datum);
-                    }
+                    DrawDatum(datum);
                 }
             }
 
             TrackClickHotspots.Clear();
 
-            if(ProgramData.SelectedTrack != null)
+            if(ProgramData.TrackSelection.Track != null)
             {
                 SKPaint brush = new SKPaint
                 {
@@ -151,7 +150,7 @@ namespace loki_bms_csharp.UserInterface
                     StrokeWidth = 1,
                 };
 
-                DrawCircle(ProgramData.SelectedTrack.Position, 16, brush, false);
+                DrawCircle(ProgramData.TrackSelection.Track.Position, 16, brush, false);
             }
 
             for (int i = 0; i < TrackDatabase.LiveTracks.Count; i++)
