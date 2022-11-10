@@ -38,7 +38,7 @@ namespace loki_bms_csharp
         private static string Delimiter = "\\";
         private static Assembly execAssy;
 
-        public static void Initialize(MainWindow window)
+        public static void Initialize()
         {
             execAssy = Assembly.GetExecutingAssembly();
             EmbeddedPath = "loki_bms_csharp.Resources.";
@@ -47,8 +47,6 @@ namespace loki_bms_csharp
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
 
             Debug.WriteLine($"[PROGRAM]: AppData at {AppDataPath}");
-
-            MainWindow = window;
 
             LoadPermanentMapData();
             LoadSymbology();
@@ -106,8 +104,13 @@ namespace loki_bms_csharp
             TrackSymbols[TrackCategory.Ship] = new SymbolGroup(new List<SVGPath>());
             TrackSymbols[TrackCategory.Ground] = new SymbolGroup(new List<SVGPath>());
 
-            SpecTypeSymbols = new Dictionary<string, SVGPath>();
-            // TODO: implement spectype symbols
+            SpecTypeSymbols = new Dictionary<string, SVGPath>() { { "", null }, };
+            var specTypeList = GetPathsFromEmbeddedFile("SpecTypes.svg");
+
+            foreach(var specType in specTypeList)
+            {
+                SpecTypeSymbols[specType.name] = specType;
+            }
         }
 
         public static List<SVGPath> GetPathsFromEmbeddedFile (string file)

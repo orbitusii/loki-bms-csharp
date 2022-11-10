@@ -1,4 +1,6 @@
-﻿using System;
+﻿using loki_bms_csharp.Database;
+using loki_bms_csharp.UserInterface;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +15,14 @@ namespace loki_bms_csharp
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            System.Diagnostics.Debug.WriteLine("Initializing App stuff...");
+            TrackNumber.Test();
+            ProgramData.Initialize();
+            TrackDatabase.Initialize(1000);
+        }
     }
 }

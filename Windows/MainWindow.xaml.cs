@@ -22,9 +22,6 @@ namespace loki_bms_csharp
             set { SetValue(DebugProperty, value); }
         }
 
-        private Brush StrokeBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
-        private Brush FillBrush = new SolidColorBrush(Color.FromArgb(128, 255, 0, 0));
-
         public ScopeRenderer ScopeRenderer = new ScopeRenderer();
 
         public int FPS { get; private set; } = 30;
@@ -41,50 +38,12 @@ namespace loki_bms_csharp
 
             BeginInit();
 
-            TrackNumber.Test();
+            ProgramData.MainWindow = this;
 
-            ProgramData.Initialize(this);
-
-            ref Settings.ViewSettings viewSettings = ref ProgramData.ViewSettings;
-
-            //ConfigureClock();
             ScopeCanvas.PaintSurface += OnPaintSurface;
             DrawDebug = false;
 
-            TrackDatabase.Initialize(1000);
-           //var FndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0, Alt = 0 },heading: Math.PI/4, speed: 50);
-           //var HosTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = -0.0001, Lon_Degrees = 0, Alt = 0 }, heading: Math.PI / 2, speed: 50);
-           //var PndTrack = TrackDatabase.InitiateTrack(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = -0.0001, Alt = 0 }, heading: Math.PI * 3 / 4, speed: 50);
-
-            //FndTrack.FFS = FriendFoeStatus.KnownFriend;
-            //HosTrack.FFS = FriendFoeStatus.Hostile;
-            //PndTrack.FFS = FriendFoeStatus.AssumedFriend;
-
-            //DataSource = new DataSource();
-            //_ = DataSource.Activate();
-
             EndInit();
-        }
-
-        private void ConfigureClock ()
-        {
-            RenderClock = new System.Timers.Timer();
-            RenderClock.Interval = MSPerFrame;
-            RenderClock.Elapsed += delegate (Object s, System.Timers.ElapsedEventArgs args)
-            {
-                try
-                {
-                    Dispatcher.Invoke(delegate ()
-                    {
-                        ScopeCanvas.InvalidateVisual();
-                    }, System.Windows.Threading.DispatcherPriority.Render);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("Missed a frame due to an exception!\n" + e.Message);
-                }
-            };
-            RenderClock.Start();
         }
 
         public void Redraw ()
