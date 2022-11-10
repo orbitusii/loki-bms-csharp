@@ -26,7 +26,7 @@ namespace loki_bms_csharp
         public static MapGeometry WorldLandmasses;
         public static MapGeometry DCSMaps;
         public static List<SVGPath> DataSymbols { get; private set; }
-        public static Dictionary<TrackCategory, FriendFoeSymbolGroup> TrackSymbols { get; private set; }
+        public static Dictionary<TrackCategory, SymbolGroup> TrackSymbols { get; private set; }
         public static Dictionary<string, SVGPath> SpecTypeSymbols { get; private set; }
 
         public static ViewSettings ViewSettings;
@@ -100,11 +100,11 @@ namespace loki_bms_csharp
         {
             DataSymbols = GetPathsFromEmbeddedFile("DataSymbols.svg");
 
-            TrackSymbols = new Dictionary<TrackCategory, FriendFoeSymbolGroup>();
-            TrackSymbols[TrackCategory.None] = new FriendFoeSymbolGroup(GetPathsFromEmbeddedFile("Tracks_General.svg"));
-            TrackSymbols[TrackCategory.Air] = new FriendFoeSymbolGroup(GetPathsFromEmbeddedFile("Tracks_Air.svg"));
-            TrackSymbols[TrackCategory.Ship] = new FriendFoeSymbolGroup(new List<SVGPath>());
-            TrackSymbols[TrackCategory.Ground] = new FriendFoeSymbolGroup(new List<SVGPath>());
+            TrackSymbols = new Dictionary<TrackCategory, SymbolGroup>();
+            TrackSymbols[TrackCategory.None] = new SymbolGroup(GetPathsFromEmbeddedFile("Tracks_General.svg"));
+            TrackSymbols[TrackCategory.Air] = new SymbolGroup(GetPathsFromEmbeddedFile("Tracks_Air.svg"));
+            TrackSymbols[TrackCategory.Ship] = new SymbolGroup(new List<SVGPath>());
+            TrackSymbols[TrackCategory.Ground] = new SymbolGroup(new List<SVGPath>());
 
             SpecTypeSymbols = new Dictionary<string, SVGPath>();
             // TODO: implement spectype symbols

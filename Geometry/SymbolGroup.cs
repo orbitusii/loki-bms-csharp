@@ -7,11 +7,11 @@ using loki_bms_csharp.Database;
 
 namespace loki_bms_csharp.Geometry
 {
-    public class FriendFoeSymbolGroup
+    public class SymbolGroup
     {
         public Dictionary<FriendFoeStatus, SVG.SVGPath> Symbols;
 
-        public FriendFoeSymbolGroup (IEnumerable<SVG.SVGPath> collection)
+        public SymbolGroup (IEnumerable<SVG.SVGPath> collection)
         {
             Symbols = new Dictionary<FriendFoeStatus, SVG.SVGPath>()
             {
