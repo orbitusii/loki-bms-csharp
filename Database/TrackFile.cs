@@ -17,19 +17,21 @@ namespace loki_bms_csharp.Database
         public DateTime Timestamp { get; private set; }
         private bool freshData = false;
         public TrackType TrackType { get; private set; }
-        public TrackCategory Category = TrackCategory.None;
+        public TrackCategory Category { get; set; } = TrackCategory.None;
 
         // TrackFile Amplifying Data
-        public FriendFoeStatus FFS;
+        public FriendFoeStatus FFS { get; set; }
 
-        public string Callsign;
+        public string Callsign { get; set; }
 
-        public int SpecType;
+        public int SpecType { get; set; }
 
-        public bool ShowHistory;
+        public bool ShowHistory { get; set; }
         public List<Vector64> History { get; private set; }
         private DateTime NewestHistory;
         private DateTime OldestHistory;
+
+        public TrackFile () { }
 
         public TrackFile(TrackNumber.Internal tn, Vector64 pos, Vector64 vel, IFFData[] codes, FriendFoeStatus _ffs = FriendFoeStatus.Pending, TrackType type = TrackType.Sim, string vcs = "", int spec = 0)
         {
