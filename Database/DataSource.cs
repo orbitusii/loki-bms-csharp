@@ -101,7 +101,7 @@ namespace loki_bms_csharp.Database
 
 
         private CancellationTokenSource cancelTokenSource;
-        private Dictionary<string, TrackDatum> UpdatedData = new Dictionary<string, TrackDatum>();
+        private Dictionary<uint, TrackDatum> UpdatedData = new Dictionary<uint, TrackDatum>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -179,7 +179,7 @@ namespace loki_bms_csharp.Database
 
                     if (unit.Unit != null)
                     {
-                        UpdatedData[unit.Unit.Callsign] = ConvertFromDCSTrack(unit.Unit);
+                        UpdatedData[unit.Unit.Id] = ConvertFromDCSTrack(unit.Unit);
                     }
                 }
             }
@@ -211,6 +211,14 @@ namespace loki_bms_csharp.Database
 
             Vector64 vel = MathL.Conversions.GetTangentVelocity(positLL, heading, speed);
 
+            string CoalitionToString = unit.Coalition switch
+            {
+                Coalition.Neutral => "Neutral",
+                Coalition.Red => "Red",
+                Coalition.Blue => "Blue",
+                _ => "Unknown",
+            };
+
             return new TrackDatum
             {
                 ID = new TrackNumber.External { Value = (short)(unit.Id + TNRange.TNMin) },
@@ -218,7 +226,8 @@ namespace loki_bms_csharp.Database
                 Velocity = vel,
                 Timestamp = DateTime.Now,
                 Category = cat,
-                Origin = this
+                Origin = this,
+                ExtraData = new string[] {$"Coalition:{CoalitionToString}", $"Type:{unit.Type}", $"Callsign:{unit.Callsign}"}
             };
         }
 

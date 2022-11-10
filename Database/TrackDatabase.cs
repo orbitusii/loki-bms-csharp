@@ -148,6 +148,31 @@ namespace loki_bms_csharp.Database
                     var newTrack = InitiateTrack(datum.Position, datum.Velocity, TrackType.External);
                     newTrack.TrackNumbers.Add(datum.ID);
                     newTrack.Category = datum.Category;
+                    foreach (object exd in datum.ExtraData)
+                    {
+                        string[] exdString = ((string)exd).Split(':', StringSplitOptions.TrimEntries);
+
+                        switch (exdString[0])
+                        {
+                            case "Type":
+                                newTrack.SpecType = exdString[1].Replace("-", "");
+                                break;
+                            case "Coalition":
+                                newTrack.FFS = exdString[1] switch
+                                {
+                                    "Red" => FriendFoeStatus.Suspect,
+                                    "Blue" => FriendFoeStatus.AssumedFriend,
+                                    "Neutral" => FriendFoeStatus.Neutral,
+                                    _ => FriendFoeStatus.Pending,
+                                };
+                                break;
+                            case "Callsign":
+                                newTrack.Callsign = exdString[1];
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
             }
             

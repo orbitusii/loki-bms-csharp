@@ -17,5 +17,7 @@ namespace loki_bms_csharp.Database
         public DateTime Timestamp { get; set; }
 
         public TrackCategory Category = TrackCategory.None;
+
+        public string[] ExtraData { get; set; } = new string[0];
     }
 }
