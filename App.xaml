@@ -59,7 +59,7 @@
             <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
             <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
         </Style>
-        <Style TargetType="ComboBox">
+        <Style TargetType="ComboBox" x:Key="ComboBoxStyle_Deprecated">
             <Setter Property="Background" Value="{StaticResource VeryDarkGray}"/>
             <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
             <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
@@ -81,6 +81,30 @@
         </Style>
         <Style x:Key="ScopeWindow" TargetType="Canvas">
             <Setter Property="Background" Value="{StaticResource SkyBG}"/>
+        </Style>
+
+        <DataTemplate x:Key="TrackNumberList">
+            <ListView ItemTemplate="{DynamicResource TrackNumberItem}">
+                <ColumnDefinition x:Name="Type"/>
+                <ColumnDefinition x:Name="Value"/>
+            </ListView>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TrackNumberItem">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="{Binding Type}" Grid.Column="0"/>
+                <Label Content="{Binding Value}" Grid.Column="1" ContentStringFormat="00000"/>
+            </Grid>
+        </DataTemplate>
+
+        <Style x:Key="TrackDetailsLabel" TargetType="Label">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Padding" Value="0,5,0,5"/>
+            <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
         </Style>
         <!--#endregion-->
 
