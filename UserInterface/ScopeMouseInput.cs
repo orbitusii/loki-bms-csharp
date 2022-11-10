@@ -57,10 +57,6 @@ namespace loki_bms_csharp.UserInterface
                 }
                 else
                 {
-                    SKPoint skPoint = new SKPoint((float)screenPt.X, (float)screenPt.Y);
-                    int trackIndex = ProgramData.MainScopeRenderer.GetTrackAtPosition(skPoint);
-
-                    ProgramData.SelectedTrack = trackIndex >= 0 ? Database.TrackDatabase.LiveTracks[trackIndex] : null;
                 }
             }
             else if (ClickState == (MouseClickState)5)
@@ -109,7 +105,8 @@ namespace loki_bms_csharp.UserInterface
         public static InputData OnMouseUp(MouseButtonEventArgs e)
         {
             int buttonValue = GetButtonValue(e.ChangedButton);
-            clickEndPoint = clickToPointOnEarth(e.GetPosition(ProgramData.MainWindow.ScopeCanvas));
+            Point screenPt = e.GetPosition(ProgramData.MainWindow.ScopeCanvas);
+            clickEndPoint = clickToPointOnEarth(screenPt);
 
             var prevClick = ClickState;
             ClickState = (MouseClickState)(buttonValue ^ (int)ClickState);
@@ -117,6 +114,13 @@ namespace loki_bms_csharp.UserInterface
             if((prevClick == (MouseClickState)5) && (MouseClickState)5 != ClickState)
             {
                 System.Diagnostics.Debug.WriteLine("Left-right click combo lost");
+            }
+            else if (prevClick == MouseClickState.Left && !DoubleClickFired)
+            {
+                SKPoint skPoint = new SKPoint((float)screenPt.X, (float)screenPt.Y);
+                int trackIndex = ProgramData.MainScopeRenderer.GetTrackAtPosition(skPoint);
+
+                ProgramData.TrackSelection.Track = trackIndex >= 0 ? Database.TrackDatabase.LiveTracks[trackIndex] : null;
             }
 
             return new MouseInputData { MouseButtons = ClickState, RequiresRedraw = true };
