@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
 using loki_bms_csharp.MathL;
 
 namespace loki_bms_csharp.Database
@@ -13,7 +14,7 @@ namespace loki_bms_csharp.Database
         }
         private static short _itn = 1;
 
-        public static List<TrackFile> LiveTracks;
+        public static ObservableCollection<TrackFile> LiveTracks;
         public static List<TrackDatum> ProcessedData;
         public static List<TrackDatum> FreshData;
 
@@ -45,14 +46,14 @@ namespace loki_bms_csharp.Database
         
         public static void Initialize (float tickRate = 100)
         {
-            LiveTracks = new List<TrackFile>();
+            LiveTracks = new ObservableCollection<TrackFile>();
             ProcessedData = new List<TrackDatum>();
             FreshData = new List<TrackDatum>();
 
             LastUpdate = DateTime.Now;
 
             UpdateClock = new System.Timers.Timer(tickRate);
-            UpdateClock.Elapsed += delegate (Object sender, System.Timers.ElapsedEventArgs args)
+            UpdateClock.Elapsed += delegate (object sender, System.Timers.ElapsedEventArgs args)
             {
                 DateTime now = args.SignalTime;
                 float dt = (float)(now - LastUpdate).TotalSeconds;
