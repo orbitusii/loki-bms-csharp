@@ -63,6 +63,15 @@
             <Setter Property="Background" Value="{StaticResource VeryDarkGray}"/>
             <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
             <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Background" Value="{StaticResource VeryDarkGray}"/>
+                        <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
+                        <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
         </Style>
         <!--#endregion-->
 
@@ -116,7 +125,7 @@
             </Border>
         </DataTemplate>
         <!--#endregion-->
-        
+
         <!--#region Data Converters-->
         <convert:DataSourceSymbolConverter x:Key="DataSymbolConverter"/>
         <convert:DataSourceColorConverter x:Key="DataSymbolColor"/>

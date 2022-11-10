@@ -158,7 +158,7 @@ namespace loki_bms_csharp.UserInterface
                 TrackFile track = TrackDatabase.LiveTracks[i];
 
                 //Base symbol
-                DrawTrack(track, i, 6);
+                DrawTrack(track, i, 16);
                 //Velocity leader
                 DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
             }
@@ -179,23 +179,43 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        public void DrawTrack(TrackFile track, int index, float size = 4)
+        public void DrawTrack(TrackFile track, int index, float size = 16)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
             SKPoint canvasPos = GetScreenPoint(screenPos);
 
             if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
-                // TODO : find a spectype path first, then a category symbol, then a general symbol
-                var originalPath = ProgramData.TrackSymbols[track.Category][track.FFS]?.SKPath ?? ProgramData.TrackSymbols[TrackCategory.None][track.FFS].SKPath;
+                var originalPath = ProgramData.SpecTypeSymbols[track.SpecType]?.SKPath ?? null;
+                float rotation = 0;
+                float extraScale = 1;
+
+                if(originalPath == null)
+                {
+                    originalPath =
+                        ProgramData.TrackSymbols[track.Category][track.FFS]?.SKPath
+                        ?? ProgramData.TrackSymbols[TrackCategory.None][track.FFS].SKPath;
+                }
+                else
+                {
+                    var surfaceMotion = MathL.Conversions.GetSurfaceMotion(track.Position, track.Velocity);
+                    rotation = (float)surfaceMotion.heading;
+                    extraScale = 1.5f;
+                }
+
                 var clonedPath = new SKPath(originalPath);
+                float width = clonedPath.Bounds.Width;
+                float scale = size / width * extraScale;
 
                 var fillPaint = TrackDatabase.FillByFFS[track.FFS];
                 var strokePaint = TrackDatabase.StrokeByFFS[track.FFS];
 
-                clonedPath.Transform(SKMatrix.CreateScaleTranslation(0.5f, 0.5f, canvasPos.X, canvasPos.Y));
+                clonedPath.Transform(SKMatrix.CreateScaleTranslation(scale, scale, canvasPos.X, canvasPos.Y));
+                clonedPath.Transform(SKMatrix.CreateRotation(rotation, clonedPath.Bounds.MidX, clonedPath.Bounds.MidY));
 
-                TrackHotspot hotSpot = new TrackHotspot { Bounds = clonedPath.Bounds, Index = index };
+                SKRect bounds = clonedPath.Bounds;
+                bounds.Inflate(4, 4);
+                TrackHotspot hotSpot = new TrackHotspot { Bounds = bounds, Index = index };
                 TrackClickHotspots.Add(hotSpot);
 
                 Canvas.DrawPath(clonedPath, fillPaint);
