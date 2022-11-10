@@ -31,5 +31,10 @@ namespace loki_bms_csharp.Windows
 
             EndInit();
         }
+
+        private void IDSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

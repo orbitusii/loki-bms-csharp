@@ -30,18 +30,27 @@
 
             <StackPanel Grid.Row="1" Orientation="Vertical">
                 <Label Content="Track Numbers" Padding="0,0,0,0" Margin="0,5,0,0"/>
-                <ListView Background="{DynamicResource VeryDarkGray}" ItemsSource="{Binding TrackNumbers}" BorderBrush="{DynamicResource MidGray}" Margin="0,5,0,5" MinHeight="30" ItemTemplate="{DynamicResource TrackNumberItem}" />
+                <ListView Background="{DynamicResource VeryDarkGray}" ItemsSource="{Binding TrackNumbers}" BorderBrush="{DynamicResource MidGray}" Margin="0,0,0,5" MinHeight="30" ItemTemplate="{DynamicResource TrackNumberItem}" />
+
+                <Label Content="IFF" Padding="0,0,0,0" Margin="0,5,0,0"/>
+                <ListView Background="{DynamicResource VeryDarkGray}" ItemsSource="{Binding IFFCodes, Mode=OneWay}" BorderBrush="{DynamicResource MidGray}" Margin="0,0,0,5" MinHeight="30" ItemTemplate="{DynamicResource TrackNumberItem}" />
 
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Category:"/>
                     <Label Content="{Binding Category}" Margin="5,0,0,0"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
                     <Label Content="ID:"/>
                     <ComboBox ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}" x:Name="IDSelection" SelectedValue="{Binding FFS}" Margin="5,0,0,0" MinWidth="107"
-                              Template="{StaticResource ComboBoxTemplate1}" Foreground="{DynamicResource OffWhite}" Background="{DynamicResource VeryDarkGray}" BorderBrush="{DynamicResource MidGray}"/>
+                              Template="{StaticResource ComboBoxTemplate1}" Foreground="{DynamicResource OffWhite}" Background="{DynamicResource VeryDarkGray}" BorderBrush="{DynamicResource MidGray}" SelectionChanged="IDSelection_SelectionChanged"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,5" >
+                    <Label Content="Callsign:"/>
+                    <TextBox MinWidth="77" Margin="5,0,0,0" Text="{Binding Callsign}"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
                     <Label Content="Specific Type:"/>
                     <ComboBox x:Name="SpecTypeSelection" Margin="5,0,0,0" SelectedValue="{Binding SpecType}" MinWidth="50" Template="{DynamicResource ComboBoxTemplate1}" ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}" Background="{DynamicResource VeryDarkGray}" BorderBrush="{DynamicResource MidGray}" Foreground="{DynamicResource OffWhite}"/>
                 </StackPanel>
