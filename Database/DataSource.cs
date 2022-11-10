@@ -72,7 +72,7 @@ namespace loki_bms_csharp.Database
             }
         }
 
-        // TODO: make this value reflect properly on SourcesWindow when it fails to connect
+        // DONE: make this value reflect properly on SourcesWindow when it fails to connect
         private bool _active = false;
         [XmlAttribute]
         public bool Active
@@ -131,7 +131,7 @@ namespace loki_bms_csharp.Database
             if (Channel == null) Channel = GrpcChannel.ForAddress($"http://{Address}:{Port}");
             cancelTokenSource = new CancellationTokenSource();
 
-            Task t = Task.Run(TryStream, cancelTokenSource.Token); //TODO: add reconnect attempts
+            Task t = Task.Run(TryStream, cancelTokenSource.Token); //DONE: add reconnect attempts
         }
 
         public async Task TryStream ()
