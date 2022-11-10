@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
@@ -30,13 +31,19 @@ namespace loki_bms_csharp.UserInterface
             get { return Height / VerticalSize; }
         }
 
-        public void SetVerticalSize (double vSize)
-        {
-            VerticalSize = vSize;
-            //CameraMatrix.SetScale(VerticalSize);
-        }
-
+        public List<TrackHotspot> TrackClickHotspots = new List<TrackHotspot>();
+        
         public ScopeRenderer () { }
+
+        public int GetTrackAtPosition (SKPoint ScreenPoint)
+        {
+            lock(TrackClickHotspots)
+            {
+                TrackHotspot hotspot = TrackClickHotspots.Find(x => x.Bounds.Contains(ScreenPoint));
+                int index = hotspot?.Index ?? -1;
+                return index;
+            }
+        }
 
         public void Redraw (SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args, MathL.TangentMatrix cameraMatrix, double VFov)
         {
@@ -68,6 +75,11 @@ namespace loki_bms_csharp.UserInterface
             {
                 DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.clickDragPoint, SKColors.White, 1);
             }
+        }
+        public void SetVerticalSize(double vSize)
+        {
+            VerticalSize = vSize;
+            //CameraMatrix.SetScale(VerticalSize);
         }
 
         public void DrawEarth()
@@ -192,12 +204,15 @@ namespace loki_bms_csharp.UserInterface
                 }
             }
 
-            foreach (TrackFile track in TrackDatabase.LiveTracks)
+            TrackClickHotspots.Clear();
+
+            for (int i = 0; i < TrackDatabase.LiveTracks.Count; i++)
             {
+                TrackFile track = TrackDatabase.LiveTracks[i];
                 SKPaint brush = TrackDatabase.StrokeByFFS[track.FFS];
 
                 //Base symbol
-                DrawTrack(track, brush, 6);
+                DrawTrack(track, i, 6);
                 //Velocity leader
                 DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
             }
@@ -218,13 +233,14 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        public void DrawTrack (TrackFile track, SKPaint brush, float size = 4)
+        public void DrawTrack (TrackFile track, int index, float size = 4)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
             SKPoint canvasPos = GetScreenPoint(screenPos);
 
             if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
+                // TODO : find a spectype path first, then a category symbol, then a general symbol
                 var originalPath = ProgramData.TrackSymbols[track.Category][track.FFS]?.SKPath ?? ProgramData.TrackSymbols[TrackCategory.None][track.FFS].SKPath;
                 var clonedPath = new SKPath(originalPath);
 
@@ -232,6 +248,9 @@ namespace loki_bms_csharp.UserInterface
                 var strokePaint = TrackDatabase.StrokeByFFS[track.FFS];
 
                 clonedPath.Transform(SKMatrix.CreateScaleTranslation(0.5f, 0.5f, canvasPos.X, canvasPos.Y));
+
+                TrackHotspot hotSpot = new TrackHotspot { Bounds = clonedPath.Bounds, Index = index };
+                TrackClickHotspots.Add(hotSpot);
 
                 Canvas.DrawPath(clonedPath, fillPaint);
                 Canvas.DrawPath(clonedPath, strokePaint);
