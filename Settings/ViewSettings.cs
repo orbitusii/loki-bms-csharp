@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using loki_bms_csharp.MathL;
+using System.ComponentModel;
 
 namespace loki_bms_csharp.Settings
 {
     [XmlRoot("ViewSettings")]
-    public class ViewSettings
+    public class ViewSettings: INotifyPropertyChanged
     {
         [XmlIgnore]
         public bool Debug;
@@ -19,8 +20,17 @@ namespace loki_bms_csharp.Settings
         [XmlIgnore]
         public TangentMatrix CameraMatrix { get; private set; }
 
+        private double _zoomInc = 16;
         [XmlElement("Zoom")]
-        public double ZoomIncrement = 16;
+        public double ZoomIncrement
+        {
+            get => _zoomInc;
+            set
+            {
+                _zoomInc = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ZoomIncrement)));
+            }
+        }
         public double VerticalFOV
         {
             get => Math.Pow(2, ZoomIncrement) * 200;
@@ -34,6 +44,8 @@ namespace loki_bms_csharp.Settings
         public delegate void ViewCenterChangedCallback(TangentMatrix mat);
         [XmlIgnore]
         public ViewCenterChangedCallback OnViewCenterChanged;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void SetViewPreset(int index, UserInterface.ZoomPreset preset)
         {
@@ -83,7 +95,6 @@ namespace loki_bms_csharp.Settings
         public double SetZoom(double Level)
         {
             ZoomIncrement = Math.Clamp(Level, 0, 16);
-            ProgramData.MainWindow.Zoom_Slider.Value = ZoomIncrement;
             return VerticalFOV;
         }
 
@@ -95,7 +106,6 @@ namespace loki_bms_csharp.Settings
         public double IncrementZoom (double delta)
         {
             ZoomIncrement = Math.Clamp(ZoomIncrement + delta, 0, 16);
-            ProgramData.MainWindow.Zoom_Slider.Value = ZoomIncrement;
             return VerticalFOV;
         }
 
