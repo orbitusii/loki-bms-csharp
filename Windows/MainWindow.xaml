@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
+        xmlns:local="clr-namespace:loki_bms_csharp"
+        xmlns:loki="clr-namespace:loki_bms_csharp.Windows"
         mc:Ignorable="d"
         Title="LOKI BMS - Main Scope" Height="880" Width="1720" ResizeMode="CanResizeWithGrip"
         Style="{StaticResource WindowTheme}" Closing="PrimaryDisplay_Closing" KeyDown="OnKeyDown" KeyUp="OnKeyUp">
@@ -23,6 +25,11 @@
         </StackPanel>
         
         <skia:SKElement x:Name="ScopeCanvas" Grid.Row="1" PaintSurface="OnPaintSurface" MouseDown="OnMouseDown" MouseUp="OnMouseUp" MouseWheel="OnMouseWheel" MouseMove="OnMouseMove"/>
+        <loki:TrackDetails x:Name="TrackDetails" Grid.Row="1" Width="200" Height="Auto" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top">
+            <loki:TrackDetails.DataContext>
+                <Binding Source="{x:Static local:ProgramData.TrackSelection}"/>
+            </loki:TrackDetails.DataContext>
+        </loki:TrackDetails>
         <!--<Canvas x:Name="ScopeCanvas" Style="{StaticResource ScopeWindow}" ClipToBounds="True"/>-->
         <!--<local:ScopeView x:Name="MainScope" Foreground="{x:Null}" DebugView="True" Loaded="MainScope_Loaded" RenderTransformOrigin="0.5,0.5"/>-->
         <Button x:Name="Button_0" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="34" Width="100" Grid.Row="2" ClickMode="Release" Content="Press me or [D]"/>
