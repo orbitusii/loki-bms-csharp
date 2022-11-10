@@ -12,7 +12,7 @@
   <ItemGroup>
     <None Remove="Resources\DataSymbols.svg" />
     <None Remove="Resources\DCSMapExtents.svg" />
-    <None Remove="Resources\SpecTypes_Air.svg" />
+    <None Remove="Resources\SpecTypes.svg" />
     <None Remove="Resources\Tracks_Air.svg" />
     <None Remove="Resources\Tracks_General.svg" />
     <None Remove="Resources\WorldLandmasses.svg" />
@@ -21,7 +21,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\DataSymbols.svg" />
     <EmbeddedResource Include="Resources\DCSMapExtents.svg" />
-    <EmbeddedResource Include="Resources\SpecTypes_Air.svg" />
+    <EmbeddedResource Include="Resources\SpecTypes.svg" />
     <EmbeddedResource Include="Resources\Tracks_Air.svg" />
     <EmbeddedResource Include="Resources\Tracks_General.svg" />
     <EmbeddedResource Include="Resources\WorldLandmasses.svg" />

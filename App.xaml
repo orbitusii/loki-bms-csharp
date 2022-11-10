@@ -59,6 +59,11 @@
             <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
             <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
         </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{StaticResource VeryDarkGray}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource MidGray}"/>
+            <Setter Property="Foreground" Value="{StaticResource OffWhite}"/>
+        </Style>
         <!--#endregion-->
 
         <!--#region Explicit Styles-->

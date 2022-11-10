@@ -23,11 +23,13 @@ namespace loki_bms_csharp.Windows
         public TrackDetails()
         {
             InitializeComponent();
-        }
 
-        private void IDSelection_Loaded(object sender, RoutedEventArgs e)
-        {
+            BeginInit();
+
             IDSelection.ItemsSource = Enum.GetValues(typeof(Database.FriendFoeStatus)).Cast<Database.FriendFoeStatus>();
+            SpecTypeSelection.ItemsSource = ProgramData.SpecTypeSymbols.Keys;
+
+            EndInit();
         }
     }
 }

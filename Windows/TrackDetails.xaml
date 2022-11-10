@@ -56,11 +56,11 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="ID:"/>
-                    <ComboBox x:Name="IDSelection" Loaded="IDSelection_Loaded" SelectedValue="{Binding FFS}" Margin="5,0,0,0"  />
+                    <ComboBox x:Name="IDSelection" SelectedValue="{Binding FFS}" Margin="5,0,0,0"  />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Specific Type:"/>
-                    <TextBox MinWidth="50" Margin="5,5,0,5"/>
+                    <ComboBox x:Name="SpecTypeSelection" Margin="5,0,0,0" SelectedValue="{Binding SpecType}"/>
                 </StackPanel>
 
             </StackPanel>
