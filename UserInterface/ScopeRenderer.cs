@@ -32,6 +32,7 @@ namespace loki_bms_csharp.UserInterface
         }
 
         public List<TrackHotspot> TrackClickHotspots = new List<TrackHotspot>();
+        public int ClickThrough = -1;
         
         public ScopeRenderer () { }
 
@@ -39,7 +40,11 @@ namespace loki_bms_csharp.UserInterface
         {
             lock(TrackClickHotspots)
             {
-                TrackHotspot hotspot = TrackClickHotspots.Find(x => x.Bounds.Contains(ScreenPoint));
+                List<TrackHotspot> hotspots = TrackClickHotspots.FindAll(x => x.Bounds.Contains(ScreenPoint));
+
+                ClickThrough = hotspots.Count > 1 ? (ClickThrough + 1) % hotspots.Count : 0;
+                TrackHotspot hotspot = hotspots.Count > 0 ? hotspots[ClickThrough] : null;
+
                 int index = hotspot?.Index ?? -1;
                 return index;
             }
@@ -84,13 +89,119 @@ namespace loki_bms_csharp.UserInterface
 
         public void DrawEarth()
         {
-            DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, SKColor.FromHsl(215, 30, 8));
+            SKPaint brush = new SKPaint
+            {
+                Style = SKPaintStyle.Fill,
+                Color = SKColor.FromHsl(215, 30, 8),
+            };
+
+            DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, brush);
 
             SKPaint landPaint = new SKPaint { Color = SKColor.Parse("#303030"), Style = SKPaintStyle.Fill };
             SKPaint mapsPaint = new SKPaint { Color = SKColor.Parse("#505050"), Style = SKPaintStyle.Stroke, StrokeWidth = 1 };
 
             DrawWorldGeometry(ProgramData.WorldLandmasses, landPaint);
             DrawWorldGeometry(ProgramData.DCSMaps, mapsPaint);
+        }
+
+        public void DrawWorldGeometry(Geometry.MapGeometry mapData, SKPaint paint)
+        {
+            SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
+            screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
+            screenMatrix.ScaleY = screenMatrix.ScaleX;
+
+            //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Drawing {MapData.CachedPaths.Length} Landmasses...");
+
+            foreach (SKPath path in mapData.CachedPaths)
+            {
+                if (Canvas.QuickReject(path)) continue;
+
+                using (SKPath clone = new SKPath(path))
+                {
+                    clone.Transform(screenMatrix);
+
+                    Canvas.DrawPath(clone, paint);
+                }
+            }
+
+            //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Done!");
+        }
+
+        public void DrawFromDatabase()
+        {
+            if (ProgramData.ViewSettings.ZoomIncrement <= 10)
+            {
+                lock (TrackDatabase.ProcessedData)
+                {
+                    foreach (var datum in TrackDatabase.ProcessedData)
+                    {
+                        DrawDatum(datum);
+                    }
+                }
+            }
+
+            TrackClickHotspots.Clear();
+
+            if(ProgramData.SelectedTrack != null)
+            {
+                SKPaint brush = new SKPaint
+                {
+                    Style = SKPaintStyle.Stroke,
+                    Color = SKColor.FromHsl(0, 0, 255, 196),
+                    StrokeWidth = 1,
+                };
+
+                DrawCircle(ProgramData.SelectedTrack.Position, 16, brush, false);
+            }
+
+            for (int i = 0; i < TrackDatabase.LiveTracks.Count; i++)
+            {
+                TrackFile track = TrackDatabase.LiveTracks[i];
+
+                //Base symbol
+                DrawTrack(track, i, 6);
+                //Velocity leader
+                DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
+            }
+        }
+
+        public void DrawDatum(TrackDatum datum)
+        {
+            Vector64 screenPos = CameraMatrix.PointToTangentSpace(datum.Position);
+            var canvasPos = GetScreenPoint(screenPos);
+
+            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
+            {
+                var path = new SKPath(datum.Origin.GetSKPath) ?? new SKPath();
+                var paint = datum.Origin.GetSKPaint ?? new SKPaint { Color = SKColors.Coral };
+                path.Transform(SKMatrix.CreateScaleTranslation(1, 1, canvasPos.X, canvasPos.Y));
+
+                Canvas.DrawPath(path, paint);
+            }
+        }
+
+        public void DrawTrack(TrackFile track, int index, float size = 4)
+        {
+            Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
+            SKPoint canvasPos = GetScreenPoint(screenPos);
+
+            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
+            {
+                // TODO : find a spectype path first, then a category symbol, then a general symbol
+                var originalPath = ProgramData.TrackSymbols[track.Category][track.FFS]?.SKPath ?? ProgramData.TrackSymbols[TrackCategory.None][track.FFS].SKPath;
+                var clonedPath = new SKPath(originalPath);
+
+                var fillPaint = TrackDatabase.FillByFFS[track.FFS];
+                var strokePaint = TrackDatabase.StrokeByFFS[track.FFS];
+
+                clonedPath.Transform(SKMatrix.CreateScaleTranslation(0.5f, 0.5f, canvasPos.X, canvasPos.Y));
+
+                TrackHotspot hotSpot = new TrackHotspot { Bounds = clonedPath.Bounds, Index = index };
+                TrackClickHotspots.Add(hotSpot);
+
+                Canvas.DrawPath(clonedPath, fillPaint);
+                Canvas.DrawPath(clonedPath, strokePaint);
+            }
         }
 
         public void DrawAxisLines()
@@ -172,7 +283,7 @@ namespace loki_bms_csharp.UserInterface
             Canvas.DrawText($"{heading:000}/{Math.Round(arcLength * MathL.Conversions.MetersToNM,0)} NM", textPoint, paint);
         }
 
-        public void DrawCircle(Vector64 center, double radius, SKColor color, bool isRadiusInWorldUnits = true)
+        public void DrawCircle(Vector64 center, double radius, SKPaint brush, bool isRadiusInWorldUnits = true)
         {
             if (isRadiusInWorldUnits)
             {
@@ -182,102 +293,7 @@ namespace loki_bms_csharp.UserInterface
             Vector64 localCenter = CameraMatrix.PointToTangentSpace(center);
             SKPoint canvasCenter = GetScreenPoint(localCenter);
 
-            SKPaint brush = new SKPaint
-            {
-                Style = SKPaintStyle.Fill,
-                Color = color,
-            };
-
             Canvas.DrawCircle(canvasCenter, (float)radius, brush);
-        }
-
-        public void DrawFromDatabase ()
-        {
-            if(ProgramData.ViewSettings.ZoomIncrement <= 10)
-            {
-                lock(TrackDatabase.ProcessedData)
-                {
-                    foreach (var datum in TrackDatabase.ProcessedData)
-                    {
-                        DrawDatum(datum);
-                    }
-                }
-            }
-
-            TrackClickHotspots.Clear();
-
-            for (int i = 0; i < TrackDatabase.LiveTracks.Count; i++)
-            {
-                TrackFile track = TrackDatabase.LiveTracks[i];
-                SKPaint brush = TrackDatabase.StrokeByFFS[track.FFS];
-
-                //Base symbol
-                DrawTrack(track, i, 6);
-                //Velocity leader
-                DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
-            }
-        }
-
-        public void DrawDatum (TrackDatum datum)
-        {
-            Vector64 screenPos = CameraMatrix.PointToTangentSpace(datum.Position);
-            var canvasPos = GetScreenPoint(screenPos);
-
-            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
-            {
-                var path = new SKPath(datum.Origin.GetSKPath) ?? new SKPath();
-                var paint = datum.Origin.GetSKPaint ?? new SKPaint { Color = SKColors.Coral };
-                path.Transform(SKMatrix.CreateScaleTranslation(1, 1, canvasPos.X, canvasPos.Y));
-
-                Canvas.DrawPath(path, paint);
-            }
-        }
-
-        public void DrawTrack (TrackFile track, int index, float size = 4)
-        {
-            Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
-            SKPoint canvasPos = GetScreenPoint(screenPos);
-
-            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
-            {
-                // TODO : find a spectype path first, then a category symbol, then a general symbol
-                var originalPath = ProgramData.TrackSymbols[track.Category][track.FFS]?.SKPath ?? ProgramData.TrackSymbols[TrackCategory.None][track.FFS].SKPath;
-                var clonedPath = new SKPath(originalPath);
-
-                var fillPaint = TrackDatabase.FillByFFS[track.FFS];
-                var strokePaint = TrackDatabase.StrokeByFFS[track.FFS];
-
-                clonedPath.Transform(SKMatrix.CreateScaleTranslation(0.5f, 0.5f, canvasPos.X, canvasPos.Y));
-
-                TrackHotspot hotSpot = new TrackHotspot { Bounds = clonedPath.Bounds, Index = index };
-                TrackClickHotspots.Add(hotSpot);
-
-                Canvas.DrawPath(clonedPath, fillPaint);
-                Canvas.DrawPath(clonedPath, strokePaint);
-            }
-        }
-
-        public void DrawWorldGeometry (Geometry.MapGeometry mapData, SKPaint paint)
-        {
-            SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
-            screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
-            screenMatrix.ScaleY = screenMatrix.ScaleX;
-
-            //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Drawing {MapData.CachedPaths.Length} Landmasses...");
-
-            foreach (SKPath path in mapData.CachedPaths)
-            {
-                if (Canvas.QuickReject(path)) continue;
-
-                using (SKPath clone = new SKPath(path))
-                {
-                    clone.Transform(screenMatrix);
-
-                    Canvas.DrawPath(clone, paint);
-                }
-            }
-
-            //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Done!");
         }
 
         public SKPoint GetScreenPoint (Vector64 screenPos)

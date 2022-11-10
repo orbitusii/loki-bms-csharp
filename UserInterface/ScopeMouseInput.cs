@@ -48,10 +48,20 @@ namespace loki_bms_csharp.UserInterface
             clickDragPoint = clickStartPoint;
             bool redraw = false;
 
-            if(ClickState == MouseClickState.Left && CheckDoubleClick())
+            if(ClickState == MouseClickState.Left)
             {
-                redraw = true;
-                RecenterCamera(clickToScreenPoint(screenPt));
+                if(CheckDoubleClick())
+                {
+                    redraw = true;
+                    RecenterCamera(clickToScreenPoint(screenPt));
+                }
+                else
+                {
+                    SKPoint skPoint = new SKPoint((float)screenPt.X, (float)screenPt.Y);
+                    int trackIndex = ProgramData.MainScopeRenderer.GetTrackAtPosition(skPoint);
+
+                    ProgramData.SelectedTrack = trackIndex >= 0 ? Database.TrackDatabase.LiveTracks[trackIndex] : null;
+                }
             }
             else if (ClickState == (MouseClickState)5)
             {

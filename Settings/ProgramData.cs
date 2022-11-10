@@ -16,6 +16,9 @@ namespace loki_bms_csharp
     public static class ProgramData
     {
         public static MainWindow MainWindow;
+        public static UserInterface.ScopeRenderer MainScopeRenderer => MainWindow.ScopeRenderer;
+        public static TrackFile SelectedTrack { get; set; }
+
         public static SourceWindow SrcWindow;
 
         public static MapGeometry WorldLandmasses;
