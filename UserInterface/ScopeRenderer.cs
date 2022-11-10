@@ -78,7 +78,11 @@ namespace loki_bms_csharp.UserInterface
 
             if (ScopeMouseInput.ClickState == MouseClickState.Left)
             {
-                DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.clickDragPoint, SKColors.White, 1);
+                try
+                {
+                    DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.clickDragPoint, SKColors.White, 1);
+                }
+                catch { }
             }
         }
         public void SetVerticalSize(double vSize)
