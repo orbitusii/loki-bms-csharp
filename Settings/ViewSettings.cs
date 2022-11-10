@@ -29,13 +29,7 @@ namespace loki_bms_csharp.Settings
         [XmlArray]
         public UserInterface.ZoomPreset[] ZoomPresets { get; set; } = new UserInterface.ZoomPreset[10];
 
-        [XmlIgnore]
-        public DateTime StartupTime = DateTime.Now;
-        [XmlIgnore]
-        public double RunTime
-        {
-            get => (DateTime.Now - StartupTime).TotalSeconds;
-        }
+        public bool DrawDebug = false;
 
         public delegate void ViewCenterChangedCallback(TangentMatrix mat);
         [XmlIgnore]

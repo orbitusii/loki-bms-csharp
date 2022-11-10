@@ -36,14 +36,38 @@ namespace loki_bms_csharp.UserInterface
             //CameraMatrix.SetScale(VerticalSize);
         }
 
-        public ScopeRenderer (SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args, MathL.TangentMatrix cameraMatrix)
+        public ScopeRenderer () { }
+
+        public void Redraw (SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args, MathL.TangentMatrix cameraMatrix, double VFov)
         {
             Info = args.Info;
-            Surface = args.Surface;
-            Canvas = Surface.Canvas;
+            if(Surface == null || Surface != args.Surface)
+            {
+                Surface = args.Surface;
+            }
+            if(Canvas == null || Canvas != Surface.Canvas)
+            {
+                Canvas = Surface.Canvas;
+            }
             CameraMatrix = cameraMatrix;
 
             Canvas.Clear(SKColors.Black);
+
+            SetVerticalSize(VFov);
+
+            DrawEarth();
+            if (ProgramData.ViewSettings.DrawDebug)
+            {
+                DrawAxisLines();
+            }
+
+            //DrawGeometry();
+            DrawFromDatabase();
+
+            if (ScopeMouseInput.ClickState == MouseClickState.Left)
+            {
+                DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.clickDragPoint, SKColors.White, 1);
+            }
         }
 
         public void DrawEarth()
@@ -159,9 +183,12 @@ namespace loki_bms_csharp.UserInterface
         {
             if(ProgramData.ViewSettings.ZoomIncrement <= 10)
             {
-                foreach (var datum in TrackDatabase.ProcessedData)
+                lock(TrackDatabase.ProcessedData)
                 {
-                    DrawDatum(datum);
+                    foreach (var datum in TrackDatabase.ProcessedData)
+                    {
+                        DrawDatum(datum);
+                    }
                 }
             }
 

@@ -25,6 +25,8 @@ namespace loki_bms_csharp
         private Brush StrokeBrush = new SolidColorBrush(Color.FromRgb(255, 0, 0));
         private Brush FillBrush = new SolidColorBrush(Color.FromArgb(128, 255, 0, 0));
 
+        private ScopeRenderer Renderer = new ScopeRenderer();
+
         public int FPS { get; private set; } = 30;
         public double MSPerFrame
         {
@@ -102,21 +104,7 @@ namespace loki_bms_csharp
 
         private void OnPaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args)
         {
-            using(var renderer = new ScopeRenderer(args, ProgramData.ViewSettings.CameraMatrix))
-            {
-                renderer.SetVerticalSize(ProgramData.ViewSettings.VerticalFOV);
-
-                renderer.DrawEarth();
-                //renderer.DrawGeometry();
-                renderer.DrawFromDatabase();
-
-                if (DrawDebug) renderer.DrawAxisLines();
-
-                if(ScopeMouseInput.ClickState == MouseClickState.Left)
-                {
-                    renderer.DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.clickDragPoint, SKColors.White, 1);
-                }
-            }
+            Renderer.Redraw(args, ProgramData.ViewSettings.CameraMatrix, ProgramData.ViewSettings.VerticalFOV);
         }
 
         public LatLonCoord GetLatLonAltSliders()
