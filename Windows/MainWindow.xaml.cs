@@ -129,5 +129,18 @@ namespace loki_bms_csharp
                 ProgramData.SrcWindow.Focus();
             }
         }
+
+        private void GeometryButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProgramData.GeoWindow == null)
+            {
+                ProgramData.GeoWindow = new Windows.GeometryWindow();
+                ProgramData.GeoWindow.Show();
+            }
+            else
+            {
+                ProgramData.GeoWindow.Focus();
+            }
+        }
     }
 }

@@ -160,6 +160,14 @@
                 </Grid>
             </Border>
         </DataTemplate>
+        <DataTemplate x:Key="GeometryList" DataType="classes:MapGeometry">
+            <Border BorderBrush="{StaticResource MidGray}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding Path=Visible}" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                    <Label Content="{Binding Path=Name}" Foreground="{StaticResource OffWhite}" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
         <!--#endregion-->
 
         <!--#region Data Converters-->
