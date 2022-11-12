@@ -231,13 +231,13 @@ namespace loki_bms_csharp.Database
             };
         }
 
-        public Dictionary<string, TrackDatum> PullData(bool clearQueue = true)
+        public Dictionary<uint, TrackDatum> PullData(bool clearQueue = true)
         {
             if(UpdatedData.Count > 0)
             {
                 lock(UpdatedData)
                 {
-                    Dictionary<string, TrackDatum> latest = new Dictionary<string, TrackDatum>(UpdatedData);
+                    Dictionary<uint, TrackDatum> latest = new Dictionary<uint, TrackDatum>(UpdatedData);
 
                     if (clearQueue)
                         UpdatedData.Clear();
@@ -246,7 +246,7 @@ namespace loki_bms_csharp.Database
                 }
             }
 
-            return new Dictionary<string, TrackDatum>(0);
+            return new Dictionary<uint, TrackDatum>(0);
         }
 
         public void Deactivate ()
