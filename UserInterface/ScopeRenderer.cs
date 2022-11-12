@@ -6,6 +6,7 @@ using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using loki_bms_csharp.Database;
 using loki_bms_csharp.UserInterface;
+using loki_bms_csharp.Geometry;
 
 namespace loki_bms_csharp.UserInterface
 {
@@ -73,7 +74,7 @@ namespace loki_bms_csharp.UserInterface
                 DrawAxisLines();
             }
 
-            //DrawGeometry();
+            DrawGeometry();
             DrawFromDatabase();
 
             if (ScopeMouseInput.ClickState == MouseClickState.Left)
@@ -105,7 +106,45 @@ namespace loki_bms_csharp.UserInterface
             SKPaint mapsPaint = new SKPaint { Color = SKColor.Parse("#505050"), Style = SKPaintStyle.Stroke, StrokeWidth = 1 };
 
             DrawWorldGeometry(ProgramData.WorldLandmasses, landPaint);
-            DrawWorldGeometry(ProgramData.DCSMaps, mapsPaint);
+        }
+
+        public void DrawGeometry()
+        {
+            SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
+            screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
+            screenMatrix.ScaleY = screenMatrix.ScaleX;
+
+            lock (ProgramData.UserGeometry)
+            {
+                foreach (MapGeometry geom in ProgramData.UserGeometry)
+                {
+                    if(!geom.Visible) continue;
+
+                    SKPaint fill = new SKPaint
+                    {
+                        Style = SKPaintStyle.Fill,
+                        Color = SKColor.Parse(geom.FillColor),
+                    };
+                    SKPaint stroke = new SKPaint
+                    {
+                        Style = SKPaintStyle.Stroke,
+                        Color = SKColor.Parse(geom.StrokeColor),
+                    };
+
+                    foreach(SKPath path in geom.CachedPaths)
+                    {
+                        if (Canvas.QuickReject(path)) continue;
+
+                        using (SKPath clone = new SKPath(path))
+                        {
+                            clone.Transform(screenMatrix);
+
+                            Canvas.DrawPath(clone, fill);
+                            Canvas.DrawPath(clone, stroke);
+                        }
+                    }
+                }
+            }
         }
 
         public void DrawWorldGeometry(Geometry.MapGeometry mapData, SKPaint paint)

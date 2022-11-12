@@ -11,6 +11,7 @@ using loki_bms_csharp.Settings;
 using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Geometry.SVG;
 using System.Reflection;
+using loki_bms_csharp.Windows;
 
 namespace loki_bms_csharp
 {
@@ -22,9 +23,11 @@ namespace loki_bms_csharp
         public static TrackSelection TrackSelection { get; set; } = new TrackSelection();
 
         public static SourceWindow SrcWindow;
+        public static GeometryWindow GeoWindow;
 
         public static MapGeometry WorldLandmasses;
-        public static MapGeometry DCSMaps;
+        public static ObservableCollection<MapGeometry> UserGeometry { get; set; }
+
         public static List<SVGPath> DataSymbols { get; private set; }
         public static Dictionary<TrackCategory, SymbolGroup> TrackSymbols { get; private set; }
         public static Dictionary<string, SVGPath> SpecTypeSymbols { get; private set; }
@@ -67,11 +70,11 @@ namespace loki_bms_csharp
                 }
             }
 
-                WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
-            DCSMaps.CachePaths(ViewSettings.CameraMatrix);
+            WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
+            UserGeometry[0].CachePaths(ViewSettings.CameraMatrix);
 
             ViewSettings.OnViewCenterChanged += WorldLandmasses.CachePaths;
-            ViewSettings.OnViewCenterChanged += DCSMaps.CachePaths;
+            ViewSettings.OnViewCenterChanged += UserGeometry[0].CachePaths;
 
             Debug.Write("Data Sources: ");
             foreach (var source in DataSources)
@@ -87,8 +90,9 @@ namespace loki_bms_csharp
             WorldLandmasses = MapGeometry.LoadGeometryFromStream(Landmasses);
 
             Stream mapBounds = execAssy.GetManifestResourceStream(EmbeddedPath + "DCSMapExtents.svg");
-            DCSMaps = MapGeometry.LoadGeometryFromStream(mapBounds);
-            foreach (var path in DCSMaps.Paths3D)
+            UserGeometry = new ObservableCollection<MapGeometry>() { MapGeometry.LoadGeometryFromStream(mapBounds) };
+            UserGeometry[0].Name = "DCS Map Extents";
+            foreach (var path in UserGeometry[0].Paths3D)
             {
                 path.ConformToSurface = true;
             }
