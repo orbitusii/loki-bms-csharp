@@ -10,6 +10,8 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Windows;
 using SkiaSharp;
+using KML;
+using KML.Shapes;
 
 namespace loki_bms_csharp.Geometry
 {
@@ -19,6 +21,40 @@ namespace loki_bms_csharp.Geometry
         public Path3D[] Paths3D;
 
         public SKPath[] CachedPaths;
+
+        public static MapGeometry LoadFromKML (string filepath)
+        {
+            if (File.Exists(filepath))
+            {
+                Kml kml;
+                using (FileStream stream = new FileStream(filepath, FileMode.Open))
+                {
+                    XmlSerializer ser = new XmlSerializer(typeof(Kml));
+
+                    kml = (Kml)ser.Deserialize(stream);
+                }
+
+                var placemarks = kml.Document.Placemarks;
+                List<Path3D> geoPaths = new List<Path3D>();
+
+                foreach (KmlPlacemark pm in placemarks)
+                {
+                    List<Vector64> points = new List<Vector64>(((KmlShape)pm.Shape).GetPoints()
+                        .Select(x => MathL.Conversions.LLToXYZ(
+                            new LatLonCoord
+                            {
+                                Lat_Degrees = x.Lat,
+                                Lon_Degrees = x.Lon,
+                                Alt = x.Alt ?? 0
+                            },
+                            MathL.Conversions.EarthRadius)));
+                    geoPaths.Add(new Path3D { Name = pm.name, Points = points.ToArray(), ConformToSurface = true, Closed = false });
+                }
+
+                return new MapGeometry { Paths3D = geoPaths.ToArray() };
+            }
+            else throw new FileNotFoundException($"KML File at {filepath} was not found!");
+        }
 
         public static MapGeometry LoadGeometryFromStream (Stream source)
         {
