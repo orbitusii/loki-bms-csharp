@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="KMLCoordRegex" xml:space="preserve">
-    <value>(?&lt;lon&gt;\d+[.]*\d*),(?&lt;lat&gt;\d+[.]*\d*),(?&lt;alt&gt;\d+[.]*\d*)</value>
+    <value>(?&lt;lon&gt;\d+[.]?\d*),(?&lt;lat&gt;\d+[.]?\d*)([,](?&lt;alt&gt;\d+[.]?\d*))?</value>
     <comment>Regex used to get Lon, Lat, and Alts from a KML &lt;coordinates&gt; element</comment>
   </data>
   <data name="SVGPathRegex" xml:space="preserve">

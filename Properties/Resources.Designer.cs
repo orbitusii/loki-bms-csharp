@@ -19,7 +19,7 @@ namespace loki_bms_csharp.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,7 +61,7 @@ namespace loki_bms_csharp.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to (?&lt;lon&gt;\d+[.]*\d*),(?&lt;lat&gt;\d+[.]*\d*),(?&lt;alt&gt;\d+[.]*\d*).
+        ///   Looks up a localized string similar to (?&lt;lon&gt;\d+[.]?\d*),(?&lt;lat&gt;\d+[.]?\d*)([,](?&lt;alt&gt;\d+[.]?\d*))?.
         /// </summary>
         internal static string KMLCoordRegex {
             get {

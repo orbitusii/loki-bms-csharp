@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>loki_bms_csharp</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>LOKI Icon.ico</ApplicationIcon>
@@ -38,6 +38,12 @@
     <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.6.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="KML">
+      <HintPath>..\KML\bin\Debug\net5.0\KML.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
