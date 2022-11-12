@@ -17,9 +17,15 @@ namespace loki_bms_csharp.Geometry
 {
     public class MapGeometry
     {
-        public Size imageSize;
-        public Path3D[] Paths3D;
+        public string Name { get; set; } = "";
+        public bool Visible { get; set; } = true;
 
+        public string StrokeColor { get; set; } = "#ffffffff";
+        public string FillColor { get; set; } = "#88ffffff";
+
+        public Size imageSize;
+
+        public Path3D[] Paths3D;
         public SKPath[] CachedPaths;
 
         public static MapGeometry LoadFromKML (string filepath)
@@ -46,12 +52,11 @@ namespace loki_bms_csharp.Geometry
                                 Lat_Degrees = x.Lat,
                                 Lon_Degrees = x.Lon,
                                 Alt = x.Alt ?? 0
-                            },
-                            MathL.Conversions.EarthRadius)));
+                            })));
                     geoPaths.Add(new Path3D { Name = pm.name, Points = points.ToArray(), ConformToSurface = true, Closed = false });
                 }
 
-                return new MapGeometry { Paths3D = geoPaths.ToArray() };
+                return new MapGeometry { Name = geoPaths[0]?.Name, Paths3D = geoPaths.ToArray() };
             }
             else throw new FileNotFoundException($"KML File at {filepath} was not found!");
         }
@@ -79,6 +84,7 @@ namespace loki_bms_csharp.Geometry
             System.Diagnostics.Debug.WriteLine("Attempting to deserialize geometry from an SVG");
 
             XmlSerializer ser = new XmlSerializer(typeof(SVGDoc));
+            
 
             SVGDoc svg = (SVGDoc)ser.Deserialize(source);
             Size imageSize = ParseImageSize(svg.viewBox);
