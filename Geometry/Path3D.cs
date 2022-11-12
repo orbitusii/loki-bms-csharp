@@ -10,6 +10,7 @@ namespace loki_bms_csharp.Geometry
         public string Name = "New Path";
         public Vector64[] Points;
         public bool ConformToSurface = false;
+        public bool Closed = true;
 
         public SKPath GetScreenSpacePath (MathL.TangentMatrix cameraMatrix)
         {
@@ -52,7 +53,7 @@ namespace loki_bms_csharp.Geometry
 
             if (numBehind < Points.Length)
             {
-                path.AddPoly(sKPoints.ToArray());
+                path.AddPoly(sKPoints.ToArray(), Closed);
             }
 
             return path;
