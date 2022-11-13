@@ -92,6 +92,9 @@ namespace loki_bms_csharp
             Stream mapBounds = execAssy.GetManifestResourceStream(EmbeddedPath + "DCSMapExtents.svg");
             UserGeometry = new ObservableCollection<MapGeometry>() { MapGeometry.LoadGeometryFromStream(mapBounds) };
             UserGeometry[0].Name = "DCS Map Extents";
+            UserGeometry[0].FillColor = "#00000000";
+            UserGeometry[0].StrokeColor = "#88ffffff";
+
             foreach (var path in UserGeometry[0].Paths3D)
             {
                 path.ConformToSurface = true;
