@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace loki_bms_csharp.Database
 {
-    public class TrackFile : IKinematicData
+    public class TrackFile : IKinematicData, INotifyPropertyChanged
     {
         public List<TrackNumber> TrackNumbers { get; set; }
         public Vector64 RawPosition { get; private set; }
@@ -41,6 +42,8 @@ namespace loki_bms_csharp.Database
         private DateTime NewestHistory;
         private DateTime OldestHistory;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public TrackFile () { }
 
         public TrackFile(TrackNumber.Internal tn, Vector64 pos, Vector64 vel, IFFData[] codes, FriendFoeStatus _ffs = FriendFoeStatus.Pending, TrackType type = TrackType.Sim, string vcs = "", string spec = "")
@@ -72,12 +75,19 @@ namespace loki_bms_csharp.Database
 
             Velocity = data.Velocity;
 
-            if(data is TrackDatum)
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Position)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LatLon)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Velocity)));
+
+            if (data is TrackDatum)
             {
                 var _asDatum = (TrackDatum)data;
 
                 Altitude = _asDatum.Altitude;
                 Heading= _asDatum.Heading;
+
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Altitude)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Heading)));
             }
 
             IFFTypes = IFFType.None;
@@ -101,16 +111,9 @@ namespace loki_bms_csharp.Database
 
             ConformalMove(dt);
 
-            /*if(DateTime.UtcNow - NewestHistory > TimeSpan.FromSeconds(10))
-            {
-                History.Add(Position);
-                NewestHistory = DateTime.UtcNow;
-            }
-            if(DateTime.UtcNow - OldestHistory > TimeSpan.FromSeconds(60) || History.Count > 6)
-            {
-                History.RemoveAt(0);
-                OldestHistory += DateTime.UtcNow - OldestHistory;
-            }*/
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Position)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LatLon)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Velocity)));
         }
 
         public void ConformalMove (float dt)

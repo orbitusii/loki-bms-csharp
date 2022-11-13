@@ -18,6 +18,8 @@ namespace loki_bms_csharp.MathL
         }
 
         public const double MetersToNM = 5.399568e-4;
+        public const double MetersToFeet = 3.28084;
+        public const double MetersPerSecToKnots = 1.944012;
 
         /// <summary>
         /// Converts a Vector64 coordinate in world space to a LatLonCoord representing its position on the surface of a sphere

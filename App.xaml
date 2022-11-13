@@ -173,6 +173,7 @@
         <!--#region Data Converters-->
         <convert:DataSourceSymbolConverter x:Key="DataSymbolConverter"/>
         <convert:DataSourceColorConverter x:Key="DataSymbolColor"/>
+        <convert:TrackDetailsUnitConverter x:Key="UnitConverter"/>
         <!--#endregion-->
     </Application.Resources>
 </Application>

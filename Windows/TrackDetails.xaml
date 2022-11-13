@@ -65,7 +65,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Altitude:"/>
-                    <Label Content="{Binding Altitude}" ContentStringFormat="F3"/>
+                    <Label Content="{Binding Altitude, ConverterParameter=MetersToFeet, Converter={StaticResource UnitConverter}}" ContentStringFormat="0 Ft MSL"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Heading:"/>
@@ -73,7 +73,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Speed:"/>
-                    <Label Content="{Binding Velocity.magnitude}" ContentStringFormat="F3"/>
+                    <Label Content="{Binding Velocity.magnitude, ConverterParameter=MetersPerSecToKts, Converter={StaticResource UnitConverter}}" ContentStringFormat="0 Kts"/>
                 </StackPanel>
 
             </StackPanel>
