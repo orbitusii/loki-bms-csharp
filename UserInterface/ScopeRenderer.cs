@@ -241,8 +241,7 @@ namespace loki_bms_csharp.UserInterface
                 }
                 else
                 {
-                    var surfaceMotion = MathL.Conversions.GetSurfaceMotion(track.Position, track.Velocity);
-                    rotation = (float)surfaceMotion.heading;
+                    rotation = (float)track.Heading_Rads;
                     extraScale = 1.5f;
                 }
 

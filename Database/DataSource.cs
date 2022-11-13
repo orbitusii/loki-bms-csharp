@@ -190,11 +190,11 @@ namespace loki_bms_csharp.Database
             }
         }
 
-        private TrackDatum ConvertFromDCSTrack (RurouniJones.Dcs.Grpc.V0.Common.Unit unit)
+        private TrackDatum ConvertFromDCSTrack (Unit unit)
         {
             var position = unit.Position;
 
-            LatLonCoord positLL = new LatLonCoord { Lat_Degrees = position.Lat, Lon_Degrees = position.Lon };
+            LatLonCoord positLL = new LatLonCoord { Lat_Degrees = position.Lat, Lon_Degrees = position.Lon, Alt = 0 };
             Vector64 posXYZ = MathL.Conversions.LLToXYZ(positLL, MathL.Conversions.EarthRadius);
             //Debug.WriteLine($"Data for {unit.Callsign}: {unit.Speed}");
 
@@ -227,6 +227,8 @@ namespace loki_bms_csharp.Database
                 Timestamp = DateTime.Now,
                 Category = cat,
                 Origin = this,
+                Altitude = unit.Position.Alt,
+                Heading = unit.Heading,
                 ExtraData = new string[] {$"Coalition:{CoalitionToString}", $"Type:{unit.Type}", $"Callsign:{unit.Callsign}"}
             };
         }

@@ -9,7 +9,17 @@ namespace loki_bms_csharp.Database
         public List<TrackNumber> TrackNumbers { get; set; }
         public Vector64 RawPosition { get; private set; }
         public Vector64 Position { get; set; }
+        public LatLonCoord LatLon => MathL.Conversions.XYZToLL(Position);
         public Vector64 Velocity { get; private set; }
+
+        public double Heading
+        {
+            get => Heading_Rads * MathL.Conversions.ToDegrees;
+            set => Heading_Rads = value * MathL.Conversions.ToRadians;
+        }
+        public double Heading_Rads { get; set; }
+
+        public double Altitude { get; set; }
 
         public IFFData[] IFFCodes { get; private set; }
         public IFFType IFFTypes { get; private set; }
@@ -62,7 +72,13 @@ namespace loki_bms_csharp.Database
 
             Velocity = data.Velocity;
 
-            //System.Diagnostics.Debug.WriteLine($"{data.Position} vs {Position} @{Velocity}");
+            if(data is TrackDatum)
+            {
+                var _asDatum = (TrackDatum)data;
+
+                Altitude = _asDatum.Altitude;
+                Heading= _asDatum.Heading;
+            }
 
             IFFTypes = IFFType.None;
             IFFCodes = codes;

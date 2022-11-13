@@ -148,6 +148,9 @@ namespace loki_bms_csharp.Database
                     var newTrack = InitiateTrack(datum.Position, datum.Velocity, TrackType.External);
                     newTrack.TrackNumbers.Add(datum.ID);
                     newTrack.Category = datum.Category;
+                    newTrack.Heading = datum.Heading;
+                    newTrack.Altitude = datum.Altitude;
+
                     foreach (object exd in datum.ExtraData)
                     {
                         string[] exdString = ((string)exd).Split(':', StringSplitOptions.TrimEntries);
