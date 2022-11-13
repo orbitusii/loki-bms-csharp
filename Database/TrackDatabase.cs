@@ -156,8 +156,10 @@ namespace loki_bms_csharp.Database
                         {
                             case "Type":
                                 string trimmed = exdString[1].Replace("-", "");
-                                string actualSymbol = ProgramData.SpecTypeSymbols.Keys.FirstOrDefault(x => trimmed.StartsWith(x)) ?? "";
-                                newTrack.SpecType = actualSymbol;
+
+                                var actual = ProgramData.SpecTypeSymbols.Keys.ToList().Find(x => trimmed.StartsWith(x) && x != "") ?? "";
+                                newTrack.SpecType = actual;
+
                                 break;
                             case "Coalition":
                                 newTrack.FFS = exdString[1] switch
