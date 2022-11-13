@@ -55,6 +55,27 @@
                     <ComboBox x:Name="SpecTypeSelection" Margin="5,0,0,0" SelectedValue="{Binding SpecType}" MinWidth="50" Template="{DynamicResource ComboBoxTemplate1}" ItemContainerStyle="{DynamicResource ComboBoxItemContainerStyle1}" Background="{DynamicResource VeryDarkGray}" BorderBrush="{DynamicResource MidGray}" Foreground="{DynamicResource OffWhite}"/>
                 </StackPanel>
 
+                <Separator Background="{DynamicResource MidGray}" VerticalAlignment="Bottom" Margin="-10,0,-10,0"/>
+                <Label Content="Kinematics" FontWeight="Bold"/>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Position:"/>
+                    <Label Content="{Binding LatLon.Lat_Degrees}" ContentStringFormat="F3"/>
+                    <Label Content="{Binding LatLon.Lon_Degrees}" ContentStringFormat="F3"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Altitude:"/>
+                    <Label Content="{Binding Altitude}" ContentStringFormat="F3"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Heading:"/>
+                    <Label Content="{Binding Heading}" ContentStringFormat="000"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Speed:"/>
+                    <Label Content="{Binding Velocity.magnitude}" ContentStringFormat="F3"/>
+                </StackPanel>
+
             </StackPanel>
         </Grid>
     </Border>
