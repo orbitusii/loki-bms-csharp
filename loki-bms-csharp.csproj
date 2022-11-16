@@ -35,15 +35,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="O2Kml" Version="0.1.1" />
     <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.6.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="KML">
-      <HintPath>..\KML\bin\Debug\net5.0\KML.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
