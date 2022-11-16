@@ -34,8 +34,8 @@ jobs:
       Solution_Path: loki-bms-csharp.sln
       Test_Project_Path: MyWpfApp.Tests\MyWpfApp.Tests.csproj
       Wpf_Project_Path: MyWpfApp\MyWpfApp.csproj   # unused
-      Wap_Project_Directory: MyWpfApp.Package
-      Wap_Project_Name: MyWpfApp.Package.wapproj
+      Wap_Project_Directory: loki-bms-csharp.Package
+      Wap_Project_Name: loki-bms-csharp.Package.wapproj
       Actions_Allow_Unsecure_Commands: true 
 
     steps:
