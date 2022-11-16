@@ -23,7 +23,7 @@ jobs:
 
     strategy:
       matrix:
-        targetplatform: [x86, x64]
+        configuration: [Debug, Release]
 
     runs-on: windows-latest  # For a list of available runner types, refer to
                              # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
@@ -63,7 +63,6 @@ jobs:
       run: msbuild $env:Solution_Path /t:Restore /p:Configuration=$env:Configuration
       env:
         Configuration: Debug
-        RuntimeIdentifier: win-${{ matrix.targetplatform }}
 
     # Decode the base 64 encoded pfx and save the Signing_Certificate - UNUSED
     #- name: Decode the pfx
@@ -74,12 +73,12 @@ jobs:
 
     # Build the Windows Application Packaging project
     - name: Build the Windows Application Packaging Project (wapproj)
-      run: msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle #/p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
+      run: msbuild $env:Solution_Path /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:BuildMode /p:AppxBundle=$env:AppxBundle #/p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
       env:
         AppxBundle: Never
+        Appx_Bundle_Platforms: x86|x64
         BuildMode: SideloadOnly
         Configuration: Debug
-        TargetPlatform: ${{ matrix.targetplatform }}
 
     # Remove the pfx - UNUSED
     #- name: Remove the pfx
