@@ -6,10 +6,18 @@
     <RootNamespace>loki_bms_csharp</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>LOKI Icon.ico</ApplicationIcon>
-    <AssemblyName>LOKI BMS</AssemblyName>
+    <AssemblyName>LOKI_BMS</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
     <PlatformTarget>$(Platform)</PlatformTarget>
+    <Title>LOKI BMS</Title>
+    <Nullable>annotations</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>LOKI_256.png</PackageIcon>
+    <RepositoryUrl>https://github.com/orbitusii/loki-bms-csharp</RepositoryUrl>
+    <PackageProjectUrl>https://orbitusii.github.io/loki-bms-csharp/</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -57,6 +65,21 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="Resources\LOKI_256.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
