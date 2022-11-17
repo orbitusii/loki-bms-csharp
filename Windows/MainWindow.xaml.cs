@@ -44,6 +44,11 @@ namespace loki_bms_csharp
             EndInit();
         }
 
+        private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ProgramData.Shutdown();
+        }
+
         public void Redraw ()
         {
             try
@@ -71,11 +76,6 @@ namespace loki_bms_csharp
             double alt = Zoom_Slider.Value;
 
             return new LatLonCoord { Lat_Degrees = lat, Lon_Degrees = lon, Alt = alt };
-        }
-
-        private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            ProgramData.Shutdown();
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)

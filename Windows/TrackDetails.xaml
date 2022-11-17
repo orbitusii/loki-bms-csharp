@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:assy="clr-namespace:loki_bms_csharp"
              xmlns:local="clr-namespace:loki_bms_csharp.Windows"
              xmlns:Database="clr-namespace:loki_bms_csharp.Database" xmlns:Settings="clr-namespace:loki_bms_csharp.Settings" x:Name="TrackDetailsPage" x:Class="loki_bms_csharp.Windows.TrackDetails"
              mc:Ignorable="d" 

@@ -190,6 +190,7 @@ namespace loki_bms_csharp
         public static void Shutdown ()
         {
             SrcWindow?.Close();
+            GeoWindow?.Close();
 
             SaveViewSettings(AppDataPath + "Views.xml");
             SaveDataSources(AppDataPath + "DataSources.xml");

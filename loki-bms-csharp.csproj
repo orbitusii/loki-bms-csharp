@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -6,11 +6,10 @@
     <RootNamespace>loki_bms_csharp</RootNamespace>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>LOKI Icon.ico</ApplicationIcon>
-    <AssemblyName>LOKI_BMS</AssemblyName>
+    <AssemblyName>LOKI BMS</AssemblyName>
   </PropertyGroup>
   <PropertyGroup>
     <PlatformTarget>$(Platform)</PlatformTarget>
-    <Title>LOKI BMS</Title>
     <Nullable>annotations</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>LOKI_256.png</PackageIcon>
@@ -18,6 +17,13 @@
     <PackageProjectUrl>https://orbitusii.github.io/loki-bms-csharp/</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Title>LOKI BMS</Title>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,12 +46,6 @@
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.49.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.50.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="O2Kml" Version="0.1.1" />
     <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.6.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
