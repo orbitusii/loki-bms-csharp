@@ -10,7 +10,7 @@ using loki_bms_csharp.Geometry;
 
 namespace loki_bms_csharp.UserInterface
 {
-    public class ScopeRenderer: IDisposable
+    public class ScopeRenderer
     {
         public SKImageInfo Info { get; private set; }
         public int Width
@@ -262,6 +262,9 @@ namespace loki_bms_csharp.UserInterface
 
                 Canvas.DrawPath(clonedPath, fillPaint);
                 Canvas.DrawPath(clonedPath, strokePaint);
+
+                Canvas.DrawRect(bounds.Right-2, bounds.Bottom - 12, 24, 16, new SKPaint { Color = SKColor.Parse("#84000000"), Style = SKPaintStyle.Fill });
+                Canvas.DrawText($"{track.Altitude * MathL.Conversions.MetersToFeet / 100:F0}", new SKPoint(bounds.Right, bounds.Bottom), new SKPaint {  Color = SKColors.White, Style = SKPaintStyle.Fill });
             }
         }
 
@@ -362,10 +365,6 @@ namespace loki_bms_csharp.UserInterface
             Vector64 scaled = screenPos * PixelsPerUnit;
 
             return new SKPoint((float)scaled.y + Width / 2, (float)scaled.z + Height / 2);
-        }
-
-        public void Dispose ()
-        {
         }
     }
 }
