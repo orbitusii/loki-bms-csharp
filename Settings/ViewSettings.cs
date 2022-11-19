@@ -78,11 +78,7 @@ namespace loki_bms_csharp.Settings
             ViewCenter = new LatLonCoord { Lat_Rad = newView.Lat_Rad, Lon_Rad = newView.Lon_Rad, Alt = 0 };
 
             UpdateCameraMatrix();
-            try
-            {
-                OnViewCenterChanged(CameraMatrix);
-            }
-            catch { }
+            OnViewCenterChanged?.Invoke(CameraMatrix);
 
             return ViewCenter;
         }

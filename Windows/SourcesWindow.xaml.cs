@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using loki_bms_csharp.Database;
 
 namespace loki_bms_csharp
 {
@@ -72,6 +73,13 @@ namespace loki_bms_csharp
             {
                 ProgramData.DataSources.RemoveAt(NamesListBox.SelectedIndex);
             }), System.Windows.Threading.DispatcherPriority.Normal);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            DataSource ds = (DataSource)SourceDetails.DataContext;
+            LatLonCoord bullsPos = new LatLonCoord { Alt = 0, Lat_Degrees = ds.Bullseye.Lat, Lon_Degrees = ds.Bullseye.Lon };
+            ProgramData.BullseyePos = bullsPos;
         }
     }
 }

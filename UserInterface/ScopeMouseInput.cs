@@ -16,7 +16,7 @@ namespace loki_bms_csharp.UserInterface
         static DateTime LastLeftClick;
         static bool DoubleClickFired;
         public static Vector64 clickStartPoint { get; private set; }
-        public static Vector64 clickDragPoint { get; private set; }
+        public static Vector64 currentMousePoint { get; private set; }
         public static Vector64 clickEndPoint { get; private set; }
         private static ref Settings.ViewSettings ViewSettings
         {
@@ -45,7 +45,7 @@ namespace loki_bms_csharp.UserInterface
             Point screenPt = e.GetPosition(ProgramData.MainWindow.ScopeCanvas);
 
             clickStartPoint = clickToPointOnEarth(screenPt);
-            clickDragPoint = clickStartPoint;
+            currentMousePoint = clickStartPoint;
             bool redraw = false;
 
             if(ClickState == MouseClickState.Left)
@@ -128,10 +128,7 @@ namespace loki_bms_csharp.UserInterface
 
         public static InputData OnMouseMove(MouseEventArgs e)
         {
-            if (ClickState != MouseClickState.None)
-            {
-                clickDragPoint = clickToPointOnEarth(e.GetPosition(ProgramData.MainWindow.ScopeCanvas));
-            }
+            currentMousePoint = clickToPointOnEarth(e.GetPosition(ProgramData.MainWindow.ScopeCanvas));
 
             return new MouseInputData { MouseButtons = ClickState, RequiresRedraw = true };
         }

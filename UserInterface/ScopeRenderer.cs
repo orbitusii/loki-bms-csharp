@@ -75,13 +75,14 @@ namespace loki_bms_csharp.UserInterface
             }
 
             DrawGeometry();
+            DrawBullseye();
             DrawFromDatabase();
 
             if (ScopeMouseInput.ClickState == MouseClickState.Left)
             {
                 try
                 {
-                    DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.clickDragPoint, SKColors.White, 1);
+                    DrawMeasureLine(ScopeMouseInput.clickStartPoint, ScopeMouseInput.currentMousePoint, SKColors.White, 1);
                 }
                 catch { }
             }
@@ -108,46 +109,7 @@ namespace loki_bms_csharp.UserInterface
             DrawWorldGeometry(ProgramData.WorldLandmasses, landPaint);
         }
 
-        public void DrawGeometry()
-        {
-            SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
-            screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
-            screenMatrix.ScaleY = screenMatrix.ScaleX;
-
-            lock (ProgramData.UserGeometry)
-            {
-                foreach (MapGeometry geom in ProgramData.UserGeometry)
-                {
-                    if(!geom.Visible) continue;
-
-                    SKPaint fill = new SKPaint
-                    {
-                        Style = SKPaintStyle.Fill,
-                        Color = SKColor.Parse(geom.FillColor),
-                    };
-                    SKPaint stroke = new SKPaint
-                    {
-                        Style = SKPaintStyle.Stroke,
-                        Color = SKColor.Parse(geom.StrokeColor),
-                    };
-
-                    foreach(SKPath path in geom.CachedPaths)
-                    {
-                        if (Canvas.QuickReject(path)) continue;
-
-                        using (SKPath clone = new SKPath(path))
-                        {
-                            clone.Transform(screenMatrix);
-
-                            Canvas.DrawPath(clone, fill);
-                            Canvas.DrawPath(clone, stroke);
-                        }
-                    }
-                }
-            }
-        }
-
-        public void DrawWorldGeometry(Geometry.MapGeometry mapData, SKPaint paint)
+        public void DrawWorldGeometry(MapGeometry mapData, SKPaint paint)
         {
             SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
             screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
@@ -168,6 +130,65 @@ namespace loki_bms_csharp.UserInterface
             }
 
             //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Done!");
+        }
+
+        public void DrawGeometry()
+        {
+            SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
+            screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
+            screenMatrix.ScaleY = screenMatrix.ScaleX;
+
+            lock (ProgramData.UserGeometry)
+            {
+                foreach (MapGeometry geom in ProgramData.UserGeometry)
+                {
+                    if (!geom.Visible) continue;
+
+                    SKPaint fill = new SKPaint
+                    {
+                        Style = SKPaintStyle.Fill,
+                        Color = SKColor.Parse(geom.FillColor),
+                    };
+                    SKPaint stroke = new SKPaint
+                    {
+                        Style = SKPaintStyle.Stroke,
+                        Color = SKColor.Parse(geom.StrokeColor),
+                    };
+
+                    foreach (SKPath path in geom.CachedPaths)
+                    {
+                        if (Canvas.QuickReject(path)) continue;
+
+                        using (SKPath clone = new SKPath(path))
+                        {
+                            clone.Transform(screenMatrix);
+
+                            Canvas.DrawPath(clone, fill);
+                            Canvas.DrawPath(clone, stroke);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DrawBullseye()
+        { 
+            Vector64 BEPos = ProgramData.BullseyeCartesian;
+            SKPaint BEBlue = new SKPaint
+            {
+                Style = SKPaintStyle.Stroke,
+                Color = SKColors.Blue,
+                StrokeWidth = 3
+            };
+
+            DrawCircle(BEPos, 8, BEBlue, false);
+            DrawCircle(BEPos, 2, BEBlue, false);
+
+            var relToBE = ProgramData.GetPositionRelativeToBullseye(ScopeMouseInput.currentMousePoint);
+
+            SKPoint bottomRight = new SKPoint(Width - 100, Height - 20);
+            Canvas.DrawText($"BE: {relToBE.heading_rads * MathL.Conversions.ToDegrees:000},{relToBE.dist * MathL.Conversions.MetersToNM:0}",
+                bottomRight, new SKPaint { TextSize = 16, Style = SKPaintStyle.Fill, Color = SKColors.White });
         }
 
         public void DrawFromDatabase()

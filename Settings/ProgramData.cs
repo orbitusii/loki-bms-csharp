@@ -32,6 +32,9 @@ namespace loki_bms_csharp
         public static Dictionary<TrackCategory, SymbolGroup> TrackSymbols { get; private set; }
         public static Dictionary<string, SVGPath> SpecTypeSymbols { get; private set; }
 
+        public static LatLonCoord BullseyePos { get; set; }
+        public static Vector64 BullseyeCartesian => MathL.Conversions.LLToXYZ(BullseyePos, MathL.Conversions.EarthRadius);
+
         public static ViewSettings ViewSettings;
         public static ObservableCollection<DataSource> DataSources;
         // TODO: add source reordering in the SourcesWindow
@@ -185,6 +188,18 @@ namespace loki_bms_csharp
 
 
             return new ObservableCollection<DataSource> { new DataSource() };
+        }
+
+        public static (double dist, double heading_rads) GetPositionRelativeToBullseye(Vector64 pos)
+        {
+            Vector64 BEpos = BullseyeCartesian;
+
+            double angle = Vector64.AngleBetween(BEpos, pos);
+            double arcLength = MathL.Conversions.EarthRadius * angle;
+
+            var hdg = MathL.Conversions.GetSurfaceMotion(BEpos, pos - BEpos).heading;
+
+            return (arcLength, hdg);
         }
 
         public static void Shutdown ()

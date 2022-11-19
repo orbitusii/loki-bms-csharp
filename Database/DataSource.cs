@@ -1,4 +1,5 @@
 ﻿using Grpc.Net.Client;
+using RurouniJones.Dcs.Grpc.V0.Coalition;
 using RurouniJones.Dcs.Grpc.V0.Common;
 using RurouniJones.Dcs.Grpc.V0.Hook;
 using RurouniJones.Dcs.Grpc.V0.Mission;
@@ -99,6 +100,9 @@ namespace loki_bms_csharp.Database
         public float ReconnectDelay = 5;
         private int CurrentReconnectAttempts;
 
+        public string MissionName { get; set; }
+        public Position Bullseye { get; set; } = new Position { Alt = 0, Lat = 0, Lon= 0 };
+
 
         private CancellationTokenSource cancelTokenSource;
         private Dictionary<uint, TrackDatum> UpdatedData = new Dictionary<uint, TrackDatum>();
@@ -142,8 +146,13 @@ namespace loki_bms_csharp.Database
                 try
                 {
                     var HookClient = new HookService.HookServiceClient(Channel);
-                    var missionName = HookClient.GetMissionName(new GetMissionNameRequest { });
-                    Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource \"{Name}\"]: Connected to {Address}:{Port}! Mission: {missionName?.Name}");
+                    var missionNameResponse = HookClient.GetMissionName(new GetMissionNameRequest { });
+                    MissionName = missionNameResponse?.Name ?? "Unknown mission";
+                    Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [DataSource \"{Name}\"]: Connected to {Address}:{Port}! Mission: {MissionName}");
+
+                    var CoalitionClient = new CoalitionService.CoalitionServiceClient(Channel);
+                    var bullseyeResponse = CoalitionClient.GetBullseye(new GetBullseyeRequest { Coalition = Coalition.Blue});
+                    Bullseye = bullseyeResponse?.Position ?? new Position { Alt = 0, Lat = 0, Lon = 0 };
 
                     CurrentReconnectAttempts = 1;
                     await StreamData();
