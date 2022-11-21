@@ -1,9 +1,11 @@
 ﻿using loki_bms_csharp.Database;
 using loki_bms_csharp.UserInterface;
 using SkiaSharp;
+using SkiaSharp.Views.WPF;
 using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -69,28 +71,21 @@ namespace loki_bms_csharp
             ScopeRenderer.Redraw(args, ProgramData.ViewSettings.CameraMatrix, ProgramData.ViewSettings.VerticalFOV);
         }
 
-        public LatLonCoord GetLatLonAltSliders()
-        {
-            double lat = Lat_Slider.Value;
-            double lon = Lon_Slider.Value;
-            double alt = Zoom_Slider.Value;
-
-            return new LatLonCoord { Lat_Degrees = lat, Lon_Degrees = lon, Alt = alt };
-        }
-
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            CheckForRedraw(ScopeHotkeys.OnKeyDown(e));
-
+            if(ScopeCanvas.IsFocused)
+                CheckForRedraw(ScopeHotkeys.OnKeyDown(e));
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            CheckForRedraw(ScopeHotkeys.OnKeyUp(e));
+            if (ScopeCanvas.IsFocused)
+                CheckForRedraw(ScopeHotkeys.OnKeyUp(e));
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
+            ScopeCanvas.Focus();
             CheckForRedraw(ScopeMouseInput.OnMouseDown(e));
         }
 

@@ -8,38 +8,30 @@
         xmlns:loki="clr-namespace:loki_bms_csharp.Windows"
         mc:Ignorable="d"
         Title="LOKI BMS - Main Scope" Height="880" Width="1720" ResizeMode="CanResizeWithGrip"
-        Style="{StaticResource WindowTheme}" Closing="PrimaryDisplay_Closing" KeyDown="OnKeyDown" KeyUp="OnKeyUp">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32" Name="TopRow"/>
-            <RowDefinition Height="3*" Name="Canvas"/>
-            <RowDefinition Height="1*" x:Name="Details" MinHeight="100"/>
-        </Grid.RowDefinitions>
-        
-        <StackPanel Orientation="Horizontal" Grid.Row="0">
+        Style="{StaticResource WindowTheme}" Closing="PrimaryDisplay_Closing" KeyDown="OnKeyDown" KeyUp="OnKeyUp"
+        FocusManager.IsFocusScope="True">
+    <DockPanel x:Name="Docks">
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <Button x:Name="SourceMenuButton" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1" Content="SRC" Click="SourceMenuButton_Click" />
             <Button x:Name="GeometryButton" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1" Content="GEO" Click="GeometryButton_Click"/>
             <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
             <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
             <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
         </StackPanel>
-        
-        <skia:SKElement x:Name="ScopeCanvas" Grid.Row="1" PaintSurface="OnPaintSurface" MouseDown="OnMouseDown" MouseUp="OnMouseUp" MouseWheel="OnMouseWheel" MouseMove="OnMouseMove"/>
-        <loki:TrackDetails x:Name="TrackDetails" Grid.Row="1" Width="200" Height="Auto" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top">
-            <loki:TrackDetails.DataContext>
-                <Binding Source="{x:Static local:ProgramData.TrackSelection}"/>
-            </loki:TrackDetails.DataContext>
-        </loki:TrackDetails>
-        <!--<Canvas x:Name="ScopeCanvas" Style="{StaticResource ScopeWindow}" ClipToBounds="True"/>-->
-        <!--<local:ScopeView x:Name="MainScope" Foreground="{x:Null}" DebugView="True" Loaded="MainScope_Loaded" RenderTransformOrigin="0.5,0.5"/>-->
-        <Button x:Name="Button_0" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="34" Width="100" Grid.Row="2" ClickMode="Release" Content="Press me or [D]"/>
-        <Slider x:Name="Lon_Slider" HorizontalAlignment="Left" Margin="60,89,0,0" Grid.Row="2" VerticalAlignment="Top" Width="120" Maximum="180" Minimum="-180"/>
-        <Slider x:Name="Lat_Slider" HorizontalAlignment="Left" Margin="60,58,0,0" Grid.Row="2" VerticalAlignment="Top" Width="120" Maximum="89.999" Minimum="-89.999"/>
-        <Label x:Name="Lon_Label" Content="{Binding Value, ElementName=Lon_Slider}" HorizontalAlignment="Left" Margin="10,85,0,0" Grid.Row="2" VerticalAlignment="Top" Width="45"/>
-        <Label x:Name="Lat_Label" Content="{Binding Value, ElementName=Lat_Slider}" HorizontalAlignment="Left" Margin="10,54,0,0" Grid.Row="2" VerticalAlignment="Top" Width="45" RenderTransformOrigin="0.511,0.02"/>
-        <Slider x:Name="Zoom_Slider" HorizontalAlignment="Left" Margin="60,120,0,0" Grid.Row="2" VerticalAlignment="Top" Width="120" Maximum="16" SmallChange="1" TickPlacement="TopLeft" DataContext="{Binding Source={x:Static local:ProgramData.ViewSettings}}" Minimum="0" IsSnapToTickEnabled="True" Value="{Binding ZoomIncrement}"/>
-        <Label x:Name="Zoom_Increment_Label" Content="{Binding Value, ElementName=Zoom_Slider}" HorizontalAlignment="Left" Margin="10,116,0,0" Grid.Row="2" VerticalAlignment="Top" Width="45"/>
-        
 
-    </Grid>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
+            <Slider x:Name="Zoom_Slider" HorizontalAlignment="Left" Margin="5,5,0,0" VerticalAlignment="Top" Width="120" Maximum="16" SmallChange="1" TickPlacement="TopLeft" DataContext="{Binding Source={x:Static local:ProgramData.ViewSettings}}" Minimum="0" IsSnapToTickEnabled="True" Value="{Binding ZoomIncrement}"/>
+            <Label x:Name="Zoom_Increment_Label" Content="{Binding Value, ElementName=Zoom_Slider}" HorizontalAlignment="Left" Margin="5,5,0,0" VerticalAlignment="Top" Width="45"/>
+        </StackPanel>
+        
+        <Grid x:Name="ScopeGrid">
+            <skia:SKElement x:Name="ScopeCanvas" PaintSurface="OnPaintSurface" MouseDown="OnMouseDown" MouseUp="OnMouseUp" MouseWheel="OnMouseWheel" MouseMove="OnMouseMove" Focusable="True"/>
+            <loki:TrackDetails x:Name="TrackDetails" Grid.Row="1" Width="200" Height="Auto" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top">
+                <loki:TrackDetails.DataContext>
+                    <Binding Source="{x:Static local:ProgramData.TrackSelection}"/>
+                </loki:TrackDetails.DataContext>
+            </loki:TrackDetails>
+        </Grid>
+    </DockPanel>
 </Window>
