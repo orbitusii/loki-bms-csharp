@@ -1,104 +1,63 @@
-# LOKI Data Structures
-## TN (Track Number): string, maybe struct eventually
-- number or code, hexadecimal?
-    - if hex, needs to be limited to a certain range
-- basically a string or an int, nothing complicated
-- should be overridden by IU# if available (moot for DCS?) and correlated between DL track and raw track
-- (maybe internal TN can be retained as a second layer of data)
-- maybe stored as a formatted string? "ITN{itn?itn:'-'}/IU{IU?IU:'-'}/..."
-    - would be easier to compare
-    - different kinds of TN:
-        - Internal, ITN
-        - External, ETN, based on other scopes and data sources
-        - Datalink/Interface Unit #, IU
+# LOKI BMS
+## Overview
+LOKI Battle Management System (BMS) is a free, open-source radar scope for use with DCS World. It aims to replicate the tools and styles found in real-world radar scopes.
+![](./docs/images/Main%20Window.png)
 
-## Uncorrelated Data: struct
-- Position (v3, cartesian)
-- Coordinates (v3, polar, derived from Position)
-- velocity (v3)
-- IFF Returns
-- IU#, if available
-- Timestamp
+## Installation
+1. Download and extract the files from a Release package, then run "LOKI BMS.exe"
+2. The DCS Server you're connecting to must have the [DCS GRPC server](https://github.com/DCS-gRPC) installed and the relevant ports for GRPC opened
 
-## Track: struct?
-- Position (v3, cartesian)
-- Coordinates (v3, polar, derived from Position)
-- velocity (v3)
-    - needs to be computable from position, heading (stored as true), speed, vertical velocity
-    - needs to compute into heading (true, magdev will be added as needed), speed, vvel
-- IFF Returns
-- IU# -> should become the main TN based on IFF and physical position/other correlation characteristics
-- Last update timestamp
-- Amp Data
-    - Friend-Foe status - FND/ASF/NEU/SUS/HOS/UNK/PND
-    - Callsign/VCS data
-    - Specific type
-        - ties into displayed type, preferred over Friend-Foe status
-- Track history
-    - previous positions every N seconds back some length of time
-    - Next drop time or maximum number of positions
-    - Displayed boolean
+## Basic Usage
+1. Run "LOKI BMS.exe"
+2. Click on the Sources Button (SRC) at the left end of the top row of buttons to open the Sources window
+	- ![](./docs/images/Sources%20Window.png)
+	1. Use the + button at the bottom left of this window to add a new Data Source
+	2. Select the new data source in the list on the left, then edit its details like the web/IP address, port, and polling rates
+	3. You can change how the raw data from this server will look on your scope using the Symbology pane on the right
+	4. To activate a source, check the "Active" box near the top of the Source Details pane
+		- Data Sources will automatically attempt to reconnect if they are unable to connect or lose the connection (often due to the mission restarting). By default, DataSources will attempt to connect 5 times, with a 5 second delay after a connection failure. This behavior can be adjusted in the `DataSources.xml` file as of 23 Nov 2022.
+	- Data Sources will remember if they were active or not when you closed the application, allowing them to automatically connect when you start the application!
+	- Data sources are stored in `%AppData%/Loki-BMS/DataSources.xml`
+3. Click on the Geometry button (GEO) in the top row of buttons to import and customize KML files that will be displayed on the scope
+	- ![](./docs/images/Geometry%20Window.png)
+	1. Click "Import" to open a file browser that will let you locate and load in KML files (you can select multiple!)
+	2. Select the geometry you want to adjust from the list on the left in order to rename it, change its stroke and fill colors, or remove it from the list
+	3. A geometry can be made invisible without removing it by toggling the checkbox next to its name in the list
+	- Geometry does not persist through application close/reopen as of 23 Nov 2022
+	- Geometry does not import colors from the source KML as of 23 Nov 2022
 
-## Track Database: static class
-- Key: TN
-- Value: Track
-- Behaviors:
-    - Correlate new data to existing tracks
-        - Broadphase, collect by proximity according to correlation parameters + some fudge factor?
-        - Fine comparison by IFF/IU#, then by kinematics
-    - Update existing track data (e.g. Amp Data) based on user input
-    - Update kinematics
-        - move tracks based on velocities and time step
-    - Drop tracks if exceeding age limit w/o new data
+### Main Scope View
+- The Main Scope's view is determined by a central view position and a vertical field of view
+	- At the bottom left of the scope is an incremented slider, representing the logarithmically-scaling vertical field of view (acceptable values are all real numbers from 0-16)
+	- The zoom level can be incremented by using the scroll wheel or touchpad's scroll function (this increments the zoom by 1.0)
+- Zoom Presets are available through the number keys 1 through 0
+	- Press and hold the button for 0.75 seconds or more to **SET** a zoom preset
+	- Press and release the same button quickly to **RECALL** a zoom preset
+	- Zoom presets store the view position and zoom level
+- Rubber band zoom, a concept that may be familiar to real-world controllers, is not implemented as of 23 Nov 2022.
+- Zoom presets and the current view are persistent through application close/reopen
+	- These presets and the current view position are stored in `%AppData%/Loki-BMS/Views.xml`
 
-## Global Settings
-- History time/quantity
-- Correlation settings
-    - Adjustable priority and limits
-    - horizontal distance
-    - vertical distance
-    - velocity difference
-    - heading difference
-    - IFF
-    - IU#
-- Theme and color settings
+### Track Details
+- By default, Tracks will display their altitude in hundreds of feet in the tags to their lower right
+- ![](./docs/images/Track%20Details%20Blank.png) ![](./docs/images/Track%20Details.png)
+- Click on a track on-screen to select it and view its details
+	- The currently selected track will be highlighted with a light gray ring
+- Viewable Details as of 23 Nov 2022
+	- Track Numbers (Internal to LOKI and External, from DCS)
+	- IFF Table - **currently blank,** pending SRS integration
+	- Category (air/sea/land/other)
+	- ID (Friend/AssumedFriend/Neutral/Suspect/Hostile/Unknown/Pending)
+	- Callsign
+	- Specific Type (changes the track's symbol on the scope)
+	- Kinematic details
+- If multiple tracks are visually stacked, you can click multiple times on the stack to iterate through the tracks at that point
 
-## Scope Stuff: a form/window/etc, or a static class tied into that
-- Viewed position (v3, polar) where z or h => width of the display, in... units (NM, KM, etc)
-- Selected Track(s) - will be used to display current track data
-- Based on Viewed position, only show Tracks from the DB that are within the screen area (store references for later use...)
-
-# Other Critical Utilities
-## Conversions
-- m/s (stored) to knots, ft/s
-- meters (stored) to nm, feet
-
-## Spherical Earth Math
-- Cartesian to Polar coordinate conversions (done)
-- Great Circle Distance
-- Tangent Plane calculation (normal is easy to find), that plane is thus ax+by+cz+d=0 (DONE)
-    - we need "up" and "right" vectors along the plane to convert from tangent space to world space
-    - those can go into a fun lil matrix that can be used later
-        - this will kinda look like...
-          [[a b c px]
-           [d e f py]
-           [g h k pz]
-           [0 0 0 1 ]]
-           where abc px => x-plane (out), def py => y-plane (right), ghk pz => z-plane (up)
-        - for reference, world space looks like
-          [[1 0 0 0]
-           [0 1 0 0]
-           [0 0 1 0]
-           [0 0 0 1]]
-        - csc(lat) * (0, 0, 1) = north vector?
-        - z cross x = y-vector?
-    - includes dot and cross product operations
-- Heading vector
-    - (0, 1) = North, the heading vector is some angle rotated around (0,0) clockwise in tangent space
-    - heading vector in tangent space then gets converted to worldspace
-- Ground Speed Vector - Heading vector * speed
-- V_Vel vector - Heading vector + normal * V_Vel (in proper units)
-- Velocity into these components
-    - first separate out V_Vel
-    - Magnitude of GSV = speed
-    - Heading vector from world space to tangent space, then get angle to north vector
+### Bullseye and Measurement Tools
+- ![](./docs/images/Bullseye.png)
+- By default, the Bullseye will be at 0 North, 0 East (null island)
+	- Clicking "Use Bullseye" in the Sources Window will move the Bullseye to that server's BlueFor bullseye position
+	- This behavior is temporary, but current as of 23 Nov 2022
+- The "BE" field at the bottom right of the screen will show the Mouse cursor's bearing and range from Bullseye in degrees and Nautical Miles, computed via Great Circle distance
+- ![](./docs/images/Bullseye%20and%20Measure%20Line.png)
+- Clicking anywhere on the scope (except on the Track Details pane) and dragging will draw a measure line, displaying the mouse cursor's position relative to the initial click point
