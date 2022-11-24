@@ -100,7 +100,9 @@ namespace loki_bms_csharp.Database
         public float ReconnectDelay = 5;
         private int CurrentReconnectAttempts;
 
+        [XmlIgnore]
         public string MissionName { get; set; }
+        [XmlIgnore]
         public Position Bullseye { get; set; } = new Position { Alt = 0, Lat = 0, Lon= 0 };
 
 
