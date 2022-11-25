@@ -11,7 +11,7 @@ using loki_bms_csharp.Geometry;
 namespace loki_bms_csharp.Settings
 {
     [XmlRoot("Geometry")]
-    internal class GeometrySettings : INotifyPropertyChanged
+    public class GeometrySettings : SerializableSettings<GeometrySettings>, INotifyPropertyChanged
     {
         [XmlIgnore]
         public MapGeometry WorldGeometry { get; set; }
@@ -42,8 +42,17 @@ namespace loki_bms_csharp.Settings
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        [XmlElement]
-        public ObservableCollection<MapGeometry> Geometry { get; set; }
+        [XmlIgnore]
+        public ObservableCollection<MapGeometry> Geometries { get; set; }
 
+        [XmlElement]
+        public List<MapGeometry> serializedGeometry
+        {
+            get => Geometries.ToList();
+            set
+            {
+                Geometries = new(value.Select(x => MapGeometry.LoadFromKML(x.FilePath)));
+            }
+        }
     }
 }

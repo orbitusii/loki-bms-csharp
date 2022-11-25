@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace loki_bms_csharp.Settings
 {
-    internal abstract class SerializableSettings<T>
+    public abstract class SerializableSettings<T>
     {
         public static T? LoadFromFile(string filename)
         {

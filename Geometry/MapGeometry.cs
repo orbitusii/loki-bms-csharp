@@ -49,7 +49,7 @@ namespace loki_bms_csharp.Geometry
         public Size? imageSize;
 
         [XmlIgnore]
-        public Path3D[] Paths3D;
+        public Path3D[] Paths3D = new Path3D[0];
         [XmlIgnore]
         public SKPath[]? CachedPaths;
 
