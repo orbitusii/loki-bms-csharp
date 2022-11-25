@@ -110,7 +110,6 @@ namespace loki_bms_csharp.UserInterface
             DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, brush);
 
             SKPaint landPaint = new SKPaint { Color = SKColor.Parse(Geometries.LandmassColor), Style = SKPaintStyle.Fill };
-            SKPaint mapsPaint = new SKPaint { Color = SKColor.Parse("#505050"), Style = SKPaintStyle.Stroke, StrokeWidth = 1 };
 
             DrawWorldGeometry(Geometries.Landmasses, landPaint);
         }
@@ -150,16 +149,8 @@ namespace loki_bms_csharp.UserInterface
                 {
                     if (!geom.Visible) continue;
 
-                    SKPaint fill = new SKPaint
-                    {
-                        Style = SKPaintStyle.Fill,
-                        Color = SKColor.Parse(geom.FillColor),
-                    };
-                    SKPaint stroke = new SKPaint
-                    {
-                        Style = SKPaintStyle.Stroke,
-                        Color = SKColor.Parse(geom.StrokeColor),
-                    };
+                    SKPaint fill = geom.GetFillBrush;
+                    SKPaint stroke = geom.GetStrokeBrush;
 
                     foreach (SKPath path in geom.CachedPaths)
                     {
