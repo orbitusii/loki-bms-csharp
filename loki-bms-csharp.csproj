@@ -27,24 +27,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\DataSymbols.svg" />
-    <None Remove="Resources\DCSMapExtents.svg" />
-    <None Remove="Resources\SpecTypes.svg" />
-    <None Remove="Resources\Tracks_Air.svg" />
-    <None Remove="Resources\Tracks_General.svg" />
-    <None Remove="Resources\WorldLandmasses.svg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\DataSymbols.svg" />
-    <EmbeddedResource Include="Resources\DCSMapExtents.svg" />
-    <EmbeddedResource Include="Resources\SpecTypes.svg" />
-    <EmbeddedResource Include="Resources\Tracks_Air.svg" />
-    <EmbeddedResource Include="Resources\Tracks_General.svg" />
-    <EmbeddedResource Include="Resources\WorldLandmasses.svg" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
     <PackageReference Include="O2Kml" Version="0.1.1" />
     <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.6.0" />
@@ -76,9 +58,28 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+    <None Update="Resources\DataSymbols.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\DCSMapExtents.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\LOKI_256.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\SpecTypes.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Tracks_Air.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Tracks_General.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\WorldLandmasses.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.ComponentModel;
-using System.Text;
 using System.Xml.Serialization;
 using loki_bms_csharp.Database;
 using loki_bms_csharp.Settings;
@@ -25,8 +23,7 @@ namespace loki_bms_csharp
         public static SourceWindow SrcWindow;
         public static GeometryWindow GeoWindow;
 
-        public static MapGeometry WorldLandmasses;
-        public static ObservableCollection<MapGeometry> UserGeometry { get; set; }
+        public static GeometrySettings GeometrySettings;
 
         public static List<SVGPath> DataSymbols { get; private set; }
         public static Dictionary<TrackCategory, SymbolGroup> TrackSymbols { get; private set; }
@@ -39,8 +36,10 @@ namespace loki_bms_csharp
         public static ObservableCollection<DataSource> DataSources;
         // TODO: add source reordering in the SourcesWindow
 
-        public static string AppDataPath;
-        public static string EmbeddedPath;
+        public static string AppDataPath { get; private set; }
+        public static string EmbeddedPath { get; private set; }
+        public static string BaseDirPath { get; private set; }
+        public static string ResourcesPath { get; private set; }
         private static string Delimiter = "\\";
         private static Assembly execAssy;
 
@@ -49,13 +48,16 @@ namespace loki_bms_csharp
             execAssy = Assembly.GetExecutingAssembly();
             EmbeddedPath = "loki_bms_csharp.Resources.";
 
+            BaseDirPath = AppDomain.CurrentDomain.BaseDirectory;
+            ResourcesPath = BaseDirPath + "Resources" + Delimiter;
+
             AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"{Delimiter}Loki-BMS{Delimiter}";
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
 
             Debug.WriteLine($"[PROGRAM]: AppData at {AppDataPath}");
 
-            LoadPermanentMapData();
             LoadSymbology();
+            LoadGeometries();
 
             ViewSettings = LoadViewSettings(AppDataPath + "Views.xml");
             DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
@@ -73,11 +75,9 @@ namespace loki_bms_csharp
                 }
             }
 
-            WorldLandmasses.CachePaths(ViewSettings.CameraMatrix);
-            UserGeometry[0].CachePaths(ViewSettings.CameraMatrix);
+            GeometrySettings.CacheGeometry(ViewSettings.CameraMatrix);
 
-            ViewSettings.OnViewCenterChanged += WorldLandmasses.CachePaths;
-            ViewSettings.OnViewCenterChanged += UserGeometry[0].CachePaths;
+            ViewSettings.OnViewCenterChanged += GeometrySettings.CacheGeometry;
 
             Debug.Write("Data Sources: ");
             foreach (var source in DataSources)
@@ -87,35 +87,18 @@ namespace loki_bms_csharp
             Debug.WriteLine($"Total: {DataSources.Count}");
         }
 
-        public static void LoadPermanentMapData()
-        {
-            Stream Landmasses = execAssy.GetManifestResourceStream(EmbeddedPath + "WorldLandmasses.svg");
-            WorldLandmasses = MapGeometry.LoadGeometryFromStream(Landmasses);
-
-            Stream mapBounds = execAssy.GetManifestResourceStream(EmbeddedPath + "DCSMapExtents.svg");
-            UserGeometry = new ObservableCollection<MapGeometry>() { MapGeometry.LoadGeometryFromStream(mapBounds) };
-            UserGeometry[0].Name = "DCS Map Extents";
-            UserGeometry[0].FillColor = "#00000000";
-            UserGeometry[0].StrokeColor = "#88ffffff";
-
-            foreach (var path in UserGeometry[0].Paths3D)
-            {
-                path.ConformToSurface = true;
-            }
-        }
-
         public static void LoadSymbology()
         {
-            DataSymbols = GetPathsFromEmbeddedFile("DataSymbols.svg");
+            DataSymbols = GetPathsFromFile(ResourcesPath +"DataSymbols.svg");
 
             TrackSymbols = new Dictionary<TrackCategory, SymbolGroup>();
-            TrackSymbols[TrackCategory.None] = new SymbolGroup(GetPathsFromEmbeddedFile("Tracks_General.svg"));
-            TrackSymbols[TrackCategory.Air] = new SymbolGroup(GetPathsFromEmbeddedFile("Tracks_Air.svg"));
+            TrackSymbols[TrackCategory.None] = new SymbolGroup(GetPathsFromFile(ResourcesPath + "Tracks_General.svg"));
+            TrackSymbols[TrackCategory.Air] = new SymbolGroup(GetPathsFromFile(ResourcesPath + "Tracks_Air.svg"));
             TrackSymbols[TrackCategory.Ship] = new SymbolGroup(new List<SVGPath>());
             TrackSymbols[TrackCategory.Ground] = new SymbolGroup(new List<SVGPath>());
 
             SpecTypeSymbols = new Dictionary<string, SVGPath>() { { "", null }, };
-            var specTypeList = GetPathsFromEmbeddedFile("SpecTypes.svg");
+            var specTypeList = GetPathsFromFile(ResourcesPath + "SpecTypes.svg");
 
             foreach(var specType in specTypeList)
             {
@@ -123,11 +106,11 @@ namespace loki_bms_csharp
             }
         }
 
-        public static List<SVGPath> GetPathsFromEmbeddedFile (string file)
+        public static List<SVGPath> GetPathsFromFile (string filepath)
         {
-            Stream symbolsStream = execAssy.GetManifestResourceStream(EmbeddedPath + file);
+            FileStream symbolStream = new FileStream(filepath, FileMode.Open);
             XmlSerializer ser = new XmlSerializer(typeof(SVGDoc));
-            SVGDoc svg = (SVGDoc)ser.Deserialize(symbolsStream);
+            SVGDoc svg = (SVGDoc)ser.Deserialize(symbolStream);
 
             List<SVGPath> paths = new List<SVGPath>(0);
 
@@ -144,6 +127,29 @@ namespace loki_bms_csharp
             }
 
             return paths;
+        }
+
+        public static void LoadGeometries()
+        {
+            GeometrySettings? loaded = GeometrySettings.LoadFromFile(AppDataPath + "Geometry.xml");
+
+            if (loaded is null)
+            {
+                loaded = new GeometrySettings()
+                {
+                    Geometries = new ObservableCollection<MapGeometry>()
+                    {
+                        MapGeometry.LoadFromSVG(ResourcesPath + "DCSMapExtents.svg"),
+                    },
+                };
+                loaded.Geometries[0].Name = "DCS Map Extents";
+                loaded.Geometries[0].ConformToSurface = true;
+                loaded.Geometries[0].StrokeColor = "#84ffffff";
+                loaded.Geometries[0].FillColor = "#00ffffff";
+            }
+            loaded.Landmasses = MapGeometry.LoadFromSVG(ResourcesPath + "WorldLandmasses.svg");
+
+            GeometrySettings = loaded;
         }
 
         public static ViewSettings LoadViewSettings(string filePath)
@@ -209,6 +215,7 @@ namespace loki_bms_csharp
 
             SaveViewSettings(AppDataPath + "Views.xml");
             SaveDataSources(AppDataPath + "DataSources.xml");
+            GeometrySettings.SaveToFile(AppDataPath + "Geometry.xml");
 
             foreach (var source in DataSources)
             {

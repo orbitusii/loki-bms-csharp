@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:loki_bms_csharp"
         xmlns:xc="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="GeometryWindow" Height="400" Width="400"
+        Title="Geometry" Height="400" Width="400"
         Style="{StaticResource WindowTheme}" Closing="Window_Closing">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -14,7 +14,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <ListBox Grid.Column="0" Margin="0,0,0,30" Name="GeometryList" ItemTemplate="{DynamicResource GeometryList}" ItemsSource="{Binding Source={x:Static local:ProgramData.UserGeometry}}"/>
+        <ListBox Grid.Column="0" Margin="0,0,0,30" Name="GeometryList" ItemTemplate="{DynamicResource GeometryList}"  DataContext="{Binding Source={x:Static local:ProgramData.GeometrySettings}}" ItemsSource="{Binding Geometries, BindsDirectlyToSource=True}"/>
         <StackPanel Grid.Column="0" Height="30" VerticalAlignment="Bottom" Orientation="Horizontal">
             <Button Width="50" Content="Import" Margin="5" Name="ImportButton" Click="ImportButton_Click"/>
             <Button Width="50" Content="Remove" Margin="5" Name="RemoveButton" Click="RemoveButton_Click"/>
