@@ -7,6 +7,7 @@ using SkiaSharp.Views.WPF;
 using loki_bms_csharp.Database;
 using loki_bms_csharp.UserInterface;
 using loki_bms_csharp.Geometry;
+using loki_bms_csharp.Settings;
 
 namespace loki_bms_csharp.UserInterface
 {
@@ -21,6 +22,11 @@ namespace loki_bms_csharp.UserInterface
         public int Height
         {
             get { return Info.Height; }
+        }
+
+        protected GeometrySettings Geometries
+        {
+            get => ProgramData.GeometrySettings;
         }
 
         public SKSurface Surface { get; private set; }
@@ -98,15 +104,15 @@ namespace loki_bms_csharp.UserInterface
             SKPaint brush = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
-                Color = SKColor.FromHsl(215, 30, 8),
+                Color = SKColor.Parse(Geometries.OceanColor),
             };
 
             DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, brush);
 
-            SKPaint landPaint = new SKPaint { Color = SKColor.Parse("#303030"), Style = SKPaintStyle.Fill };
+            SKPaint landPaint = new SKPaint { Color = SKColor.Parse(Geometries.LandmassColor), Style = SKPaintStyle.Fill };
             SKPaint mapsPaint = new SKPaint { Color = SKColor.Parse("#505050"), Style = SKPaintStyle.Stroke, StrokeWidth = 1 };
 
-            DrawWorldGeometry(ProgramData.WorldLandmasses, landPaint);
+            DrawWorldGeometry(Geometries.Landmasses, landPaint);
         }
 
         public void DrawWorldGeometry(MapGeometry mapData, SKPaint paint)
@@ -138,9 +144,9 @@ namespace loki_bms_csharp.UserInterface
             screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
             screenMatrix.ScaleY = screenMatrix.ScaleX;
 
-            lock (ProgramData.UserGeometry)
+            lock (Geometries.Geometries)
             {
-                foreach (MapGeometry geom in ProgramData.UserGeometry)
+                foreach (MapGeometry geom in Geometries.Geometries)
                 {
                     if (!geom.Visible) continue;
 
