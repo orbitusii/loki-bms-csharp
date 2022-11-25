@@ -10,7 +10,7 @@ using loki_bms_csharp.Geometry;
 
 namespace loki_bms_csharp.Settings
 {
-    [XmlRoot("Geometry")]
+    [XmlRoot("GeometrySettings")]
     public class GeometrySettings : SerializableSettings<GeometrySettings>, INotifyPropertyChanged
     {
         [XmlIgnore]
