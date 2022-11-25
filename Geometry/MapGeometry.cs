@@ -86,6 +86,32 @@ namespace loki_bms_csharp.Geometry
             else throw new FileNotFoundException($"KML File at {filepath} was not found!");
         }
 
+        public static MapGeometry LoadFromSVG (string filepath, bool conformal = true)
+        {
+            if(File.Exists(filepath))
+            {
+                SVGDoc doc;
+                using (FileStream stream = new FileStream(filepath, FileMode.Open))
+                {
+                    XmlSerializer ser = new XmlSerializer(typeof(SVGDoc));
+                    doc = (SVGDoc)ser.Deserialize(stream);
+                }
+
+                var paths = GetAllPaths(doc);
+                var size = ParseImageSize(doc.viewBox);
+
+                MapGeometry newGeo = new MapGeometry
+                {
+                    imageSize = size,
+                    Paths3D = ConvertGeometryTo3D(paths, size),
+                    ConformToSurface = conformal,
+                };
+
+                return newGeo;
+            }
+            else throw new FileNotFoundException($"SVG File at {filepath} was not found!");
+        }
+
         public static MapGeometry LoadGeometryFromStream (Stream source)
         {
             (Size size, SVGPath[] paths) = UnpackSVG(source);
@@ -152,7 +178,33 @@ namespace loki_bms_csharp.Geometry
             }
 
             return (imageSize, paths.ToArray());
+        }
 
+        public static SVGPath[] GetAllPaths (SVGDoc svg)
+        {
+            List<SVGPath> paths = new List<SVGPath>(0);
+
+            if (svg.paths != null)
+            {
+                foreach (SVGPath path in svg.paths)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Found path {path.name}");
+                    paths.Add(path);
+                }
+            }
+            if (svg.groups != null)
+            {
+
+                foreach (SVGGroup group in svg.groups)
+                {
+                    foreach (SVGPath g_p in group.paths)
+                    {
+                        paths.Add(g_p);
+                    }
+                }
+            }
+
+            return paths.ToArray();
         }
 
         public static Size ParseImageSize (string viewBox)
