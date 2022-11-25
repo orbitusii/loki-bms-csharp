@@ -45,8 +45,7 @@ namespace loki_bms_csharp.Windows
                     MapGeometry geo = MapGeometry.LoadFromKML(filename);
                     geo.CachePaths(ProgramData.ViewSettings.CameraMatrix);
 
-                    ProgramData.UserGeometry.Add(geo);
-                    ProgramData.ViewSettings.OnViewCenterChanged += geo.CachePaths;
+                    ProgramData.GeometrySettings.Geometries.Add(geo);
                 }
             }
         }
@@ -54,8 +53,7 @@ namespace loki_bms_csharp.Windows
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             MapGeometry toRemove = (MapGeometry)GeometryList.SelectedItem;
-            ProgramData.ViewSettings.OnViewCenterChanged -= toRemove.CachePaths;
-            ProgramData.UserGeometry.Remove(toRemove);
+            ProgramData.GeometrySettings.Geometries.Remove(toRemove);
         }
     }
 }
