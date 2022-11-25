@@ -41,9 +41,87 @@ namespace loki_bms_csharp.Geometry
         public string FilePath { get; set; } = "";
 
         [XmlElement]
-        public string StrokeColor { get; set; } = "#ffffffff";
+        public string StrokeColor
+        {
+            get => _strokecolor;
+            set
+            {
+                _strokecolor = value;
+                if(_strokeBrush is not null)
+                {
+                    _strokeBrush.Color = SKColor.Parse(_strokecolor);
+                }
+            }
+        }
+        private string _strokecolor = "#ffffffff";
+
         [XmlElement]
-        public string FillColor { get; set; } = "#88ffffff";
+        public float StrokeWidth
+        {
+            get => _strokewidth;
+            set
+            {
+                _strokewidth = value;
+                if(_strokeBrush is not null)
+                {
+                    _strokeBrush.StrokeWidth = _strokewidth;
+                }
+            }
+        }
+        private float _strokewidth = 1;
+
+        [XmlElement]
+        public string FillColor
+        {
+            get => _fillcolor;
+            set
+            {
+                _fillcolor = value;
+                if (_fillBrush is not null)
+                {
+                    _fillBrush.Color = SKColor.Parse(_fillcolor);
+                }
+            }
+        }
+        private string _fillcolor = "#88ffffff";
+
+        [XmlIgnore]
+        public SKPaint GetStrokeBrush
+        {
+            get
+            {
+                if(_strokeBrush is null)
+                {
+                    _strokeBrush = new SKPaint()
+                    {
+                        Style = SKPaintStyle.Stroke,
+                        StrokeWidth = StrokeWidth,
+                        Color = SKColor.Parse(StrokeColor),
+                    };
+                }
+                return _strokeBrush;
+            }
+        }
+        private SKPaint? _strokeBrush;
+
+        [XmlIgnore]
+        public SKPaint GetFillBrush
+        {
+            get
+            {
+                if(_fillBrush is null)
+                {
+                    _fillBrush = new SKPaint()
+                    {
+                        Style = SKPaintStyle.Fill,
+                        Color = SKColor.Parse(FillColor),
+                    };
+                }
+
+                return _fillBrush;
+            }
+        }
+        private SKPaint? _fillBrush;
 
         [XmlIgnore]
         public Size? imageSize;
