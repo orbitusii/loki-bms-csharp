@@ -43,21 +43,29 @@ namespace loki_bms_csharp.Settings
         public event PropertyChangedEventHandler? PropertyChanged;
 
 
-        [XmlElement("Geometries")]
-        public List<MapGeometry> _serializedGeometry
+        [XmlElement("Geometry")]
+        public MapGeometry[] _serializedGeometry
         {
-            get => Geometries.ToList();
+            get => Geometries.ToArray();
             set
             {
-                Geometries = new(value.Select(x => MapGeometry.LoadFromKML(x.FilePath)));
+                Geometries.Clear();
+                foreach (var rawGeo in value)
+                {
+                    MapGeometry loaded = MapGeometry.LoadFromFile(rawGeo.FilePath, rawGeo.ConformToSurface);
+
+                    rawGeo.Paths3D = loaded.Paths3D;
+
+                    Geometries.Add(rawGeo);
+                }
             }
         }
         [XmlIgnore]
-        public ObservableCollection<MapGeometry> Geometries { get; set; }
+        public ObservableCollection<MapGeometry> Geometries { get; set; } = new ObservableCollection<MapGeometry>();
 
         public void CacheGeometry (MathL.TangentMatrix matrix)
         {
-            Landmasses.CachePaths(matrix);
+            Landmasses?.CachePaths(matrix);
             foreach(MapGeometry geo in Geometries)
             {
                 geo.CachePaths(matrix);
