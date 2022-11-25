@@ -14,7 +14,7 @@ namespace loki_bms_csharp.Settings
     public class GeometrySettings : SerializableSettings<GeometrySettings>, INotifyPropertyChanged
     {
         [XmlIgnore]
-        public MapGeometry WorldGeometry { get; set; }
+        public MapGeometry Landmasses { get; set; }
 
         private string _ocean = "#ff0E131B";
         [XmlElement]
@@ -42,16 +42,25 @@ namespace loki_bms_csharp.Settings
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        [XmlIgnore]
-        public ObservableCollection<MapGeometry> Geometries { get; set; }
 
-        [XmlElement]
-        public List<MapGeometry> serializedGeometry
+        [XmlElement("Geometries")]
+        public List<MapGeometry> _serializedGeometry
         {
             get => Geometries.ToList();
             set
             {
                 Geometries = new(value.Select(x => MapGeometry.LoadFromKML(x.FilePath)));
+            }
+        }
+        [XmlIgnore]
+        public ObservableCollection<MapGeometry> Geometries { get; set; }
+
+        public void CacheGeometry (MathL.TangentMatrix matrix)
+        {
+            Landmasses.CachePaths(matrix);
+            foreach(MapGeometry geo in Geometries)
+            {
+                geo.CachePaths(matrix);
             }
         }
     }
