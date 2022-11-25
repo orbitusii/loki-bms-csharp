@@ -49,7 +49,7 @@ namespace loki_bms_csharp
             EmbeddedPath = "loki_bms_csharp.Resources.";
 
             BaseDirPath = AppDomain.CurrentDomain.BaseDirectory;
-            ResourcesPath = BaseDirPath + Delimiter + "Resources" + Delimiter;
+            ResourcesPath = BaseDirPath + "Resources" + Delimiter;
 
             AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"{Delimiter}Loki-BMS{Delimiter}";
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
@@ -129,50 +129,25 @@ namespace loki_bms_csharp
             return paths;
         }
 
-        public static List<SVGPath> GetPathsFromEmbeddedFile (string file)
-        {
-            Stream symbolsStream = execAssy.GetManifestResourceStream(EmbeddedPath + file);
-            XmlSerializer ser = new XmlSerializer(typeof(SVGDoc));
-            SVGDoc svg = (SVGDoc)ser.Deserialize(symbolsStream);
-
-            List<SVGPath> paths = new List<SVGPath>(0);
-
-            if (svg.paths != null)
-            {
-                paths.AddRange(svg.paths);
-            }
-            if (svg.groups != null)
-            {
-                foreach (SVGGroup group in svg.groups)
-                {
-                    paths.AddRange(group.paths);
-                }
-            }
-
-            return paths;
-        }
-
         public static void LoadGeometries()
         {
             GeometrySettings? loaded = GeometrySettings.LoadFromFile(AppDataPath + "Geometry.xml");
 
             if (loaded is null)
             {
-                FileStream landmassStream = new FileStream(ResourcesPath + "WorldLandmasses.svg", FileMode.Open);
-                FileStream dcsMapsStream = new FileStream(ResourcesPath + "DCSMapExtents.svg", FileMode.Open);
-
                 loaded = new GeometrySettings()
                 {
-                    Landmasses = MapGeometry.LoadGeometryFromStream(landmassStream),
                     Geometries = new ObservableCollection<MapGeometry>()
                     {
-                        MapGeometry.LoadGeometryFromStream(dcsMapsStream),
+                        MapGeometry.LoadFromSVG(ResourcesPath + "DCSMapExtents.svg"),
                     },
                 };
                 loaded.Geometries[0].Name = "DCS Map Extents";
                 loaded.Geometries[0].ConformToSurface = true;
                 loaded.Geometries[0].StrokeColor = "#84ffffff";
+                loaded.Geometries[0].FillColor = "#00ffffff";
             }
+            loaded.Landmasses = MapGeometry.LoadFromSVG(ResourcesPath + "WorldLandmasses.svg");
 
             GeometrySettings = loaded;
         }
