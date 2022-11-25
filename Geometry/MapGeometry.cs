@@ -17,18 +17,43 @@ namespace loki_bms_csharp.Geometry
 {
     public class MapGeometry
     {
+        [XmlAttribute]
         public string Name { get; set; } = "";
+
+        [XmlAttribute]
         public bool Visible { get; set; } = true;
 
+        [XmlAttribute]
+        public bool ConformToSurface {
+            get => _conform;
+            set
+            {
+                _conform = value;
+                foreach(Path3D path in Paths3D)
+                {
+                    path.ConformToSurface = value;
+                }
+            }
+        }
+        private bool _conform;
+
+        [XmlElement]
+        public string FilePath { get; set; } = "";
+
+        [XmlElement]
         public string StrokeColor { get; set; } = "#ffffffff";
+        [XmlElement]
         public string FillColor { get; set; } = "#88ffffff";
 
-        public Size imageSize;
+        [XmlIgnore]
+        public Size? imageSize;
 
+        [XmlIgnore]
         public Path3D[] Paths3D;
-        public SKPath[] CachedPaths;
+        [XmlIgnore]
+        public SKPath[]? CachedPaths;
 
-        public static MapGeometry LoadFromKML (string filepath)
+        public static MapGeometry LoadFromKML (string filepath, bool conformToSurface = true)
         {
             if (File.Exists(filepath))
             {
@@ -53,10 +78,10 @@ namespace loki_bms_csharp.Geometry
                                 Lon_Degrees = x.Lon,
                                 Alt = x.Alt ?? 0
                             })));
-                    geoPaths.Add(new Path3D { Name = pm.name, Points = points.ToArray(), ConformToSurface = true, Closed = false });
+                    geoPaths.Add(new Path3D { Name = pm.name, Points = points.ToArray(), ConformToSurface = conformToSurface, Closed = false });
                 }
 
-                return new MapGeometry { Name = geoPaths[0]?.Name, Paths3D = geoPaths.ToArray() };
+                return new MapGeometry { Name = geoPaths[0]?.Name, FilePath = filepath, ConformToSurface = conformToSurface, Paths3D = geoPaths.ToArray() };
             }
             else throw new FileNotFoundException($"KML File at {filepath} was not found!");
         }
@@ -77,6 +102,21 @@ namespace loki_bms_csharp.Geometry
         public void CachePaths(MathL.TangentMatrix cameraMatrix)
         {
             CachedPaths = ConvertToSKPaths(Paths3D, cameraMatrix);
+        }
+
+        public static SKPath[] ConvertToSKPaths(Path3D[] paths, MathL.TangentMatrix cameraMatrix)
+        {
+            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Caching map data paths for drawing...");
+
+            SKPath[] cached = new SKPath[paths.Length];
+
+            for (int i = 0; i < paths.Length; i++)
+            {
+                cached[i] = paths[i].GetScreenSpacePath(cameraMatrix);
+            }
+
+            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Done!");
+            return cached;
         }
 
         public static (Size size, SVGPath[] paths) UnpackSVG(Stream source)
@@ -145,7 +185,7 @@ namespace loki_bms_csharp.Geometry
 
                 foreach(var subpath in subpaths)
                 {
-                    Path3D convertedPath = ConvertPath(subpath, imageSize);
+                    Path3D convertedPath = ConvertSVGToPath(subpath, imageSize);
                     paths.Add(convertedPath);
                 }
             }
@@ -155,7 +195,7 @@ namespace loki_bms_csharp.Geometry
             return pathsArray;
         }
 
-        private static Path3D ConvertPath (SVGPath path, Size imageSize)
+        private static Path3D ConvertSVGToPath (SVGPath path, Size imageSize)
         {
             Point[] points = path.GetPoints();
             Vector64[] points3D = new Vector64[points.Length];
@@ -164,14 +204,14 @@ namespace loki_bms_csharp.Geometry
 
             for (int i = 0; i < points.Length; i++)
             {
-                LatLonCoord latLon = PointToLatLon(points[i], imageSize);
+                LatLonCoord latLon = SVGPointToLatLon(points[i], imageSize);
                 points3D[i] = MathL.Conversions.LLToXYZ(latLon);
             }
 
             return new Path3D { Name = path.name, Points = points3D };
         }
 
-        public static LatLonCoord PointToLatLon (Point point, Size imageSize)
+        public static LatLonCoord SVGPointToLatLon (Point point, Size imageSize)
         {
             double percentDown = point.Y / imageSize.Height;
             double percentAcross = point.X / imageSize.Width;
@@ -180,21 +220,6 @@ namespace loki_bms_csharp.Geometry
             double Lon = (percentAcross - 0.5) * 360;
 
             return new LatLonCoord { Lat_Degrees = Lat, Lon_Degrees = Lon };
-        }
-
-        public static SKPath[] ConvertToSKPaths (Path3D[] paths, MathL.TangentMatrix cameraMatrix)
-        {
-            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Caching map data paths for drawing...");
-
-            SKPath[] cached = new SKPath[paths.Length];
-
-            for (int i = 0; i < paths.Length; i++)
-            {
-                cached[i] = paths[i].GetScreenSpacePath(cameraMatrix);
-            }
-
-            System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Done!");
-            return cached;
         }
     }
 }
