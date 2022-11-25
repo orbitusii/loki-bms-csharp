@@ -53,6 +53,13 @@ namespace loki_bms_csharp.Geometry
         [XmlIgnore]
         public SKPath[]? CachedPaths;
 
+        public static MapGeometry LoadFromFile (string filepath, bool conformal = true)
+        {
+            if (filepath.EndsWith(".svg")) return LoadFromSVG(filepath, conformal);
+            else if (filepath.EndsWith(".kml")) return LoadFromKML(filepath, conformal);
+            else return default;
+        }
+
         public static MapGeometry LoadFromKML (string filepath, bool conformToSurface = true)
         {
             if (File.Exists(filepath))
@@ -102,6 +109,8 @@ namespace loki_bms_csharp.Geometry
 
                 MapGeometry newGeo = new MapGeometry
                 {
+                    Name = paths[0]?.name ?? "unnamed geometry",
+                    FilePath = filepath,
                     imageSize = size,
                     Paths3D = ConvertGeometryTo3D(paths, size),
                     ConformToSurface = conformal,
