@@ -124,11 +124,12 @@ namespace loki_bms_csharp.UserInterface
 
             foreach (SKPath path in mapData.CachedPaths)
             {
-                if (Canvas.QuickReject(path)) continue;
 
                 using (SKPath clone = new SKPath(path))
                 {
                     clone.Transform(screenMatrix);
+                    
+                    if (Canvas.QuickReject(clone)) continue;
 
                     Canvas.DrawPath(clone, paint);
                 }
@@ -154,11 +155,11 @@ namespace loki_bms_csharp.UserInterface
 
                     foreach (SKPath path in geom.CachedPaths)
                     {
-                        if (Canvas.QuickReject(path)) continue;
-
                         using (SKPath clone = new SKPath(path))
                         {
                             clone.Transform(screenMatrix);
+
+                            if (Canvas.QuickReject(clone)) continue;
 
                             Canvas.DrawPath(clone, fill);
                             Canvas.DrawPath(clone, stroke);
