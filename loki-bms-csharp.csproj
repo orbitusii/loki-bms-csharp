@@ -25,6 +25,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="loki-plugins\**" />
+    <EmbeddedResource Remove="loki-plugins\**" />
+    <None Remove="loki-plugins\**" />
+    <Page Remove="loki-plugins\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
