@@ -57,7 +57,7 @@ namespace loki_bms_csharp.MathL
         }
 
         /// <summary>
-        /// Gets the velocity of an object tangent 
+        /// Gets the velocity of an object, in cartesian space, based on its speed tangent to the surface of Earth
         /// </summary>
         /// <param name="latLon"></param>
         /// <param name="heading">Heading, in clockwise radians from true North</param>
