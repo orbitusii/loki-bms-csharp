@@ -105,6 +105,18 @@ namespace loki_bms_csharp.Database
         [XmlIgnore]
         public Position Bullseye { get; set; } = new Position { Alt = 0, Lat = 0, Lon= 0 };
 
+        [XmlIgnore]
+        public DateTime? LastUpdate
+        {
+            get => _lastUpdate;
+            set
+            {
+                _lastUpdate = value;
+                OnPropertyChanged("LastUpdate");
+            }
+        }
+        [XmlIgnore]
+        private DateTime? _lastUpdate = null;
 
         private CancellationTokenSource cancelTokenSource;
         private Dictionary<uint, TrackDatum> UpdatedData = new Dictionary<uint, TrackDatum>();
@@ -123,6 +135,19 @@ namespace loki_bms_csharp.Database
             Address = address;
             Port = port;
             Channel = GrpcChannel.ForAddress($"http://{Address}:{Port}");
+        }
+
+        public void PauseUnpause ()
+        {
+            try
+            {
+                var HookClient = new HookService.HookServiceClient(Channel);
+
+                bool isPaused = HookClient.GetPaused(new GetPausedRequest()).Paused;
+
+                HookClient.SetPaused(new SetPausedRequest { Paused = !isPaused });
+            }
+            catch { }
         }
 
         public void Activate ()
@@ -192,6 +217,8 @@ namespace loki_bms_csharp.Database
                     {
                         UpdatedData[unit.Unit.Id] = ConvertFromDCSTrack(unit.Unit);
                     }
+
+                    LastUpdate= DateTime.Now;
                 }
             }
             catch (Exception e)
@@ -209,10 +236,10 @@ namespace loki_bms_csharp.Database
             Vector64 posXYZ = MathL.Conversions.LLToXYZ(positLL, MathL.Conversions.EarthRadius);
             //Debug.WriteLine($"Data for {unit.Callsign}: {unit.Speed}");
 
-            double speed = unit.Speed;
-            double heading = unit.Heading * MathL.Conversions.ToRadians;
+            double speed = unit.Velocity.Speed;
+            double hdg_rads = unit.Velocity.Heading * MathL.Conversions.ToRadians;
 
-            TrackCategory cat = unit.Category switch
+            TrackCategory cat = unit.Group.Category switch
             {
                 GroupCategory.Airplane or GroupCategory.Helicopter => TrackCategory.Air,
                 GroupCategory.Ground or GroupCategory.Train => TrackCategory.Ground,
@@ -220,7 +247,7 @@ namespace loki_bms_csharp.Database
                 _ => TrackCategory.None,
             };
 
-            Vector64 vel = MathL.Conversions.GetTangentVelocity(positLL, heading, speed);
+            Vector64 vel = MathL.Conversions.GetTangentVelocity(positLL, hdg_rads, speed);
 
             string CoalitionToString = unit.Coalition switch
             {
@@ -239,7 +266,7 @@ namespace loki_bms_csharp.Database
                 Category = cat,
                 Origin = this,
                 Altitude = unit.Position.Alt,
-                Heading = unit.Heading,
+                Heading = unit.Velocity.Heading,
                 ExtraData = new string[] {$"Coalition:{CoalitionToString}", $"Type:{unit.Type}", $"Callsign:{unit.Callsign}"}
             };
         }
