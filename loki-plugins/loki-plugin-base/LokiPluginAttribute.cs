@@ -13,22 +13,27 @@ namespace loki_plugin_base
         public string PluginName = string.Empty;
         public string Description = string.Empty;
         public string Version = "0.0.0";
+
+        public string Author = "Unknown";
+
         public LokiVersion DesiredLokiVersion = LokiVersion.Any;
+
+        public Type[]? DataSourceTypes;
+        public Type[]? CustomMenuTypes;
 
         public LokiPluginAttribute(Type RootType,
                                    string PluginName,
                                    string Description,
-                                   string Version,
-                                   LokiVersion DesiredLokiVersion = LokiVersion.Any)
+                                   string Version)
         {
             this.RootType = RootType;
             this.PluginName = PluginName;
             this.Description = Description;
             this.Version = Version;
-            this.DesiredLokiVersion= DesiredLokiVersion;
         }
     }
 
+    [Flags]
     public enum LokiVersion
     {
         Any = 0,

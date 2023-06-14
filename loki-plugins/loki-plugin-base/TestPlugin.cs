@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-[assembly: LokiPlugin(typeof(LokiPlugin), "Test Plugin", "Test Plugin", "999")]
+[assembly: LokiPlugin(typeof(TestPlugin), "Test Plugin", "Test Plugin", "999", Author = "Dani Lodholm")]
 namespace loki_plugin_base
 {
     public class TestPlugin : LokiPlugin

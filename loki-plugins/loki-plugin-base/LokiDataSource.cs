@@ -15,6 +15,5 @@ namespace loki_plugin_base
         public abstract bool CheckAlive();
 
         public abstract IKinematicData[] GetFreshData();
-
     }
 }

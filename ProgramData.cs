@@ -10,11 +10,15 @@ using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Geometry.SVG;
 using System.Reflection;
 using loki_bms_csharp.Windows;
+using loki_bms_csharp.Plugins;
+using loki_plugin_base;
 
 namespace loki_bms_csharp
 {
     public static class ProgramData
     {
+        internal static PluginLoader Plugins = new PluginLoader(LokiVersion.v0_2_0);
+
         public static MainWindow MainWindow;
         public static UserInterface.ScopeRenderer MainScopeRenderer => MainWindow.ScopeRenderer;
 
@@ -55,6 +59,8 @@ namespace loki_bms_csharp
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
 
             Debug.WriteLine($"[PROGRAM]: AppData at {AppDataPath}");
+
+            Plugins.LoadPlugins();
 
             LoadSymbology();
             LoadGeometries();
