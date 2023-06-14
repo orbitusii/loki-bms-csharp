@@ -1,4 +1,5 @@
-﻿using System;
+﻿using loki_bms_common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ namespace loki_plugin_base
         public abstract void Deactivate();
 
         public abstract bool CheckAlive();
+
+        public abstract IKinematicData[] GetFreshData();
 
     }
 }

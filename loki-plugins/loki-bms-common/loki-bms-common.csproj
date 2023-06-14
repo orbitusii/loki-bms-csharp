@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>loki_plugin_base</RootNamespace>
+    <RootNamespace>loki_bms_common</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\loki-bms-common\loki-bms-common.csproj" />
+    <Compile Remove="TrackDatum.cs" />
   </ItemGroup>
 
 </Project>

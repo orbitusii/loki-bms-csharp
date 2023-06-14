@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using loki_bms_common;
 
 namespace loki_bms_csharp.Database
 {
-    public class TrackFile : IKinematicData, INotifyPropertyChanged
+    public class TrackFile : INotifyPropertyChanged
     {
         public List<TrackNumber> TrackNumbers { get; set; }
         public Vector64 RawPosition { get; private set; }

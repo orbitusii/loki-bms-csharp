@@ -31,6 +31,10 @@
     <None Remove="loki-plugins\**" />
     <Page Remove="loki-plugins\**" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Database\IKinematicData.cs" />
+    <Compile Remove="MathL\Vector64.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
@@ -38,6 +42,11 @@
     <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.7.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="loki-plugins\loki-bms-common\loki-bms-common.csproj" />
+    <ProjectReference Include="loki-plugins\loki-plugin-base\loki-plugin-base.csproj" />
   </ItemGroup>
 
   <ItemGroup>
