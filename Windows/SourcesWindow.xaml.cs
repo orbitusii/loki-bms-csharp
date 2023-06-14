@@ -81,5 +81,11 @@ namespace loki_bms_csharp
             LatLonCoord bullsPos = new LatLonCoord { Alt = 0, Lat_Degrees = ds.Bullseye.Lat, Lon_Degrees = ds.Bullseye.Lon };
             ProgramData.BullseyePos = bullsPos;
         }
+
+        private void Pause_Click(object sender, RoutedEventArgs e)
+        {
+            DataSource ds = (DataSource)SourceDetails.DataContext;
+            ds.PauseUnpause();
+        }
     }
 }

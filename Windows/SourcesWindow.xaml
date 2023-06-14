@@ -31,6 +31,7 @@
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="55"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
 
             <Label Content="Source Details" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -41,17 +42,21 @@
             <Label Content="Name" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,29,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
 
             <Grid x:Name="BlockableDetails" Grid.Row="2" Grid.Column="1" Width="Auto" IsEnabled="{Binding CanEditPollRate, BindsDirectlyToSource=True, Mode=OneWay, NotifyOnSourceUpdated=True}">
-                <Label Content="Address" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
-                <TextBox x:Name="AddressBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="64,1,0,0" Text="{Binding Address, BindsDirectlyToSource=True, FallbackValue=127.0.0.1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Grid.Row="1" Height="18"/>
-                <Label Content="Port" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,24,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
-                <TextBox x:Name="PortBox" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="64,24,0,0" Text="{Binding Port, BindsDirectlyToSource=True, FallbackValue=50051, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Grid.Row="1" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
-                <Label Content="Polling" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
-                <TextBox x:Name="Poll_Normal" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="134,47,0,0" Text="{Binding PollRate, BindsDirectlyToSource=True, FallbackValue=10, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" Grid.Row="1" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
-                <Label Content="Normal" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="80,47,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
-                <TextBox x:Name="Poll_Slow" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="134,70,0,0" Text="{Binding SlowPollrate, BindsDirectlyToSource=True, FallbackValue=30, Mode=TwoWay, StringFormat=\{0:D\}, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" Grid.Row="1" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
-                <Label Content="Slow" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="80,70,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0" Grid.Row="1"/>
+                <Label Content="Address" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
+                <TextBox x:Name="AddressBox" HorizontalAlignment="Left" Margin="64,1,0,0" Text="{Binding Address, BindsDirectlyToSource=True, FallbackValue=127.0.0.1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Height="18"/>
+                <Label Content="Port" HorizontalAlignment="Left" Margin="10,24,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
+                <TextBox x:Name="PortBox" HorizontalAlignment="Left" Margin="64,24,0,0" Text="{Binding Port, BindsDirectlyToSource=True, FallbackValue=50051, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="140" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
+                <Label Content="Polling" HorizontalAlignment="Left" Margin="10,47,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
+                <TextBox x:Name="Poll_Normal" HorizontalAlignment="Left" Margin="134,47,0,0" Text="{Binding PollRate, BindsDirectlyToSource=True, FallbackValue=10, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
+                <Label Content="Normal" HorizontalAlignment="Left" Margin="80,47,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
+                <TextBox x:Name="Poll_Slow" HorizontalAlignment="Left" Margin="134,70,0,0" Text="{Binding SlowPollrate, BindsDirectlyToSource=True, FallbackValue=30, Mode=TwoWay, StringFormat=\{0:D\}, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" VerticalAlignment="Top" Width="70" Height="18" PreviewTextInput="ForceTextInputToNumerals" DataObject.Pasting="PasteOnlyNumbers"/>
+                <Label Content="Slow" HorizontalAlignment="Left" Margin="80,70,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
             </Grid>
+            <Button Content="Toggle Pause" Margin="10,0,139,35" Grid.Row="2" VerticalAlignment="Bottom" Height="20" Click="Pause_Click" Grid.RowSpan="2"/>
+            <Label x:Name="LastUpdatelabel" Grid.Row="3" Content="{Binding LastUpdate, BindsDirectlyToSource=True, StringFormat=\{0:R\}, TargetNullValue=offline}" HorizontalAlignment="Center" Margin="0,25,0,0" VerticalAlignment="Top" Width="205" Height="25"/>
+
             <Button x:Name="BullseyeButton" Content="Use Bullseye" HorizontalAlignment="Left" Margin="140,6,0,0" Grid.Row="1" VerticalAlignment="Top" Height="18" Width="65" Click="Button_Click"/>
+            <Label x:Name="MissionTitle" Grid.Row="2" Content="{Binding MissionName, BindsDirectlyToSource=True, StringFormat=\{0:R\}, TargetNullValue=offline}" HorizontalAlignment="Left" Margin="91,0,0,32" Width="124" Height="25" VerticalAlignment="Bottom" Grid.RowSpan="2"/>
         </Grid>
         <Grid Grid.Column="2" DataContext="{Binding SelectedItem, ElementName=NamesListBox}">
             <Grid.RowDefinitions>

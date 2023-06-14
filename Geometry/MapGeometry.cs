@@ -10,8 +10,8 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using System.Windows;
 using SkiaSharp;
-using KML;
-using KML.Shapes;
+using O2Kml;
+using O2Kml.Shapes;
 
 namespace loki_bms_csharp.Geometry
 {
@@ -161,7 +161,7 @@ namespace loki_bms_csharp.Geometry
                             {
                                 Lat_Degrees = x.Lat,
                                 Lon_Degrees = x.Lon,
-                                Alt = x.Alt ?? 0
+                                Alt = x.Alt
                             })));
                     geoPaths.Add(new Path3D { Name = pm.name, Points = points.ToArray(), ConformToSurface = conformToSurface, Closed = false });
                 }

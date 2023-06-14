@@ -28,8 +28,8 @@
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
-    <PackageReference Include="O2Kml" Version="0.1.1" />
-    <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.6.0" />
+    <PackageReference Include="O2Kml" Version="0.1.2" />
+    <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.7.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
   </ItemGroup>
