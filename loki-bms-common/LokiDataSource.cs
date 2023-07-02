@@ -41,7 +41,7 @@ namespace loki_bms_common
         public string DataSymbol { get; set; } = "LineVert";
 
         [XmlAttribute("Color")]
-        public string DataColor = "#dd6600";
+        public string DataColor { get; set; } = "#ff6600";
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string PropertyName)

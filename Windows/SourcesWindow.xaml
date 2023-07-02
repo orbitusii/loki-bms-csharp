@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:loki_bms_csharp"
-        xmlns:Database="clr-namespace:loki_bms_common.Database" xmlns:Geometry="clr-namespace:loki_bms_csharp.Geometry" x:Name="SourcesWin" x:Class="loki_bms_csharp.SourceWindow"
+        xmlns:Geometry="clr-namespace:loki_bms_csharp.Geometry" x:Name="SourcesWin" x:Class="loki_bms_csharp.SourceWindow"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="Data Sources" Height="400" Width="550"
