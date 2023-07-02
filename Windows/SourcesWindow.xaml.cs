@@ -21,6 +21,8 @@ namespace loki_bms_csharp
     /// </summary>
     public partial class SourceWindow : Window
     {
+        TrackDatabase DB => (TrackDatabase)DataContext;
+
         public SourceWindow()
         {
             InitializeComponent();
@@ -63,7 +65,8 @@ namespace loki_bms_csharp
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                ProgramData.DataSources.Add(new Database.DataSource());
+                // TODO: add support for DataSource factory methods of some sort
+                //DB.DataSources.Add(new LokiDataSource());
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
 
@@ -71,21 +74,21 @@ namespace loki_bms_csharp
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                ProgramData.DataSources.RemoveAt(NamesListBox.SelectedIndex);
+                DB.DataSources.RemoveAt(NamesListBox.SelectedIndex);
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Bullseye_Select(object sender, RoutedEventArgs e)
         {
-            DataSource ds = (DataSource)SourceDetails.DataContext;
-            LatLonCoord bullsPos = new LatLonCoord { Alt = 0, Lat_Degrees = ds.Bullseye.Lat, Lon_Degrees = ds.Bullseye.Lon };
-            ProgramData.BullseyePos = bullsPos;
+            LokiDataSource ds = (LokiDataSource)SourceDetails.DataContext;
+            //LatLonCoord bullsPos = new LatLonCoord { Alt = 0, Lat_Degrees = ds.Bullseye.Lat, Lon_Degrees = ds.Bullseye.Lon };
+            //ProgramData.BullseyePos = bullsPos;
         }
 
         private void Pause_Click(object sender, RoutedEventArgs e)
         {
-            DataSource ds = (DataSource)SourceDetails.DataContext;
-            ds.PauseUnpause();
+            LokiDataSource ds = (LokiDataSource)SourceDetails.DataContext;
+            //ds.PauseUnpause();
         }
     }
 }

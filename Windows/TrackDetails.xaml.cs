@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using loki_bms_common.Database;
 
 namespace loki_bms_csharp.Windows
 {
@@ -26,7 +27,7 @@ namespace loki_bms_csharp.Windows
 
             BeginInit();
 
-            IDSelection.ItemsSource = Enum.GetValues(typeof(Database.FriendFoeStatus)).Cast<Database.FriendFoeStatus>();
+            IDSelection.ItemsSource = Enum.GetValues(typeof(FriendFoeStatus)).Cast<FriendFoeStatus>();
             SpecTypeSelection.ItemsSource = ProgramData.SpecTypeSymbols.Keys;
 
             EndInit();

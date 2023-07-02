@@ -22,7 +22,7 @@ namespace loki_bms_csharp
             System.Diagnostics.Debug.WriteLine("Initializing App stuff...");
             TrackNumber.Test();
             ProgramData.Initialize();
-            TrackDatabase.Initialize(1000);
+            //TrackDatabase.Initialize(1000);
         }
     }
 }

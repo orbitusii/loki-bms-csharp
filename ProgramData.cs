@@ -29,6 +29,7 @@ namespace loki_bms_csharp
         public static GeometryWindow GeoWindow;
 
         public static GeometrySettings GeometrySettings;
+        internal static ColorSettings ColorSettings;
 
         public static List<SVGPath> DataSymbols { get; private set; }
         public static Dictionary<TrackCategory, SymbolGroup> TrackSymbols { get; private set; }
@@ -38,7 +39,8 @@ namespace loki_bms_csharp
         public static Vector64 BullseyeCartesian => Conversions.LLToXYZ(BullseyePos, Conversions.EarthRadius);
 
         public static ViewSettings ViewSettings;
-        public static ObservableCollection<LokiDataSource> DataSources;
+        public static ObservableCollection<LokiDataSource> DataSources => Database.DataSources;
+        public static TrackDatabase Database;
         // TODO: add source reordering in the SourcesWindow
 
         public static string AppDataPath { get; private set; }
@@ -67,7 +69,11 @@ namespace loki_bms_csharp
             LoadGeometries();
 
             ViewSettings = LoadViewSettings(AppDataPath + "Views.xml");
-            DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
+
+            ColorSettings = LoadColorSettings(AppDataPath + "Colors.xml");
+
+            Database = new TrackDatabase(1000);
+            Database.DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
             //SymbolSettings = LoadSymbolSettings(AppDataPath + "Symbology.xml");
 
             foreach (LokiDataSource source in DataSources)
@@ -201,6 +207,22 @@ namespace loki_bms_csharp
 
 
             return new ObservableCollection<LokiDataSource>();
+        }
+
+        internal static ColorSettings LoadColorSettings (string filepath)
+        {
+            if(File.Exists(filepath))
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(ColorSettings));
+
+                using var stream = new FileStream(filepath, FileMode.OpenOrCreate);
+
+                ColorSettings? cs = (ColorSettings)ser.Deserialize(stream);
+
+                if(cs is not null) return cs;
+            }
+
+            return new ColorSettings();
         }
 
         public static (double dist, double heading_rads) GetPositionRelativeToBullseye(Vector64 pos)

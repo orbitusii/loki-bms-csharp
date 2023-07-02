@@ -6,23 +6,27 @@ using loki_bms_common.MathL;
 
 namespace loki_bms_common.Database
 {
-    public static class TrackDatabase
+    public class TrackDatabase
     {
-        public static short NextITN
+        public short NextITN
         {
             get { return _itn++; }
         }
-        private static short _itn = 1;
+        private short _itn = 1;
 
-        public static ObservableCollection<TrackFile> LiveTracks;
-        public static List<TrackDatum> ProcessedData;
-        public static List<TrackDatum> FreshData;
+        public ObservableCollection<LokiDataSource> DataSources = new ObservableCollection<LokiDataSource>();
 
-        private static System.Timers.Timer UpdateClock;
-        private static DateTime LastUpdate;
-        private static float MaxDatumAge = 30;
+        public ObservableCollection<TrackFile> LiveTracks = new ObservableCollection<TrackFile>();
+        public List<TrackDatum> ProcessedData = new List<TrackDatum>();
+        public List<TrackDatum> FreshData = new List<TrackDatum>();
+
+        public ObservableCollection<TacticalElement> TEs = new ObservableCollection<TacticalElement>();
+
+        private System.Timers.Timer UpdateClock;
+        private DateTime LastUpdate;
+        private float MaxDatumAge = 30;
         
-        public static void Initialize (float tickRate = 100)
+        public TrackDatabase (float tickRate = 100)
         {
             LiveTracks = new ObservableCollection<TrackFile>();
             ProcessedData = new List<TrackDatum>();
@@ -66,7 +70,7 @@ namespace loki_bms_common.Database
             UpdateClock.Start();
         }
 
-        public static TrackFile InitiateTrack (LatLonCoord latLon, double heading = 0, double speed = 0, double vertSpeed = 0, TrackType trackType = TrackType.Sim)
+        public TrackFile InitiateTrack (LatLonCoord latLon, double heading = 0, double speed = 0, double vertSpeed = 0, TrackType trackType = TrackType.Sim)
         {
             Vector64 posit = Conversions.LLToXYZ(latLon, Conversions.EarthRadius);
             Vector64 vel = Conversions.GetTangentVelocity(latLon, heading, speed, vertSpeed);
@@ -86,7 +90,7 @@ namespace loki_bms_common.Database
             return newTrack;
         }
 
-        public static TrackFile InitiateTrack (Vector64 position, Vector64 velocity, TrackType trackType = TrackType.Sim)
+        public TrackFile InitiateTrack (Vector64 position, Vector64 velocity, TrackType trackType = TrackType.Sim)
         {
             var newTN = new TrackNumber.Internal { Value = NextITN };
 
@@ -103,18 +107,18 @@ namespace loki_bms_common.Database
             return newTrack;
         }
 
-        public static void PullNewData ()
+        public void PullNewData ()
         {
-            foreach (var src in ProgramData.DataSources)
+            foreach (var src in DataSources)
             {
                 if (src.Active)
                 {
-                    FreshData.AddRange(src.PullData().Values);
+                    FreshData.AddRange(src.GetFreshData());
                 }
             }
         }
 
-        public static void UpdateTracks (float dt)
+        public void UpdateTracks (float dt)
         {
             for (int i = 0; i < FreshData.Count; i++)
             {
@@ -125,7 +129,7 @@ namespace loki_bms_common.Database
                     var newTrack = InitiateTrack(datum.Position, datum.Velocity, TrackType.External);
                     newTrack.TrackNumbers.Add(datum.ID);
                     newTrack.Category = datum.Category;
-                    newTrack.Heading = datum.Heading;
+                    newTrack.Heading = datum.Heading_Deg;
                     newTrack.Altitude = datum.Altitude;
 
                     foreach (object exd in datum.ExtraData)
@@ -166,7 +170,7 @@ namespace loki_bms_common.Database
             }
         }
 
-        private static bool Correlate_ByETN (TrackDatum datum)
+        private bool Correlate_ByETN (TrackDatum datum)
         {
             var query = from TrackFile track in LiveTracks where track.TrackNumbers.Contains(datum.ID) select track;
             try
@@ -188,7 +192,7 @@ namespace loki_bms_common.Database
             return false;
         }
 
-        public static void PurgeOldData()
+        public void PurgeOldData()
         {
             DateTime now = DateTime.Now;
 
