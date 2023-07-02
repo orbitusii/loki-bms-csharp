@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using loki_bms_csharp.Database;
+using loki_bms_common.Database;
 
 namespace loki_bms_csharp
 {

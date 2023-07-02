@@ -1,4 +1,4 @@
-﻿using loki_bms_csharp.Database;
+﻿using loki_bms_common.Database;
 using loki_bms_csharp.UserInterface;
 using System;
 using System.Collections.Generic;

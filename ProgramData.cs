@@ -1,18 +1,18 @@
-﻿using System;
+﻿global using loki_bms_common;
+global using loki_bms_common.MathL;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
-using loki_bms_csharp.Database;
+using loki_bms_common.Database;
 using loki_bms_csharp.Settings;
 using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Geometry.SVG;
 using System.Reflection;
 using loki_bms_csharp.Windows;
 using loki_bms_csharp.Plugins;
-using loki_bms_common;
-using loki_bms_common.MathL;
 
 namespace loki_bms_csharp
 {
@@ -38,7 +38,7 @@ namespace loki_bms_csharp
         public static Vector64 BullseyeCartesian => Conversions.LLToXYZ(BullseyePos, Conversions.EarthRadius);
 
         public static ViewSettings ViewSettings;
-        public static ObservableCollection<DataSource> DataSources;
+        public static ObservableCollection<LokiDataSource> DataSources;
         // TODO: add source reordering in the SourcesWindow
 
         public static string AppDataPath { get; private set; }
@@ -70,9 +70,9 @@ namespace loki_bms_csharp
             DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
             //SymbolSettings = LoadSymbolSettings(AppDataPath + "Symbology.xml");
 
-            foreach (DataSource source in DataSources)
+            foreach (LokiDataSource source in DataSources)
             {
-                if(source.TNRange == null || source.TNRange.TNMin < 0)
+                if(source.TNRange == null || source.TNRange.TNMax < 0)
                 {
                     source.TNRange = new TrackNumberRange
                     {
@@ -183,7 +183,7 @@ namespace loki_bms_csharp
             }
         }
 
-        public static ObservableCollection<DataSource> LoadDataSources(string filePath)
+        public static ObservableCollection<LokiDataSource> LoadDataSources(string filePath)
         {
             if (File.Exists(filePath))
             {
@@ -195,12 +195,12 @@ namespace loki_bms_csharp
 
                 if (foundSources.Items.Length > 0)
                 {
-                    return new ObservableCollection<DataSource>(foundSources.Items);
+                    return new ObservableCollection<LokiDataSource>(foundSources.Items);
                 }
             }
 
 
-            return new ObservableCollection<DataSource> { new DataSource() };
+            return new ObservableCollection<LokiDataSource>();
         }
 
         public static (double dist, double heading_rads) GetPositionRelativeToBullseye(Vector64 pos)
@@ -208,9 +208,9 @@ namespace loki_bms_csharp
             Vector64 BEpos = BullseyeCartesian;
 
             double angle = Vector64.AngleBetween(BEpos, pos);
-            double arcLength = MathL.Conversions.EarthRadius * angle;
+            double arcLength = Conversions.EarthRadius * angle;
 
-            var hdg = MathL.Conversions.GetSurfaceMotion(BEpos, pos - BEpos).heading;
+            var hdg = Conversions.GetSurfaceMotion(BEpos, pos - BEpos).heading;
 
             return (arcLength, hdg);
         }
@@ -257,7 +257,7 @@ namespace loki_bms_csharp
 
             try
             {
-                ser.Serialize(stream, new DataSourceDoc { Items = new List<Database.DataSource>(DataSources).ToArray() });
+                ser.Serialize(stream, new DataSourceDoc { Items = new List<LokiDataSource>(DataSources).ToArray() });
                 return true;
             }
             catch
@@ -273,7 +273,7 @@ namespace loki_bms_csharp
         public DataSourceDoc() { }
 
         [XmlElement("source")]
-        public Database.DataSource[] Items { get; set; }
+        public LokiDataSource[] Items { get; set; }
     }
 
     [XmlRoot("ZoomPresets")]

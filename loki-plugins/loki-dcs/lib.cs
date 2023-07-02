@@ -1,4 +1,4 @@
-using loki_bms_common;
+global using loki_bms_common;
 using loki_dcs;
 using loki_dcs.Services;
 

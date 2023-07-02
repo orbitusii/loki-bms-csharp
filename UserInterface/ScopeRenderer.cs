@@ -4,7 +4,8 @@ using System.Collections.ObjectModel;
 using System.Text;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
-using loki_bms_csharp.Database;
+using loki_bms_common.Database;
+using loki_bms_common.MathL;
 using loki_bms_csharp.UserInterface;
 using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Settings;
@@ -31,7 +32,7 @@ namespace loki_bms_csharp.UserInterface
 
         public SKSurface Surface { get; private set; }
         public SKCanvas Canvas { get; private set; }
-        public MathL.TangentMatrix CameraMatrix;
+        public TangentMatrix CameraMatrix;
         public double VerticalSize = 2;
         public double PixelsPerUnit
         {
@@ -57,7 +58,7 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        public void Redraw (SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args, MathL.TangentMatrix cameraMatrix, double VFov)
+        public void Redraw (SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args, TangentMatrix cameraMatrix, double VFov)
         {
             Info = args.Info;
             if(Surface == null || Surface != args.Surface)
@@ -107,7 +108,7 @@ namespace loki_bms_csharp.UserInterface
                 Color = SKColor.Parse(Geometries.OceanColor),
             };
 
-            DrawCircle((0, 0, 0), MathL.Conversions.EarthRadius, brush);
+            DrawCircle((0, 0, 0), Conversions.EarthRadius, brush);
 
             SKPaint landPaint = new SKPaint { Color = SKColor.Parse(Geometries.LandmassColor), Style = SKPaintStyle.Fill };
 
@@ -117,7 +118,7 @@ namespace loki_bms_csharp.UserInterface
         public void DrawWorldGeometry(MapGeometry mapData, SKPaint paint)
         {
             SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
-            screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
+            screenMatrix.ScaleX = (float)(Conversions.EarthRadius * PixelsPerUnit);
             screenMatrix.ScaleY = screenMatrix.ScaleX;
 
             //System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [ScopeRenderer]: Drawing {MapData.CachedPaths.Length} Landmasses...");
@@ -141,7 +142,7 @@ namespace loki_bms_csharp.UserInterface
         public void DrawGeometry()
         {
             SKMatrix screenMatrix = SKMatrix.CreateTranslation(Width / 2, Height / 2);
-            screenMatrix.ScaleX = (float)(MathL.Conversions.EarthRadius * PixelsPerUnit);
+            screenMatrix.ScaleX = (float)(Conversions.EarthRadius * PixelsPerUnit);
             screenMatrix.ScaleY = screenMatrix.ScaleX;
 
             lock (Geometries.Geometries)
@@ -185,7 +186,7 @@ namespace loki_bms_csharp.UserInterface
             var relToBE = ProgramData.GetPositionRelativeToBullseye(ScopeMouseInput.currentMousePoint);
 
             SKPoint bottomRight = new SKPoint(Width - 100, Height - 20);
-            Canvas.DrawText($"BE: {relToBE.heading_rads * MathL.Conversions.ToDegrees:000},{relToBE.dist * MathL.Conversions.MetersToNM:0}",
+            Canvas.DrawText($"BE: {relToBE.heading_rads * Conversions.ToDegrees:000},{relToBE.dist * MathL.Conversions.MetersToNM:0}",
                 bottomRight, new SKPaint { TextSize = 16, Style = SKPaintStyle.Fill, Color = SKColors.White });
         }
 
@@ -231,7 +232,7 @@ namespace loki_bms_csharp.UserInterface
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(datum.Position);
             var canvasPos = GetScreenPoint(screenPos);
 
-            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
+            if (Math.Abs(screenPos.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
                 var path = new SKPath(datum.Origin.GetSKPath) ?? new SKPath();
                 var paint = datum.Origin.GetSKPaint ?? new SKPaint { Color = SKColors.Coral };
@@ -246,7 +247,7 @@ namespace loki_bms_csharp.UserInterface
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
             SKPoint canvasPos = GetScreenPoint(screenPos);
 
-            if (Math.Abs(screenPos.x) <= MathL.Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
+            if (Math.Abs(screenPos.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
                 var originalPath = ProgramData.SpecTypeSymbols[track.SpecType]?.SKPath ?? null;
                 float rotation = 0;
@@ -283,7 +284,7 @@ namespace loki_bms_csharp.UserInterface
                 Canvas.DrawPath(clonedPath, strokePaint);
 
                 Canvas.DrawRect(bounds.Right-2, bounds.Bottom - 12, 24, 16, new SKPaint { Color = SKColor.Parse("#84000000"), Style = SKPaintStyle.Fill });
-                Canvas.DrawText($"{track.Altitude * MathL.Conversions.MetersToFeet / 100:F0}", new SKPoint(bounds.Right, bounds.Bottom), new SKPaint {  Color = SKColors.White, Style = SKPaintStyle.Fill });
+                Canvas.DrawText($"{track.Altitude * Conversions.MetersToFeet / 100:F0}", new SKPoint(bounds.Right, bounds.Bottom), new SKPaint {  Color = SKColors.White, Style = SKPaintStyle.Fill });
             }
         }
 
@@ -333,11 +334,11 @@ namespace loki_bms_csharp.UserInterface
         public void DrawMeasureLine (Vector64 from, Vector64 to, SKColor color, float width)
         {
             double angle = Vector64.AngleBetween(from, to);
-            double arcLength = MathL.Conversions.EarthRadius * angle;
+            double arcLength = Conversions.EarthRadius * angle;
 
             if (arcLength < 100) return;
 
-            double circumferenceFraction = Math.Round(arcLength / MathL.Conversions.EarthCircumference * 72);
+            double circumferenceFraction = Math.Round(arcLength / Conversions.EarthCircumference * 72);
 
             Vector64 segment_start = from;
 
@@ -353,8 +354,8 @@ namespace loki_bms_csharp.UserInterface
             DrawLine(segment_start, to, color, width);
 
             SKPoint textPoint = GetScreenPoint(CameraMatrix.PointToTangentSpace(to)) + new SKPoint(10, -10);
-            var surfaceData = MathL.Conversions.GetSurfaceMotion(from, to - from);
-            double heading = Math.Round(surfaceData.heading * MathL.Conversions.ToDegrees, 0);
+            var surfaceData = Conversions.GetSurfaceMotion(from, to - from);
+            double heading = Math.Round(surfaceData.heading * Conversions.ToDegrees, 0);
 
             SKPaint paint = new SKPaint(new SKFont(SKTypeface.Default, 16))
             {
@@ -363,7 +364,7 @@ namespace loki_bms_csharp.UserInterface
 
             };
 
-            Canvas.DrawText($"{heading:000}/{Math.Round(arcLength * MathL.Conversions.MetersToNM,0)} NM", textPoint, paint);
+            Canvas.DrawText($"{heading:000}/{Math.Round(arcLength * Conversions.MetersToNM,0)} NM", textPoint, paint);
         }
 
         public void DrawCircle(Vector64 center, double radius, SKPaint brush, bool isRadiusInWorldUnits = true)

@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using loki_bms_csharp.MathL;
+using loki_bms_common;
+using loki_bms_common.MathL;
 using System.ComponentModel;
 
 namespace loki_bms_csharp.Settings

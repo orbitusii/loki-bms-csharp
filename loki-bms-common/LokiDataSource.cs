@@ -12,6 +12,9 @@ namespace loki_bms_common
 {
     public abstract class LokiDataSource
     {
+        [XmlAttribute]
+        public bool Active { get; protected set; }
+
         private string _name = "New Data Source";
         [XmlAttribute]
         public string Name
@@ -53,6 +56,9 @@ namespace loki_bms_common
 
         public abstract RawTrackDatum[] GetFreshData();
 
-        public virtual TacticalElement[] GetTEs() { } 
+        public virtual TacticalElement[] GetTEs()
+        {
+            return Array.Empty<TacticalElement>();
+        }
     }
 }

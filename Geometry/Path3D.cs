@@ -12,7 +12,7 @@ namespace loki_bms_csharp.Geometry
         public bool ConformToSurface = false;
         public bool Closed = true;
 
-        public SKPath GetScreenSpacePath (MathL.TangentMatrix cameraMatrix)
+        public SKPath GetScreenSpacePath (TangentMatrix cameraMatrix)
         {
             List<SKPoint> sKPoints = new List<SKPoint>(0);
             int numBehind = 0;
@@ -21,7 +21,7 @@ namespace loki_bms_csharp.Geometry
             {
                 Vector64 screenSpace = cameraMatrix.PointToTangentSpace(Points[i]);
 
-                if(Math.Abs(screenSpace.x) <= MathL.Conversions.EarthRadius)
+                if(Math.Abs(screenSpace.x) <= Conversions.EarthRadius)
                 {
                     if(ConformToSurface && i > 0)
                     {

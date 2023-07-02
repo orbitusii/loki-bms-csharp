@@ -156,7 +156,7 @@ namespace loki_bms_csharp.Geometry
                 foreach (KmlPlacemark pm in placemarks)
                 {
                     List<Vector64> points = new List<Vector64>(((KmlShape)pm.Shape).GetPoints()
-                        .Select(x => MathL.Conversions.LLToXYZ(
+                        .Select(x => Conversions.LLToXYZ(
                             new LatLonCoord
                             {
                                 Lat_Degrees = x.Lat,
@@ -212,12 +212,12 @@ namespace loki_bms_csharp.Geometry
             return newData;
         }
 
-        public void CachePaths(MathL.TangentMatrix cameraMatrix)
+        public void CachePaths(TangentMatrix cameraMatrix)
         {
             CachedPaths = ConvertToSKPaths(Paths3D, cameraMatrix);
         }
 
-        public static SKPath[] ConvertToSKPaths(Path3D[] paths, MathL.TangentMatrix cameraMatrix)
+        public static SKPath[] ConvertToSKPaths(Path3D[] paths, TangentMatrix cameraMatrix)
         {
             System.Diagnostics.Debug.WriteLine($"{DateTime.Now:h:mm:ss:fff} [MapData]: Caching map data paths for drawing...");
 
@@ -344,7 +344,7 @@ namespace loki_bms_csharp.Geometry
             for (int i = 0; i < points.Length; i++)
             {
                 LatLonCoord latLon = SVGPointToLatLon(points[i], imageSize);
-                points3D[i] = MathL.Conversions.LLToXYZ(latLon);
+                points3D[i] = Conversions.LLToXYZ(latLon);
             }
 
             return new Path3D { Name = path.name, Points = points3D };

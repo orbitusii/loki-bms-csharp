@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using loki_bms_csharp.Database;
+using loki_bms_common.Database;
 
 namespace loki_bms_csharp.Geometry
 {

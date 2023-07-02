@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\loki-bms-common\loki-bms-common.csproj" />
+    <ProjectReference Include="..\..\loki-bms-common\loki-bms-common.csproj" />
   </ItemGroup>
 
 </Project>

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using loki_bms_csharp.Geometry;
+using loki_bms_common.MathL;
 
 namespace loki_bms_csharp.Settings
 {
@@ -63,7 +64,7 @@ namespace loki_bms_csharp.Settings
         [XmlIgnore]
         public ObservableCollection<MapGeometry> Geometries { get; set; } = new ObservableCollection<MapGeometry>();
 
-        public void CacheGeometry (MathL.TangentMatrix matrix)
+        public void CacheGeometry (TangentMatrix matrix)
         {
             Landmasses?.CachePaths(matrix);
             foreach(MapGeometry geo in Geometries)
