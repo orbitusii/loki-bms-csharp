@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loki-bms-csharp", "loki-bms-csharp.csproj", "{8FB59651-57D6-470C-85DF-35D70AA3A7C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loki-bms-common", "loki-plugins\loki-bms-common\loki-bms-common.csproj", "{17C3DA0A-B279-42BA-B70B-B318A8619699}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loki-bms-common", "loki-bms-common\loki-bms-common.csproj", "{17C3DA0A-B279-42BA-B70B-B318A8619699}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "loki-dcs", "loki-plugins\loki-dcs\loki-dcs.csproj", "{C9CB03D5-3A68-473F-8354-38761EFA7B6B}"
 EndProject

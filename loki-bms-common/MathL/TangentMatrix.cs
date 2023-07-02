@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace loki_bms_csharp.MathL
+namespace loki_bms_common.MathL
 {
     public class TangentMatrix
     {

@@ -12,6 +12,7 @@ using System.Reflection;
 using loki_bms_csharp.Windows;
 using loki_bms_csharp.Plugins;
 using loki_bms_common;
+using loki_bms_common.MathL;
 
 namespace loki_bms_csharp
 {
@@ -34,7 +35,7 @@ namespace loki_bms_csharp
         public static Dictionary<string, SVGPath> SpecTypeSymbols { get; private set; }
 
         public static LatLonCoord BullseyePos { get; set; }
-        public static Vector64 BullseyeCartesian => MathL.Conversions.LLToXYZ(BullseyePos, MathL.Conversions.EarthRadius);
+        public static Vector64 BullseyeCartesian => Conversions.LLToXYZ(BullseyePos, Conversions.EarthRadius);
 
         public static ViewSettings ViewSettings;
         public static ObservableCollection<DataSource> DataSources;

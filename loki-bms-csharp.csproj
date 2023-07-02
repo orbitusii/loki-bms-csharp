@@ -27,13 +27,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="loki-plugins\**" />
+    <Compile Remove="MathL\**" />
     <EmbeddedResource Remove="loki-plugins\**" />
+    <EmbeddedResource Remove="MathL\**" />
     <None Remove="loki-plugins\**" />
+    <None Remove="MathL\**" />
     <Page Remove="loki-plugins\**" />
+    <Page Remove="MathL\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Database\IKinematicData.cs" />
-    <Compile Remove="MathL\Vector64.cs" />
+    <Compile Remove="Database\TrackNumber.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,7 +49,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="loki-plugins\loki-bms-common\loki-bms-common.csproj" />
+    <ProjectReference Include="loki-bms-common\loki-bms-common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

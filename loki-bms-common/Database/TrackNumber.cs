@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace loki_bms_csharp.Database
+namespace loki_bms_common.Database
 {
     public abstract class TrackNumber: IEquatable<TrackNumber>
     {
@@ -21,8 +21,10 @@ namespace loki_bms_csharp.Database
         public class External : TrackNumber { }
         public class DataLink : TrackNumber { }
 
-        public bool Equals(TrackNumber other)
+        public bool Equals(TrackNumber? other)
         {
+            if (other is null) return false;
+
             Type myType = this.GetType();
             if (other.GetType() == myType && other.Value == this.Value)
             {

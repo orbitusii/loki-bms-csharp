@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using loki_bms_csharp.MathL;
+using loki_bms_common.MathL;
 
-namespace loki_bms_csharp
+namespace loki_bms_common
 {
     public struct LatLonCoord
     {

@@ -21,6 +21,8 @@ namespace loki_bms_common
         public Type[]? DataSourceTypes;
         public Type[]? CustomMenuTypes;
 
+        public LokiPluginAttribute() { }
+
         public LokiPluginAttribute(Type RootType,
                                    string PluginName,
                                    string Version)

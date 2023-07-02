@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace loki_bms_csharp.Database
+namespace loki_bms_common.Database
 {
     public class TrackNumberRange
     {

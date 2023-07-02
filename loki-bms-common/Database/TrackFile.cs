@@ -69,7 +69,7 @@ namespace loki_bms_csharp.Database
             OldestHistory = Timestamp;
         }
 
-        public void AddNewData (IKinematicData data, IFFData[] codes)
+        public void AddNewData (RawTrackDatum data, IFFData[] codes)
         {
             RawPosition = data.Position;
             Position = data.Position;
