@@ -13,7 +13,7 @@ namespace loki_bms_common
     public abstract class LokiDataSource
     {
         [XmlAttribute]
-        public bool Active { get; protected set; }
+        public bool Active { get; set; }
 
         private string _name = "New Data Source";
         [XmlAttribute]

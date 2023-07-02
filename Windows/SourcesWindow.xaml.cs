@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace loki_bms_csharp
     public partial class SourceWindow : Window
     {
         TrackDatabase DB => (TrackDatabase)DataContext;
+        private bool SelectingType = false;
 
         public SourceWindow()
         {
@@ -30,7 +32,9 @@ namespace loki_bms_csharp
 
         private void SourcesWin_Loaded(object sender, RoutedEventArgs e)
         {
+            DataContext = ProgramData.Database;
             NamesListBox.SelectedIndex = 0;
+            TypesBox.Visibility = Visibility.Collapsed;
         }
 
         private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -63,6 +67,10 @@ namespace loki_bms_csharp
 
         private void ClickAddSourceButton(object sender, RoutedEventArgs e)
         {
+            TypesBox.Visibility= Visibility.Visible;
+            TypesBox.SelectedIndex = -1;
+            SelectingType = true;
+
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 // TODO: add support for DataSource factory methods of some sort
@@ -74,6 +82,8 @@ namespace loki_bms_csharp
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
+                if (NamesListBox.SelectedIndex < 0 || NamesListBox.SelectedIndex >= DB.DataSources.Count) return;
+
                 DB.DataSources.RemoveAt(NamesListBox.SelectedIndex);
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
@@ -89,6 +99,25 @@ namespace loki_bms_csharp
         {
             LokiDataSource ds = (LokiDataSource)SourceDetails.DataContext;
             //ds.PauseUnpause();
+        }
+
+        private void ClickSourceType(object sender, SelectionChangedEventArgs e)
+        {
+            if (!SelectingType) return;
+
+            TypesBox.Visibility = Visibility.Collapsed;
+            SelectingType = false;
+
+            Type sourceType = ProgramData.PluginLoader.DataSourceTypes[((Type)TypesBox.SelectedValue).Name];
+            LokiDataSource? newSource = (LokiDataSource)Activator.CreateInstance(sourceType);
+
+            if (newSource is null)
+            {
+                Debug.WriteLine($"[DATABASE][ERROR] Unable to create a Data Source of type \"{sourceType.Name}\"");
+                return;
+            }
+
+            DB.DataSources.Add(newSource);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace loki_bms_csharp
 {
     public static class ProgramData
     {
-        internal static PluginLoader Plugins = new PluginLoader(LokiVersion.v0_2_0);
+        public static PluginLoader PluginLoader = new PluginLoader(LokiVersion.v0_2_0);
 
         public static MainWindow MainWindow;
         public static UserInterface.ScopeRenderer MainScopeRenderer => MainWindow.ScopeRenderer;
@@ -63,7 +63,7 @@ namespace loki_bms_csharp
 
             Debug.WriteLine($"[PROGRAM]: AppData at {AppDataPath}");
 
-            Plugins.LoadPlugins();
+            PluginLoader.LoadPlugins();
 
             LoadSymbology();
             LoadGeometries();
@@ -74,6 +74,7 @@ namespace loki_bms_csharp
 
             Database = new TrackDatabase(1000);
             Database.DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
+
             //SymbolSettings = LoadSymbolSettings(AppDataPath + "Symbology.xml");
 
             foreach (LokiDataSource source in DataSources)
@@ -197,12 +198,12 @@ namespace loki_bms_csharp
 
                 using var stream = new FileStream(filePath, FileMode.OpenOrCreate);
 
-                var foundSources = (DataSourceDoc)serializer.Deserialize(stream);
+                //var foundSources = (DataSourceDoc)serializer.Deserialize(stream);
 
-                if (foundSources.Items.Length > 0)
+                /*if (foundSources.Items.Length > 0)
                 {
                     return new ObservableCollection<LokiDataSource>(foundSources.Items);
-                }
+                }*/
             }
 
 

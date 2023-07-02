@@ -9,17 +9,17 @@ namespace loki_dcs
 
         public override void Activate()
         {
-            throw new NotImplementedException();
+
         }
 
         public override bool CheckAlive()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override void Deactivate()
         {
-            throw new NotImplementedException();
+
         }
 
         public override TrackDatum[] GetFreshData()

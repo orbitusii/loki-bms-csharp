@@ -1,6 +1,7 @@
 global using loki_bms_common;
 using loki_dcs;
 using loki_dcs.Services;
+using System.Diagnostics;
 
 [assembly: LokiPlugin(
     RootType = typeof(LokiDCSPlugin),
@@ -14,13 +15,14 @@ using loki_dcs.Services;
 
 namespace loki_dcs
 {
-    public class LokiDCSPlugin : LokiPlugin
+    
+    public class LokiDCSPlugin: LokiPlugin
     {
         public LokiDCSPlugin() { }
 
         public override void Init()
         {
-            throw new NotImplementedException();
+            Debug.WriteLine("[PLUGINS][LOG] LOKI for DCS loaded");
         }
     }
 }

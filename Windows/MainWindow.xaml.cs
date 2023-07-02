@@ -39,6 +39,7 @@ namespace loki_bms_csharp
             BeginInit();
 
             ProgramData.MainWindow = this;
+            ProgramData.Database.OnDatabaseUpdated += Redraw;
 
             ScopeCanvas.PaintSurface += OnPaintSurface;
             DrawDebug = false;
@@ -48,6 +49,7 @@ namespace loki_bms_csharp
 
         private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            ProgramData.Database.OnDatabaseUpdated -= Redraw;
             ProgramData.Shutdown();
         }
 

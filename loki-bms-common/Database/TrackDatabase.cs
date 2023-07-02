@@ -14,7 +14,7 @@ namespace loki_bms_common.Database
         }
         private short _itn = 1;
 
-        public ObservableCollection<LokiDataSource> DataSources = new ObservableCollection<LokiDataSource>();
+        public ObservableCollection<LokiDataSource> DataSources { get; set; } = new ObservableCollection<LokiDataSource>();
 
         public ObservableCollection<TrackFile> LiveTracks = new ObservableCollection<TrackFile>();
         public List<TrackDatum> ProcessedData = new List<TrackDatum>();
@@ -25,7 +25,10 @@ namespace loki_bms_common.Database
         private System.Timers.Timer UpdateClock;
         private DateTime LastUpdate;
         private float MaxDatumAge = 30;
-        
+
+        public delegate void DatabaseUpdatedCallback();
+        public DatabaseUpdatedCallback? OnDatabaseUpdated;
+
         public TrackDatabase (float tickRate = 100)
         {
             LiveTracks = new ObservableCollection<TrackFile>();
@@ -61,10 +64,11 @@ namespace loki_bms_common.Database
                         }
                     }
 
+                    OnDatabaseUpdated?.Invoke();
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine($"{DateTime.UtcNow:h:mm:ss.fff} Missed a Database tick! Exception: {e.Message}\n\t{e.StackTrace}");
+                    System.Diagnostics.Debug.WriteLine($"[DATABASE][ERROR][{DateTime.UtcNow:h:mm:ss.fff}] Missed a Database tick! Exception: {e.Message}\n\t{e.StackTrace}");
                 }
             };
             UpdateClock.Start();

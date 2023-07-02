@@ -7,14 +7,32 @@ using System.Threading.Tasks;
 using System.IO;
 using loki_bms_common;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 
 namespace loki_bms_csharp.Plugins
 {
-    internal class PluginLoader
+    public class PluginLoader
     {
         public string PluginFolder = Path.Join(".", "Plugins");
         public LokiVersion Version;
         public Dictionary<LokiPlugin, LokiPluginAttribute> LoadedPlugins = new Dictionary<LokiPlugin, LokiPluginAttribute>();
+
+        public Dictionary<string, Type> DataSourceTypes
+        {
+            get
+            {
+                var dict = new Dictionary<string, Type>();
+
+                foreach(var plugin in LoadedPlugins.Values) {
+                    foreach(var dstype in plugin.DataSourceTypes)
+                    {
+                        dict.Add(dstype.Name, dstype);
+                    }
+                }
+
+                return dict;
+            }
+        }
 
         public PluginLoader(LokiVersion Version)
         {
@@ -47,8 +65,10 @@ namespace loki_bms_csharp.Plugins
 
                 if (assembly.GetCustomAttribute(typeof(LokiPluginAttribute)) is LokiPluginAttribute lpa)
                 {
-                    if ((lpa.DesiredLokiVersion & Version) != Version && lpa.DesiredLokiVersion != LokiVersion.Any)
+                    if (lpa.DesiredLokiVersion != LokiVersion.Any && (lpa.DesiredLokiVersion & Version) != Version)
                         continue;
+
+                    Debug.WriteLine($"{lpa.RootType}");
 
                     LokiPlugin? Root = (LokiPlugin)Activator.CreateInstance(lpa.RootType);
                     if (Root is null)
