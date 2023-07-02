@@ -21,5 +21,7 @@ namespace loki_bms_common.Database
 
         public LokiDataSource? Source;
         public DateTime Timestamp { get; }
+
+        public double Radius;
     }
 }

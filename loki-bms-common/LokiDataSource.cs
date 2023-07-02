@@ -10,12 +10,18 @@ using loki_bms_common.Database;
 
 namespace loki_bms_common
 {
-    public abstract class LokiDataSource
+    public abstract class LokiDataSource: INotifyPropertyChanged
     {
+        /// <summary>
+        /// Is this source active and attempting to get data? Do not use this property to activate/deactivate the source, call Activate() and Deactivate() instead.
+        /// </summary>
         [XmlAttribute]
         public bool Active { get; set; }
+        public bool CanEditPollRate => !Active;
 
-        private string _name = "New Data Source";
+        /// <summary>
+        /// The display name for this source.
+        /// </summary>
         [XmlAttribute]
         public string Name
         {
@@ -26,22 +32,55 @@ namespace loki_bms_common
                 OnPropertyChanged("Name");
             }
         }
+        private string _name = "New Data Source";
+
+        /// <summary>
+        /// The address at which to access this source. Example: 127.0.0.1 or dcs.server.com
+        /// </summary>
         [XmlAttribute]
         public string Address { get; set; } = "127.0.0.1";
+
+        /// <summary>
+        /// The port to use when accessing the source at the specified Address. Example: 50051, 10052
+        /// </summary>
         [XmlAttribute]
         public string Port { get; set; } = "50051";
+
+        /// <summary>
+        /// Speed at which fast-updating objects should be polled. E.g. aircraft, weapons, etc.
+        /// </summary>
         [XmlAttribute]
         public string PollRate { get; set; } = "10";
+
+        /// <summary>
+        /// Speed at which slow-updating objects should be polled. E.g. boats, land units, etc.
+        /// </summary>
         [XmlAttribute]
         public string SlowPollrate { get; set; } = "30";
+
+        /// <summary>
+        /// The range of Track Numbers this data source can use. Once it reaches TNMax, new tracks will roll over back to TNMin.
+        /// </summary>
         [XmlElement]
         public TrackNumberRange TNRange { get; set; } = new TrackNumberRange { TNMin = -1, TNMax = -1 };
 
+        /// <summary>
+        /// The symbol used to render this source's raw data.
+        /// </summary>
         [XmlAttribute("Symbol")]
         public string DataSymbol { get; set; } = "LineVert";
 
+        /// <summary>
+        /// The color used to render this source's raw data.
+        /// </summary>
         [XmlAttribute("Color")]
         public string DataColor { get; set; } = "#ff6600";
+
+        /// <summary>
+        /// A property that provides information on this source. Set this to provide information to users.
+        /// </summary>
+        [XmlIgnore]
+        public string SourceInfo { get; protected set; } = string.Empty;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string PropertyName)
@@ -49,13 +88,34 @@ namespace loki_bms_common
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
         }
 
+        /// <summary>
+        /// Method to call when ACTIVATING this source. Put any logic necessary to initiate the connection here.
+        /// </summary>
         public abstract void Activate();
+        /// <summary>
+        /// Method to call when DEACTIVATING this source. Put any logic necessary to stop and clean up the connection here.
+        /// </summary>
         public abstract void Deactivate();
-
+        /// <summary>
+        /// Method to call in order to see if the source is alive and providing data.
+        /// This doesn't necessarily need to be implemented if your server doesn't provide feedback
+        /// on whether it's alive or not.
+        /// </summary>
+        /// <returns></returns>
         public abstract bool CheckAlive();
 
+        /// <summary>
+        /// Called by a Database to retrieve any new data for tracks from this DataSource.
+        /// The data should already have been collected in another thread,
+        /// this simply returns it for integration into the database.
+        /// </summary>
+        /// <returns></returns>
         public abstract TrackDatum[] GetFreshData();
-
+        /// <summary>
+        /// Called by a Database to get any Tactical Elements for the mission.
+        /// These shouldn't update much, if at all.
+        /// </summary>
+        /// <returns></returns>
         public virtual TacticalElement[] GetTEs()
         {
             return Array.Empty<TacticalElement>();
