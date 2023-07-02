@@ -60,6 +60,8 @@ namespace loki_bms_csharp.Plugins
                     Debug.WriteLine($"[PLUGINS][LOG] Loaded plugin \"{lpa.PluginName}\", version {lpa.Version} by {lpa.Author}");
                 }
             }
+
+            Debug.WriteLine($"[PLUGINS][LOG] Finished loading Plugins - {LoadedPlugins.Count} total");
         }
     }
 }

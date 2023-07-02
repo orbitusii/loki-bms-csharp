@@ -20,11 +20,11 @@ namespace loki_bms_csharp.UserInterface.Converters
             switch (param)
             {
                 case "MetersPerSecToKts":
-                    return (double)value * MathL.Conversions.MetersPerSecToKnots;
+                    return (double)value * Conversions.MetersPerSecToKnots;
                 case "MetersToFeet":
-                    return (double)value * MathL.Conversions.MetersToFeet;
+                    return (double)value * Conversions.MetersToFeet;
                 case "MetersToNM":
-                    return (double)value * MathL.Conversions.MetersToNM;
+                    return (double)value * Conversions.MetersToNM;
                 default:
                     return (double)value;
             }
@@ -37,11 +37,11 @@ namespace loki_bms_csharp.UserInterface.Converters
             switch (param)
             {
                 case "MetersPerSecToKts":
-                    return (double)value / MathL.Conversions.MetersPerSecToKnots;
+                    return (double)value / Conversions.MetersPerSecToKnots;
                 case "MetersToFeet":
-                    return (double)value / MathL.Conversions.MetersToFeet;
+                    return (double)value / Conversions.MetersToFeet;
                 case "MetersToNM":
-                    return (double)value / MathL.Conversions.MetersToNM;
+                    return (double)value / Conversions.MetersToNM;
                 default:
                     return (double)value;
             }
