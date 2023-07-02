@@ -26,12 +26,16 @@
     <DebugType>embedded</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="loki-bms-common\**" />
     <Compile Remove="loki-plugins\**" />
     <Compile Remove="MathL\**" />
+    <EmbeddedResource Remove="loki-bms-common\**" />
     <EmbeddedResource Remove="loki-plugins\**" />
     <EmbeddedResource Remove="MathL\**" />
+    <None Remove="loki-bms-common\**" />
     <None Remove="loki-plugins\**" />
     <None Remove="MathL\**" />
+    <Page Remove="loki-bms-common\**" />
     <Page Remove="loki-plugins\**" />
     <Page Remove="MathL\**" />
   </ItemGroup>

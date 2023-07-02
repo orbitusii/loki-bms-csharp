@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
-using loki_bms_csharp.MathL;
+using loki_bms_common.MathL;
 
-namespace loki_bms_csharp.Database
+namespace loki_bms_common.Database
 {
     public static class TrackDatabase
     {

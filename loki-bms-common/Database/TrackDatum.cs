@@ -4,12 +4,12 @@ using System.Text;
 using loki_bms_common;
 using loki_bms_common.MathL;
 
-namespace loki_bms_csharp.Database
+namespace loki_bms_common.Database
 {
     public class TrackDatum : RawTrackDatum
     {
         public TrackNumber ID;
-        public DataSource Origin;
+        public LokiDataSource Origin;
 
         public Vector64 Position { get; set; }
         public LatLonCoord LatLon => Conversions.XYZToLL(Position);

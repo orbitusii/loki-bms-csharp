@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using loki_bms_common;
 
-namespace loki_bms_csharp.Database
+namespace loki_bms_common.Database
 {
     public class TrackFile : INotifyPropertyChanged
     {

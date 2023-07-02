@@ -8,7 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Database\DataSource.cs" />
     <Compile Remove="TrackDatum.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Database\DataSource.cs" />
   </ItemGroup>
 
 </Project>

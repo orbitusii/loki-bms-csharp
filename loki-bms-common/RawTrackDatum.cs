@@ -6,7 +6,7 @@ using System.Text;
 
 namespace loki_bms_common
 {
-    public class RawTrackDatum
+    public class RawTrackDatum: IPositionedObject
     {
         public int RawID;
         public LokiDataSource Origin;
@@ -17,7 +17,7 @@ namespace loki_bms_common
             this.Origin = Origin;
         }
 
-        public Vector64 Position { get; }
+        public Vector64 Position { get; set; }
         public LatLonCoord LatLon => Conversions.XYZToLL(Position);
 
         public double Heading
@@ -27,7 +27,7 @@ namespace loki_bms_common
         }
         public double Heading_Rads { get; set; }
 
-        public Vector64 Velocity { get; }
+        public Vector64 Velocity { get; set; }
 
         public DateTime Timestamp { get; }
     }

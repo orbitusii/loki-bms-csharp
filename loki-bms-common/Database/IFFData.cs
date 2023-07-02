@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace loki_bms_csharp.Database
+namespace loki_bms_common.Database
 {
     public struct IFFData
     {

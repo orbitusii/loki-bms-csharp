@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace loki_bms_csharp.Database
+namespace loki_bms_common
 {
-    public interface IKinematicData
+    public interface IPositionedObject
     {
         public Vector64 Position { get; }
         public Vector64 Velocity { get; }
-
-        public DateTime Timestamp { get; }
     }
 }
