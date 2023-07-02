@@ -6,16 +6,25 @@ using loki_bms_common.MathL;
 
 namespace loki_bms_common.Database
 {
-    public class TrackDatum : RawTrackDatum
+    public class TrackDatum: IPositionedObject
     {
         public TrackNumber ID;
         public LokiDataSource Origin;
+
+        public TrackDatum (TrackNumber ID, LokiDataSource Origin, Vector64 Position, Vector64 Velocity)
+        {
+            this.ID = ID;
+            this.Origin = Origin;
+            this.Position = Position;
+            this.Velocity = Velocity;
+            Timestamp = DateTime.Now;
+        }
 
         public Vector64 Position { get; set; }
         public LatLonCoord LatLon => Conversions.XYZToLL(Position);
         public Vector64 Velocity { get; set; }
 
-        public IFFData[] IFFCodes { get; set; }
+        public IFFData[]? IFFCodes { get; set; }
 
         public DateTime Timestamp { get; set; }
 

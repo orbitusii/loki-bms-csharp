@@ -54,7 +54,7 @@ namespace loki_bms_common
 
         public abstract bool CheckAlive();
 
-        public abstract RawTrackDatum[] GetFreshData();
+        public abstract TrackDatum[] GetFreshData();
 
         public virtual TacticalElement[] GetTEs()
         {
