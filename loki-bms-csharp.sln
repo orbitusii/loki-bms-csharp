@@ -5,9 +5,9 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loki-bms-csharp", "loki-bms-csharp.csproj", "{8FB59651-57D6-470C-85DF-35D70AA3A7C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loki-plugin-base", "loki-plugins\loki-plugin-base\loki-plugin-base.csproj", "{C8D1C47F-642B-441D-9E86-6DA24A264D32}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loki-bms-common", "loki-plugins\loki-bms-common\loki-bms-common.csproj", "{17C3DA0A-B279-42BA-B70B-B318A8619699}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "loki-bms-common", "loki-plugins\loki-bms-common\loki-bms-common.csproj", "{17C3DA0A-B279-42BA-B70B-B318A8619699}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "loki-dcs", "loki-plugins\loki-dcs\loki-dcs.csproj", "{C9CB03D5-3A68-473F-8354-38761EFA7B6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{8FB59651-57D6-470C-85DF-35D70AA3A7C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FB59651-57D6-470C-85DF-35D70AA3A7C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FB59651-57D6-470C-85DF-35D70AA3A7C8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8D1C47F-642B-441D-9E86-6DA24A264D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8D1C47F-642B-441D-9E86-6DA24A264D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8D1C47F-642B-441D-9E86-6DA24A264D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8D1C47F-642B-441D-9E86-6DA24A264D32}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17C3DA0A-B279-42BA-B70B-B318A8619699}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17C3DA0A-B279-42BA-B70B-B318A8619699}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17C3DA0A-B279-42BA-B70B-B318A8619699}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17C3DA0A-B279-42BA-B70B-B318A8619699}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9CB03D5-3A68-473F-8354-38761EFA7B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9CB03D5-3A68-473F-8354-38761EFA7B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9CB03D5-3A68-473F-8354-38761EFA7B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9CB03D5-3A68-473F-8354-38761EFA7B6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

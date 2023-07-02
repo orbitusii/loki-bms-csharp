@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using loki_plugin_base;
+using loki_bms_common;
 using System.Diagnostics;
 
 namespace loki_bms_csharp.Plugins

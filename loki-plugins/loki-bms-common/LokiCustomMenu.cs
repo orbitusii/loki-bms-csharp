@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace loki_plugin_base
+namespace loki_bms_common
 {
     public abstract class LokiCustomMenu
     {

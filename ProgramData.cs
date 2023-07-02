@@ -11,7 +11,7 @@ using loki_bms_csharp.Geometry.SVG;
 using System.Reflection;
 using loki_bms_csharp.Windows;
 using loki_bms_csharp.Plugins;
-using loki_plugin_base;
+using loki_bms_common;
 
 namespace loki_bms_csharp
 {

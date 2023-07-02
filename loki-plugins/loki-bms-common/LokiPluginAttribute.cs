@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace loki_plugin_base
+namespace loki_bms_common
 {
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
     public class LokiPluginAttribute : System.Attribute
@@ -23,12 +23,10 @@ namespace loki_plugin_base
 
         public LokiPluginAttribute(Type RootType,
                                    string PluginName,
-                                   string Description,
                                    string Version)
         {
             this.RootType = RootType;
             this.PluginName = PluginName;
-            this.Description = Description;
             this.Version = Version;
         }
     }

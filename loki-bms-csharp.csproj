@@ -46,7 +46,6 @@
 
   <ItemGroup>
     <ProjectReference Include="loki-plugins\loki-bms-common\loki-bms-common.csproj" />
-    <ProjectReference Include="loki-plugins\loki-plugin-base\loki-plugin-base.csproj" />
   </ItemGroup>
 
   <ItemGroup>
