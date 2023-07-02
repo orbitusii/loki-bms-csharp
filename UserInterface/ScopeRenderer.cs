@@ -9,6 +9,7 @@ using loki_bms_common.MathL;
 using loki_bms_csharp.UserInterface;
 using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Settings;
+using System.Linq;
 
 namespace loki_bms_csharp.UserInterface
 {
@@ -29,6 +30,8 @@ namespace loki_bms_csharp.UserInterface
         {
             get => ProgramData.GeometrySettings;
         }
+
+        protected TrackDatabase? DB => ProgramData.Database;
 
         public SKSurface Surface { get; private set; }
         public SKCanvas Canvas { get; private set; }
@@ -186,15 +189,17 @@ namespace loki_bms_csharp.UserInterface
             var relToBE = ProgramData.GetPositionRelativeToBullseye(ScopeMouseInput.currentMousePoint);
 
             SKPoint bottomRight = new SKPoint(Width - 100, Height - 20);
-            Canvas.DrawText($"BE: {relToBE.heading_rads * Conversions.ToDegrees:000},{relToBE.dist * MathL.Conversions.MetersToNM:0}",
+            Canvas.DrawText($"BE: {relToBE.heading_rads * Conversions.ToDegrees:000},{relToBE.dist * Conversions.MetersToNM:0}",
                 bottomRight, new SKPaint { TextSize = 16, Style = SKPaintStyle.Fill, Color = SKColors.White });
         }
 
         public void DrawFromDatabase()
         {
+            if (DB is null) return;
+
             if (ProgramData.ViewSettings.ZoomIncrement <= 9)
             {
-                List<TrackDatum> dataSymbols = new List<TrackDatum>(TrackDatabase.ProcessedData);
+                List<TrackDatum> dataSymbols = new List<TrackDatum>(DB.ProcessedData);
 
                 foreach (var datum in dataSymbols)
                 {
@@ -216,9 +221,9 @@ namespace loki_bms_csharp.UserInterface
                 DrawCircle(ProgramData.TrackSelection.Track.Position, 16, brush, false);
             }
 
-            for (int i = 0; i < TrackDatabase.LiveTracks.Count; i++)
+            for (int i = 0; i < DB.LiveTracks.Count; i++)
             {
-                TrackFile track = TrackDatabase.LiveTracks[i];
+                TrackFile track = DB.LiveTracks[i];
 
                 //Base symbol
                 DrawTrack(track, i, 16);
@@ -234,8 +239,8 @@ namespace loki_bms_csharp.UserInterface
 
             if (Math.Abs(screenPos.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
-                var path = new SKPath(datum.Origin.GetSKPath) ?? new SKPath();
-                var paint = datum.Origin.GetSKPaint ?? new SKPaint { Color = SKColors.Coral };
+                var path = new SKPath(ProgramData.DataSymbols.FirstOrDefault(x => x.name == datum.Origin.DataSymbol)?.SKPath) ?? new SKPath();
+                var paint = new SKPaint { Color = SKColor.Parse(datum.Origin.DataColor) };
                 path.Transform(SKMatrix.CreateScaleTranslation(1, 1, canvasPos.X, canvasPos.Y));
 
                 Canvas.DrawPath(path, paint);
@@ -269,8 +274,8 @@ namespace loki_bms_csharp.UserInterface
                 float width = clonedPath.Bounds.Width;
                 float scale = size / width * extraScale;
 
-                var fillPaint = TrackDatabase.FillByFFS[track.FFS];
-                var strokePaint = TrackDatabase.StrokeByFFS[track.FFS];
+                var fillPaint = ProgramData.ColorSettings.FillByFFS[track.FFS];
+                var strokePaint = ProgramData.ColorSettings.StrokeByFFS[track.FFS];
 
                 clonedPath.Transform(SKMatrix.CreateScaleTranslation(scale, scale, canvasPos.X, canvasPos.Y));
                 clonedPath.Transform(SKMatrix.CreateRotation(rotation, clonedPath.Bounds.MidX, clonedPath.Bounds.MidY));

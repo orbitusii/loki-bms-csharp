@@ -10,7 +10,7 @@ namespace loki_bms_csharp.Settings
 {
     internal class ColorSettings
     {
-        [XmlAttribute]
+        [XmlElement]
         public Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> StrokeByFFS =
             new Dictionary<FriendFoeStatus, SkiaSharp.SKPaint>()
             {
@@ -22,7 +22,8 @@ namespace loki_bms_csharp.Settings
                 {FriendFoeStatus.Unknown, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Yellow, StrokeWidth = 2 }  },
                 {FriendFoeStatus.Pending, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Stroke, Color = SkiaSharp.SKColors.Gray, StrokeWidth = 2 }  },
             };
-        public static Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> FillByFFS =
+        [XmlElement]
+        public Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> FillByFFS =
             new Dictionary<FriendFoeStatus, SkiaSharp.SKPaint>()
             {
                 {FriendFoeStatus.KnownFriend, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Blue.WithAlpha(128) } },

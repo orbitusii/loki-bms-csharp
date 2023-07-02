@@ -86,18 +86,18 @@ namespace loki_bms_csharp.UserInterface
 
         public static void RecenterCamera (Vector64 screenClickPt)
         {
-            if (screenClickPt.magnitude <= MathL.Conversions.EarthRadius)
+            if (screenClickPt.magnitude <= Conversions.EarthRadius)
             {
                 Vector64 WorldOrigin = ViewSettings.CameraMatrix.PointToTangentSpace((0, 0, 0));
 
-                double r = MathL.Conversions.EarthRadius;
+                double r = Conversions.EarthRadius;
                 double rawIntersect = Math.Sqrt(r * r - screenClickPt.y * screenClickPt.y - screenClickPt.z * screenClickPt.z);
 
                 Vector64 WorldIntersectPos = ViewSettings.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, screenClickPt.y, screenClickPt.z));
 
                 //TrackDatabase.UncorrelatedData[0].Position = WorldIntersectPos;
 
-                LatLonCoord newCenter = MathL.Conversions.XYZToLL(WorldIntersectPos, r);
+                LatLonCoord newCenter = Conversions.XYZToLL(WorldIntersectPos, r);
                 ViewSettings.UpdateViewPosition(newCenter);
             }
         }
@@ -120,7 +120,7 @@ namespace loki_bms_csharp.UserInterface
                 SKPoint skPoint = new SKPoint((float)screenPt.X, (float)screenPt.Y);
                 int trackIndex = ProgramData.MainScopeRenderer.GetTrackAtPosition(skPoint);
 
-                ProgramData.TrackSelection.Track = trackIndex >= 0 ? Database.TrackDatabase.LiveTracks[trackIndex] : null;
+                ProgramData.TrackSelection.Track = trackIndex >= 0 ? ProgramData.Database.LiveTracks[trackIndex] : null;
             }
 
             return new MouseInputData { MouseButtons = ClickState, RequiresRedraw = true };
@@ -139,17 +139,17 @@ namespace loki_bms_csharp.UserInterface
             Vector64 worldPos;
             Vector64 WorldOrigin = ViewSettings.CameraMatrix.PointToTangentSpace((0, 0, 0));
 
-            double r = MathL.Conversions.EarthRadius;
+            double r = Conversions.EarthRadius;
             double rawIntersect = Math.Sqrt(r * r - camPoint.y * camPoint.y - camPoint.z * camPoint.z);
 
 
-            if (camPoint.magnitude <= MathL.Conversions.EarthRadius)
+            if (camPoint.magnitude <= Conversions.EarthRadius)
             {
                 worldPos = ViewSettings.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, camPoint.y, camPoint.z));
             }
             else {
                 Vector64 atEdge = (0, camPoint.y, camPoint.z);
-                atEdge = atEdge.normalized * MathL.Conversions.EarthRadius;
+                atEdge = atEdge.normalized * Conversions.EarthRadius;
 
                 worldPos = ViewSettings.CameraMatrix.PointToWorldSpace((WorldOrigin.x, atEdge.y, atEdge.z));
             }
