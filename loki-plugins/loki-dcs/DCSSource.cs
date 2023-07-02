@@ -1,4 +1,5 @@
 ﻿using loki_bms_common;
+using loki_bms_common.Database;
 
 namespace loki_dcs
 {
@@ -21,7 +22,7 @@ namespace loki_dcs
             throw new NotImplementedException();
         }
 
-        public override RawTrackDatum[] GetFreshData()
+        public override TrackDatum[] GetFreshData()
         {
             throw new NotImplementedException();
         }

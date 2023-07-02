@@ -6,12 +6,12 @@ using loki_bms_common.MathL;
 
 namespace loki_bms_common.Database
 {
-    public class TrackDatum: IPositionedObject
+    public class TrackDatum : IPositionedObject
     {
         public TrackNumber ID;
         public LokiDataSource Origin;
 
-        public TrackDatum (TrackNumber ID, LokiDataSource Origin, Vector64 Position, Vector64 Velocity)
+        public TrackDatum(TrackNumber ID, LokiDataSource Origin, Vector64 Position, Vector64 Velocity)
         {
             this.ID = ID;
             this.Origin = Origin;
@@ -29,7 +29,16 @@ namespace loki_bms_common.Database
         public DateTime Timestamp { get; set; }
 
         public TrackCategory Category = TrackCategory.None;
+
         public double Heading_Rads { get; set; }
+        public double Heading_Deg
+        {
+            get => Heading_Rads * Conversions.ToDegrees;
+            set
+            {
+                Heading_Rads = value * Conversions.ToRadians;
+            }
+        }
 
         public double Altitude { get; set; }
 

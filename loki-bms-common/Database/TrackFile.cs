@@ -43,7 +43,7 @@ namespace loki_bms_common.Database
         private DateTime NewestHistory;
         private DateTime OldestHistory;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public TrackFile () { }
 
@@ -69,7 +69,7 @@ namespace loki_bms_common.Database
             OldestHistory = Timestamp;
         }
 
-        public void AddNewData (RawTrackDatum data, IFFData[] codes)
+        public void AddNewData (TrackDatum data, IFFData[] codes)
         {
             RawPosition = data.Position;
             Position = data.Position;
@@ -85,7 +85,7 @@ namespace loki_bms_common.Database
                 var _asDatum = (TrackDatum)data;
 
                 Altitude = _asDatum.Altitude;
-                Heading= _asDatum.Heading;
+                Heading= _asDatum.Heading_Deg;
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Altitude)));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Heading)));
