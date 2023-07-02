@@ -171,6 +171,20 @@ namespace loki_bms_common.Database
             foreach (var track in LiveTracks)
             {
                 track.UpdateVisual(dt);
+                TimeSpan age = DateTime.Now - track.Timestamp;
+
+                // Track Drop logic
+                // If a track is older than 20 seconds, set it to pending
+                // If a track is pending and older than 30 seconds, drop it
+                // This isn't complete logic, but it'll work for now.
+                if (age > TimeSpan.FromSeconds(30) && track.FFS == FriendFoeStatus.Pending)
+                {
+                    LiveTracks.Remove(track);
+                }
+                else if (age > TimeSpan.FromSeconds(20))
+                {
+                    track.FFS = FriendFoeStatus.Pending;
+                }
             }
         }
 
