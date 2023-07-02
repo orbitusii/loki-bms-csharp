@@ -75,6 +75,7 @@ namespace loki_bms_csharp.Plugins
                         continue;
 
                     Root.Init();
+
                     LoadedPlugins.Add(Root, lpa);
 
                     Debug.WriteLine($"[PLUGINS][LOG] Loaded plugin \"{lpa.PluginName}\", version {lpa.Version} by {lpa.Author}");

@@ -13,6 +13,8 @@ using loki_bms_csharp.Geometry.SVG;
 using System.Reflection;
 using loki_bms_csharp.Windows;
 using loki_bms_csharp.Plugins;
+using System.Linq;
+using System.Windows.Documents;
 
 namespace loki_bms_csharp
 {
@@ -79,7 +81,7 @@ namespace loki_bms_csharp
 
             foreach (LokiDataSource source in DataSources)
             {
-                if(source.TNRange == null || source.TNRange.TNMax < 0)
+                if (source.TNRange == null || source.TNRange.TNMax < 0)
                 {
                     source.TNRange = new TrackNumberRange
                     {
@@ -103,7 +105,7 @@ namespace loki_bms_csharp
 
         public static void LoadSymbology()
         {
-            DataSymbols = GetPathsFromFile(ResourcesPath +"DataSymbols.svg");
+            DataSymbols = GetPathsFromFile(ResourcesPath + "DataSymbols.svg");
 
             TrackSymbols = new Dictionary<TrackCategory, SymbolGroup>();
             TrackSymbols[TrackCategory.None] = new SymbolGroup(GetPathsFromFile(ResourcesPath + "Tracks_General.svg"));
@@ -114,13 +116,13 @@ namespace loki_bms_csharp
             SpecTypeSymbols = new Dictionary<string, SVGPath>() { { "", null }, };
             var specTypeList = GetPathsFromFile(ResourcesPath + "SpecTypes.svg");
 
-            foreach(var specType in specTypeList)
+            foreach (var specType in specTypeList)
             {
                 SpecTypeSymbols[specType.name] = specType;
             }
         }
 
-        public static List<SVGPath> GetPathsFromFile (string filepath)
+        public static List<SVGPath> GetPathsFromFile(string filepath)
         {
             FileStream symbolStream = new FileStream(filepath, FileMode.Open);
             XmlSerializer ser = new XmlSerializer(typeof(SVGDoc));
@@ -192,27 +194,53 @@ namespace loki_bms_csharp
 
         public static ObservableCollection<LokiDataSource> LoadDataSources(string filePath)
         {
+            ObservableCollection<LokiDataSource> sources = new ObservableCollection<LokiDataSource>();
+
             if (File.Exists(filePath))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(DataSourceDoc));
 
                 using var stream = new FileStream(filePath, FileMode.OpenOrCreate);
+                DataSourceDoc? foundSources;
 
-                //var foundSources = (DataSourceDoc)serializer.Deserialize(stream);
-
-                /*if (foundSources.Items.Length > 0)
+                try
                 {
-                    return new ObservableCollection<LokiDataSource>(foundSources.Items);
-                }*/
+                    foundSources = (DataSourceDoc)serializer.Deserialize(stream);
+                }
+                catch(InvalidOperationException)
+                {
+                    return sources;
+                }
+
+                if (foundSources is DataSourceDoc && foundSources.Items.Length > 0)
+                {
+                    foreach (var source in foundSources.Items)
+                    {
+                        Type t;
+                        if (PluginLoader.DataSourceTypes.TryGetValue(source.SourceType, out t))
+                        {
+                            Debug.WriteLine($"[SETTINGS][LOG] Successfully found a type for SDS of type {source.SourceType}");
+                            LokiDataSource ds = Activator.CreateInstance(t) as LokiDataSource;
+                            ds.LoadSerializable(source);
+
+                            sources.Add(ds);
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"[SETTINGS][WARNING] Unable to find a valid type for Serialized Data Source of type {source.SourceType}");
+                            continue;
+                        }
+                    }
+                }
             }
 
-
-            return new ObservableCollection<LokiDataSource>();
+            Debug.WriteLine($"Deserialized {sources.Count} Data Sources successfully");
+            return sources;
         }
 
-        internal static ColorSettings LoadColorSettings (string filepath)
+        internal static ColorSettings LoadColorSettings(string filepath)
         {
-            if(File.Exists(filepath))
+            if (File.Exists(filepath))
             {
                 XmlSerializer ser = new XmlSerializer(typeof(ColorSettings));
 
@@ -220,7 +248,7 @@ namespace loki_bms_csharp
 
                 ColorSettings? cs = (ColorSettings)ser.Deserialize(stream);
 
-                if(cs is not null) return cs;
+                if (cs is not null) return cs;
             }
 
             return new ColorSettings();
@@ -238,7 +266,7 @@ namespace loki_bms_csharp
             return (arcLength, hdg);
         }
 
-        public static void Shutdown ()
+        public static void Shutdown()
         {
             SrcWindow?.Close();
             GeoWindow?.Close();
@@ -253,7 +281,7 @@ namespace loki_bms_csharp
             }
         }
 
-        public static bool SaveViewSettings (string filePath)
+        public static bool SaveViewSettings(string filePath)
         {
             if (!File.Exists(filePath)) File.Create(filePath).Close();
 
@@ -280,11 +308,12 @@ namespace loki_bms_csharp
 
             try
             {
-                ser.Serialize(stream, new DataSourceDoc { Items = new List<LokiDataSource>(DataSources).ToArray() });
+                ser.Serialize(stream, new DataSourceDoc { Items = DataSources.Select(x => x.GetSerializable()).ToArray() });
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.WriteLine($"[SETTINGS][ERROR] Failed to store Data Sources. Thrown: {e}");
                 return false;
             }
         }
@@ -296,7 +325,7 @@ namespace loki_bms_csharp
         public DataSourceDoc() { }
 
         [XmlElement("source")]
-        public LokiDataSource[] Items { get; set; }
+        public SerializedDataSource[] Items { get; set; }
     }
 
     [XmlRoot("ZoomPresets")]

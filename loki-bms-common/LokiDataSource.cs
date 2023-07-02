@@ -17,6 +17,7 @@ namespace loki_bms_common
         /// </summary>
         [XmlAttribute]
         public bool Active { get; set; }
+
         public bool CanEditPollRate => !Active;
 
         /// <summary>
@@ -86,6 +87,24 @@ namespace loki_bms_common
         protected void OnPropertyChanged(string PropertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+        }
+
+        public virtual SerializedDataSource GetSerializable ()
+        {
+            return SerializedDataSource.From(this);
+        }
+
+        public virtual void LoadSerializable (SerializedDataSource sds)
+        {
+            Active = sds.Active;
+            Name = sds.Name;
+            Address = sds.Address;
+            Port = sds.Port;
+            PollRate = sds.PollRate;
+            SlowPollrate = sds.SlowPollrate;
+            TNRange = sds.TNRange;
+            DataSymbol = sds.DataSymbol;
+            DataColor = sds.DataColor;
         }
 
         /// <summary>
