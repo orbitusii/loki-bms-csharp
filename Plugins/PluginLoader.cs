@@ -36,6 +36,7 @@ namespace loki_bms_csharp.Plugins
 
         public PluginLoader(LokiVersion Version)
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             this.Version = Version;
         }
 
@@ -47,7 +48,8 @@ namespace loki_bms_csharp.Plugins
 
         public void LoadPlugins()
         {
-            if(!Directory.Exists(PluginFolder))
+
+            if (!Directory.Exists(PluginFolder))
             {
                 Directory.CreateDirectory(PluginFolder);
                 Debug.WriteLine("[PLUGINS][LOG] Plugins folder did not exist. Created it, no plugins loaded.");
@@ -83,6 +85,22 @@ namespace loki_bms_csharp.Plugins
             }
 
             Debug.WriteLine($"[PLUGINS][LOG] Finished loading Plugins - {LoadedPlugins.Count} total");
+        }
+
+        private Assembly? CurrentDomain_AssemblyResolve(object? sender, ResolveEventArgs args)
+        {
+            var dllName = new AssemblyName(args.Name).Name + ".dll";
+            var assemblyPath = Assembly.GetExecutingAssembly().Location;
+
+            var referenceDirectory = new DirectoryInfo(Path.Combine(Path.GetDirectoryName(assemblyPath), "Plugins"));
+            if (!referenceDirectory.Exists)
+                return null; // Can't find the reference directory
+
+            var assemblyFile = referenceDirectory.EnumerateFiles(dllName, SearchOption.AllDirectories).FirstOrDefault();
+            if (assemblyFile == null)
+                return null; // Can't find a matching dll
+
+            return Assembly.LoadFrom(assemblyFile.FullName);
         }
     }
 }
