@@ -1,6 +1,4 @@
-﻿global using loki_bms_common;
-global using loki_bms_common.MathL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -72,7 +70,7 @@ namespace loki_bms_csharp
 
             ViewSettings = LoadViewSettings(AppDataPath + "Views.xml");
 
-            ColorSettings = LoadColorSettings(AppDataPath + "Colors.xml");
+            ColorSettings = LoadColorSettings();
 
             Database = new TrackDatabase(1000);
             Database.DataSources = LoadDataSources(AppDataPath + "DataSources.xml");
@@ -238,20 +236,11 @@ namespace loki_bms_csharp
             return sources;
         }
 
-        internal static ColorSettings LoadColorSettings(string filepath)
+        internal static ColorSettings LoadColorSettings()
         {
-            if (File.Exists(filepath))
-            {
-                XmlSerializer ser = new XmlSerializer(typeof(ColorSettings));
+            ColorSettings? cs = ColorSettings.LoadFromFile(AppDataPath + "Colors.xml");
 
-                using var stream = new FileStream(filepath, FileMode.OpenOrCreate);
-
-                ColorSettings? cs = (ColorSettings)ser.Deserialize(stream);
-
-                if (cs is not null) return cs;
-            }
-
-            return new ColorSettings();
+            return cs ?? new ColorSettings();
         }
 
         public static (double dist, double heading_rads) GetPositionRelativeToBullseye(Vector64 pos)
@@ -274,6 +263,7 @@ namespace loki_bms_csharp
             SaveViewSettings(AppDataPath + "Views.xml");
             SaveDataSources(AppDataPath + "DataSources.xml");
             GeometrySettings.SaveToFile(AppDataPath + "Geometry.xml");
+            ColorSettings.SaveToFile(AppDataPath + "Colors.xml");
 
             foreach (var source in DataSources)
             {

@@ -259,12 +259,12 @@ namespace loki_bms_csharp.Database
 
             return new TrackDatum
             {
-                ID = new TrackNumber.External { Value = (short)(unit.Id + TNRange.TNMin) },
-                Position = posXYZ,
-                Velocity = vel,
-                Timestamp = DateTime.Now,
+                //ID = new TrackNumber.External { Value = (short)(unit.Id + TNRange.TNMin) },
+                //Position = posXYZ,
+                //Velocity = vel,
+                //Timestamp = DateTime.Now,
                 Category = cat,
-                Origin = this,
+                //Origin = this,
                 Altitude = unit.Position.Alt,
                 Heading = unit.Velocity.Heading,
                 ExtraData = new string[] {$"Coalition:{CoalitionToString}", $"Type:{unit.Type}", $"Callsign:{unit.Callsign}"}

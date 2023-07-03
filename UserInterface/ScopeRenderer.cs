@@ -31,7 +31,8 @@ namespace loki_bms_csharp.UserInterface
             get => ProgramData.GeometrySettings;
         }
 
-        protected TrackDatabase? DB => ProgramData.Database;
+        protected TrackDatabase DB => ProgramData.Database;
+        protected ColorSettings Colors => ProgramData.ColorSettings;
 
         public SKSurface Surface { get; private set; }
         public SKCanvas Canvas { get; private set; }
@@ -108,12 +109,12 @@ namespace loki_bms_csharp.UserInterface
             SKPaint brush = new SKPaint
             {
                 Style = SKPaintStyle.Fill,
-                Color = SKColor.Parse(Geometries.OceanColor),
+                Color = SKColor.Parse(Colors.OceanColor),
             };
 
             DrawCircle((0, 0, 0), Conversions.EarthRadius, brush);
 
-            SKPaint landPaint = new SKPaint { Color = SKColor.Parse(Geometries.LandmassColor), Style = SKPaintStyle.Fill };
+            SKPaint landPaint = new SKPaint { Color = SKColor.Parse(Colors.LandmassColor), Style = SKPaintStyle.Fill };
 
             DrawWorldGeometry(Geometries.Landmasses, landPaint);
         }
@@ -274,8 +275,8 @@ namespace loki_bms_csharp.UserInterface
                 float width = clonedPath.Bounds.Width;
                 float scale = size / width * extraScale;
 
-                var fillPaint = ProgramData.ColorSettings.FillByFFS[track.FFS];
-                var strokePaint = ProgramData.ColorSettings.StrokeByFFS[track.FFS];
+                var fillPaint = Colors.FillByFFS[track.FFS];
+                var strokePaint = Colors.StrokeByFFS[track.FFS];
 
                 clonedPath.Transform(SKMatrix.CreateScaleTranslation(scale, scale, canvasPos.X, canvasPos.Y));
                 clonedPath.Transform(SKMatrix.CreateRotation(rotation, clonedPath.Bounds.MidX, clonedPath.Bounds.MidY));

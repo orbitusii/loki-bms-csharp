@@ -18,6 +18,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Title>LOKI BMS</Title>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>embedded</DebugType>
@@ -104,8 +105,9 @@
     </None>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="call BuildScripts\CopyPlugins.bat .\loki-plugins\loki-dcs\bin\Debug\net6.0\loki-dcs.dll $(Outdir)Plugins\loki-dcs.dll /Y" />
-  </Target>
+  <ItemGroup>
+    <Using Include="loki_bms_common" />
+    <Using Include="loki_bms_common.MathL" />
+  </ItemGroup>
 
 </Project>

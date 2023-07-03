@@ -12,37 +12,10 @@ using loki_bms_common.MathL;
 namespace loki_bms_csharp.Settings
 {
     [XmlRoot("GeometrySettings")]
-    public class GeometrySettings : SerializableSettings<GeometrySettings>, INotifyPropertyChanged
+    public class GeometrySettings : SerializableSettings<GeometrySettings>
     {
         [XmlIgnore]
         public MapGeometry Landmasses { get; set; }
-
-        private string _ocean = "#ff0E131B";
-        [XmlElement]
-        public string OceanColor
-        {
-            get => _ocean;
-            set
-            {
-                _ocean = value;
-                PropertyChanged?.Invoke(this, new(nameof(OceanColor)));
-            }
-        }
-
-        private string _landmass = "#ff303030";
-        [XmlElement]
-        public string LandmassColor
-        {
-            get => _landmass;
-            set
-            {
-                _landmass = value;
-                PropertyChanged?.Invoke(this, new(nameof(LandmassColor)));
-            }
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
 
         [XmlElement("Geometry")]
         public MapGeometry[] _serializedGeometry
