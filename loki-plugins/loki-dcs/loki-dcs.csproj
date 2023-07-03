@@ -13,12 +13,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.54.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.54.0" />
     <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\loki-bms-common\loki-bms-common.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="References\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="call ..\..\BuildScripts\CopyFile.bat .\References\ ..\..\bin\Debug\net6.0-windows\Plugins\References\" />
+  </Target>
 
 </Project>
