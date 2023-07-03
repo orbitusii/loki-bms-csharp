@@ -1,0 +1,1 @@
+(robocopy %1 %2 *.dll /xf loki-bms-common.*) ^& IF %ERRORLEVEL% LEQ 1 exit 0
