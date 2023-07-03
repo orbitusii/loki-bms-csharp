@@ -10,16 +10,6 @@ namespace loki_bms_common.Database
     {
         public TrackNumber ID;
         public LokiDataSource Origin;
-
-        public TrackDatum(TrackNumber ID, LokiDataSource Origin, Vector64 Position, Vector64 Velocity)
-        {
-            this.ID = ID;
-            this.Origin = Origin;
-            this.Position = Position;
-            this.Velocity = Velocity;
-            Timestamp = DateTime.Now;
-        }
-
         public Vector64 Position { get; set; }
         public LatLonCoord LatLon => Conversions.XYZToLL(Position);
         public Vector64 Velocity { get; set; }
@@ -43,5 +33,14 @@ namespace loki_bms_common.Database
         public double Altitude { get; set; }
 
         public string[] ExtraData { get; set; } = new string[0];
+
+        public TrackDatum(TrackNumber ID, LokiDataSource Origin, Vector64 Position, Vector64 Velocity)
+        {
+            this.ID = ID;
+            this.Origin = Origin;
+            this.Position = Position;
+            this.Velocity = Velocity;
+            Timestamp = DateTime.Now;
+        }
     }
 }

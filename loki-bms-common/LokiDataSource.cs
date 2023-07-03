@@ -81,7 +81,7 @@ namespace loki_bms_common
         /// A property that provides information on this source. Set this to provide information to users.
         /// </summary>
         [XmlIgnore]
-        public string SourceInfo { get; protected set; } = string.Empty;
+        public virtual string SourceInfo => string.Empty;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string PropertyName)
