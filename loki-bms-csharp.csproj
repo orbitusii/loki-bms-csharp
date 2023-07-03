@@ -47,7 +47,6 @@
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
     <PackageReference Include="O2Kml" Version="0.1.2" />
-    <PackageReference Include="RurouniJones.Dcs.Grpc" Version="0.7.0" />
     <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
   </ItemGroup>
@@ -104,5 +103,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="call BuildScripts\CopyPlugins.bat .\loki-plugins\loki-dcs\bin\Debug\net6.0\loki-dcs.dll $(Outdir)Plugins\loki-dcs.dll /Y" />
+  </Target>
 
 </Project>
