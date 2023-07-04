@@ -27,7 +27,11 @@ namespace loki_bms_csharp
 
         public void SelectionChanged(object sender, SelectionChangedArgs args)
         {
-            Track = (TrackFile)args.NewSelection;
+            if (args.NewSelection is TrackFile tf)
+            {
+                Track = tf;
+            }
+            else Track = null;
         }
 
         public void Dispose ()

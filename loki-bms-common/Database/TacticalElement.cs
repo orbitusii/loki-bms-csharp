@@ -17,11 +17,11 @@ namespace loki_bms_common.Database
         public string SpecialInfo = string.Empty;
 
         public FriendFoeStatus FFS = FriendFoeStatus.Pending;
-        public TrackCategory Category = TrackCategory.None;
+        public TEType Category = TEType.None;
 
         public LokiDataSource? Source;
         public DateTime Timestamp { get; }
 
-        public double Radius;
+        public double Radius = 0;
     }
 }

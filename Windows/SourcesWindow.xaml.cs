@@ -104,12 +104,18 @@ namespace loki_bms_csharp
 
         private void ImportTEs (LokiDataSource ds)
         {
+            Debug.WriteLine($"[DATABASE][LOG] Importing Tactical Elements from {ds.Name}...");
             TacticalElement[] TEs = ds.GetTEs();
 
-            foreach ( var te in TEs )
+            Debug.WriteLine($"[DATABASE][LOG] Got {TEs.Length}, adding to Database...");
+            Dispatcher.BeginInvoke(() =>
             {
-                DB.TEs.Add(te);
-            }
+                foreach (var te in TEs)
+                {
+                    DB.TEs.Add(te);
+                }
+                Debug.WriteLine($"[DATABASE][LOG] Done.");
+            });
         }
 
         private void Pause_Click(object sender, RoutedEventArgs e)

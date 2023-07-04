@@ -1,6 +1,7 @@
 ﻿using Grpc.Net.Client;
 using loki_bms_common.Database;
 using loki_bms_common.MathL;
+using RurouniJones.Dcs.Grpc.V0.Coalition;
 using RurouniJones.Dcs.Grpc.V0.Common;
 using RurouniJones.Dcs.Grpc.V0.Hook;
 using RurouniJones.Dcs.Grpc.V0.Mission;
@@ -20,6 +21,7 @@ namespace loki_dcs
         internal MissionService.MissionServiceClient Mission;
         internal NetService.NetServiceClient Net;
         internal WorldService.WorldServiceClient World;
+        internal CoalitionService.CoalitionServiceClient CoalitionService;
 
         private CancellationTokenSource StopTokenSource = new CancellationTokenSource();
 
@@ -49,6 +51,7 @@ namespace loki_dcs
             Mission = new MissionService.MissionServiceClient(Channel);
             Net = new NetService.NetServiceClient(Channel);
             World = new WorldService.WorldServiceClient(Channel);
+            CoalitionService = new CoalitionService.CoalitionServiceClient(Channel);
         }
 
         public override void Activate()
@@ -188,7 +191,29 @@ namespace loki_dcs
 
         public override TacticalElement[] GetTEs()
         {
-            return base.GetTEs();
+            List<TacticalElement> TEs = new List<TacticalElement>();
+
+            var BlueBullseye = CoalitionService.GetBullseye(new GetBullseyeRequest { Coalition = Coalition.Blue });
+            var RedBullseye = CoalitionService.GetBullseye(new GetBullseyeRequest { Coalition = Coalition.Red });
+
+            TEs.Add(TEFromBullseye(BlueBullseye, "Blue Bullseye", FriendFoeStatus.KnownFriend));
+            TEs.Add(TEFromBullseye(RedBullseye, "Red Bullseye", FriendFoeStatus.Hostile));
+
+            return TEs.ToArray();
+        }
+
+        private TacticalElement TEFromBullseye (GetBullseyeResponse rawbull, string name, FriendFoeStatus FFS)
+        {
+            LatLonCoord position = new LatLonCoord { Lat_Degrees = rawbull.Position.Lat, Lon_Degrees = rawbull.Position.Lon, Alt = 0 };
+
+            return new TacticalElement
+            {
+                Category = TEType.Bullseye,
+                FFS = FFS,
+                Name = name,
+                Position = Conversions.LLToXYZ(position, Conversions.EarthRadius),
+                Source = this,
+            };
         }
     }
 }

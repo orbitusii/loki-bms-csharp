@@ -230,7 +230,7 @@ namespace loki_bms_csharp.UserInterface
 
             TrackClickHotspots.Clear();
 
-            if (ProgramData.TrackSelection.Track != null)
+            if (ProgramData.SelectedObject != null)
             {
                 SKPaint brush = new SKPaint
                 {
@@ -242,6 +242,12 @@ namespace loki_bms_csharp.UserInterface
                 DrawCircle(ProgramData.SelectedObject.Position, 16, brush, false);
             }
 
+            foreach (TacticalElement TE in DB.TEs)
+            {
+                //Base symbol
+                DrawTE(TE, 16);
+            }
+
             int clickIndex = 0;
 
             foreach (TrackFile track in DB.LiveTracks)
@@ -250,12 +256,6 @@ namespace loki_bms_csharp.UserInterface
                 DrawTrack(track, clickIndex++, 16);
                 //Velocity leader
                 DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
-            }
-
-            foreach (TacticalElement TE in DB.TEs)
-            {
-                //Base symbol
-
             }
         }
 
