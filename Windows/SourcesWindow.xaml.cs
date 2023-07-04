@@ -23,6 +23,8 @@ namespace loki_bms_csharp
     public partial class SourceWindow : Window
     {
         TrackDatabase DB => (TrackDatabase)DataContext;
+        LokiDataSource? selectedSource => (LokiDataSource)SourcesListBox.SelectedItem;
+
         private bool SelectingType = false;
 
         public SourceWindow()
@@ -33,7 +35,7 @@ namespace loki_bms_csharp
         private void SourcesWin_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = ProgramData.Database;
-            NamesListBox.SelectedIndex = 0;
+            SourcesListBox.SelectedIndex = 0;
             TypesBox.Visibility = Visibility.Collapsed;
         }
 
@@ -82,9 +84,9 @@ namespace loki_bms_csharp
         {
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                if (NamesListBox.SelectedIndex < 0 || NamesListBox.SelectedIndex >= DB.DataSources.Count) return;
+                if (SourcesListBox.SelectedIndex < 0 || SourcesListBox.SelectedIndex >= DB.DataSources.Count) return;
 
-                DB.DataSources.RemoveAt(NamesListBox.SelectedIndex);
+                DB.DataSources.RemoveAt(SourcesListBox.SelectedIndex);
             }), System.Windows.Threading.DispatcherPriority.Normal);
         }
 
@@ -118,6 +120,21 @@ namespace loki_bms_csharp
             }
 
             DB.DataSources.Add(newSource);
+        }
+
+        private void ActivateDeactivateButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedSource is null) return;
+
+            if (selectedSource.Status == LokiDataSource.SourceStatus.Starting) return;
+            else if(selectedSource.Status == LokiDataSource.SourceStatus.Active)
+            {
+                selectedSource.Deactivate();
+            }
+            else
+            {
+                selectedSource.Activate();
+            }
         }
     }
 }

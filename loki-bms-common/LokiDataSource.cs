@@ -10,13 +10,23 @@ using loki_bms_common.Database;
 
 namespace loki_bms_common
 {
-    public abstract class LokiDataSource: INotifyPropertyChanged
+    public abstract class LokiDataSource : INotifyPropertyChanged
     {
         /// <summary>
         /// Is this source active and attempting to get data? Do not use this property to activate/deactivate the source, call Activate() and Deactivate() instead.
         /// </summary>
-        [XmlAttribute]
-        public bool Active { get; set; }
+        [XmlIgnore]
+        public bool Active
+        {
+            get => _active;
+            set
+            {
+                _active = value;
+                OnPropertyChanged("Active");
+                OnPropertyChanged("CanEditPollRate");
+            }
+        }
+        private bool _active = false;
 
         public bool CanEditPollRate => !Active;
 
@@ -83,20 +93,54 @@ namespace loki_bms_common
         [XmlIgnore]
         public virtual string SourceInfo => string.Empty;
 
+        /// <summary>
+        /// An enum representing the status of this source in a more granular manner than a boolean
+        /// </summary>
+        public enum SourceStatus
+        {
+            /// <summary>
+            /// This source is offline deliberately - usually by a user clicking "Deactivate."
+            /// </summary>
+            Offline,
+            /// <summary>
+            /// This source is starting up and attempting to connect.
+            /// </summary>
+            Starting,
+            /// <summary>
+            /// This source has successfully started and is receiving data (probably!)
+            /// </summary>
+            Active,
+            /// <summary>
+            /// This source attempted to connect and get data, but the server either didn't respond or threw an error.
+            /// </summary>
+            Disconnected,
+        }
+
+        [XmlIgnore]
+        public SourceStatus Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                OnPropertyChanged("Status");
+            }
+        }
+        public SourceStatus _status = SourceStatus.Offline;
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string PropertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
         }
 
-        public virtual SerializedDataSource GetSerializable ()
+        public virtual SerializedDataSource GetSerializable()
         {
             return SerializedDataSource.From(this);
         }
 
-        public virtual void LoadSerializable (SerializedDataSource sds)
+        public virtual void LoadSerializable(SerializedDataSource sds)
         {
-            Active = sds.Active;
             Name = sds.Name;
             Address = sds.Address;
             Port = sds.Port;
