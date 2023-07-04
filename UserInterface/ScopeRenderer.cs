@@ -10,6 +10,7 @@ using loki_bms_csharp.UserInterface;
 using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Settings;
 using System.Linq;
+using loki_bms_csharp.Geometry.SVG;
 
 namespace loki_bms_csharp.UserInterface
 {
@@ -255,20 +256,22 @@ namespace loki_bms_csharp.UserInterface
 
             if (Math.Abs(screenPos.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
-                var originalPath = ProgramData.SpecTypeSymbols[track.SpecType]?.SKPath ?? null;
+                SKPath originalPath;
+
                 float rotation = 0;
                 float extraScale = 1;
 
-                if(originalPath == null)
+                if(ProgramData.SpecTypeSymbols.TryGetValue(track.SpecType, out var svgPath))
+                {
+                    originalPath = svgPath.SKPath;
+                    rotation = (float)track.Heading_Rads;
+                    extraScale = 1.5f;
+                }
+                else
                 {
                     originalPath =
                         ProgramData.TrackSymbols[track.Category][track.FFS]?.SKPath
                         ?? ProgramData.TrackSymbols[TrackCategory.None][track.FFS].SKPath;
-                }
-                else
-                {
-                    rotation = (float)track.Heading_Rads;
-                    extraScale = 1.5f;
                 }
 
                 var clonedPath = new SKPath(originalPath);
