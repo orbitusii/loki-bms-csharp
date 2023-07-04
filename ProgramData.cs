@@ -153,7 +153,7 @@ namespace loki_bms_csharp
                 {
                     Geometries = new ObservableCollection<MapGeometry>()
                     {
-                        MapGeometry.LoadFromSVG(ResourcesPath + "DCSMapExtents.svg"),
+                        MapGeometry.LoadFromKML(ResourcesPath + "DCSMaps.kml"),
                     },
                 };
                 loaded.Geometries[0].Name = "DCS Map Extents";

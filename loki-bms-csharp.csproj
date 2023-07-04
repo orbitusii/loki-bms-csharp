@@ -86,6 +86,9 @@
     <None Update="Resources\DCSMapExtents.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\DCSMaps.kml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\LOKI_256.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
