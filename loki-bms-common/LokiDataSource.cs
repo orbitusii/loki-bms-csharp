@@ -1,12 +1,6 @@
-﻿using loki_bms_common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using loki_bms_common.Database;
 using System.ComponentModel;
-using loki_bms_common.Database;
+using System.Xml.Serialization;
 
 namespace loki_bms_common
 {

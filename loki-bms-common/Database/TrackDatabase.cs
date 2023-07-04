@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using loki_bms_common.MathL;
 using System.Collections.ObjectModel;
-using loki_bms_common.MathL;
-using System.Diagnostics;
 
 namespace loki_bms_common.Database
 {
@@ -30,7 +26,7 @@ namespace loki_bms_common.Database
         public delegate void DatabaseUpdatedCallback();
         public DatabaseUpdatedCallback? OnDatabaseUpdated;
 
-        public TrackDatabase (float tickRate = 100)
+        public TrackDatabase(float tickRate = 100)
         {
             LiveTracks = new ObservableCollection<TrackFile>();
             ProcessedData = new List<TrackDatum>();
@@ -75,7 +71,7 @@ namespace loki_bms_common.Database
             UpdateClock.Start();
         }
 
-        public TrackFile InitiateTrack (LatLonCoord latLon, double heading = 0, double speed = 0, double vertSpeed = 0, TrackType trackType = TrackType.Sim)
+        public TrackFile InitiateTrack(LatLonCoord latLon, double heading = 0, double speed = 0, double vertSpeed = 0, TrackType trackType = TrackType.Sim)
         {
             Vector64 posit = Conversions.LLToXYZ(latLon, Conversions.EarthRadius);
             Vector64 vel = Conversions.GetTangentVelocity(latLon, heading, speed, vertSpeed);
@@ -95,7 +91,7 @@ namespace loki_bms_common.Database
             return newTrack;
         }
 
-        public TrackFile InitiateTrack (Vector64 position, Vector64 velocity, TrackType trackType = TrackType.Sim)
+        public TrackFile InitiateTrack(Vector64 position, Vector64 velocity, TrackType trackType = TrackType.Sim)
         {
             var newTN = new TrackNumber.Internal { Value = NextITN };
 
@@ -112,11 +108,10 @@ namespace loki_bms_common.Database
             return newTrack;
         }
 
-        public void PullNewData ()
+        public void PullNewData()
         {
             var ActiveSources = DataSources.Where(x => x.Status == LokiDataSource.SourceStatus.Active).ToList();
 
-            Debug.WriteLine($"[DATABASE][LOG] Getting data from {ActiveSources.Count} Sources");
             foreach (var src in ActiveSources)
             {
                 if (src.Active)
@@ -126,7 +121,7 @@ namespace loki_bms_common.Database
             }
         }
 
-        public void UpdateTracks (float dt)
+        public void UpdateTracks(float dt)
         {
             for (int i = 0; i < FreshData.Count; i++)
             {
@@ -170,7 +165,7 @@ namespace loki_bms_common.Database
                     }
                 }
             }
-            
+
             //System.Diagnostics.Debug.WriteLine($"Updating Tracks with dt={dt}");
             foreach (var track in LiveTracks)
             {
@@ -178,7 +173,7 @@ namespace loki_bms_common.Database
             }
         }
 
-        private bool Correlate_ByETN (TrackDatum datum)
+        private bool Correlate_ByETN(TrackDatum datum)
         {
             var query = from TrackFile track in LiveTracks where track.TrackNumbers.Contains(datum.ID) select track;
             try
@@ -219,7 +214,7 @@ namespace loki_bms_common.Database
                 ProcessedData.Remove(old);
             }
 
-            foreach(var track in LiveTracks)
+            foreach (var track in LiveTracks)
             {
                 TimeSpan age = DateTime.Now - track.Timestamp;
 

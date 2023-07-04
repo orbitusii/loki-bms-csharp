@@ -1,7 +1,6 @@
 global using loki_bms_common;
 using loki_dcs;
 using System.Diagnostics;
-using System.Reflection;
 
 [assembly: LokiPlugin(
     RootType = typeof(LokiDCSPlugin),
@@ -15,8 +14,8 @@ using System.Reflection;
 
 namespace loki_dcs
 {
-    
-    public class LokiDCSPlugin: LokiPlugin
+
+    public class LokiDCSPlugin : LokiPlugin
     {
         public LokiDCSPlugin() { }
 

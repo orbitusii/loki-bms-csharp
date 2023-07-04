@@ -1,18 +1,13 @@
-﻿using loki_bms_common;
+﻿using Grpc.Net.Client;
 using loki_bms_common.Database;
-using System.Xml.Serialization;
-using RurouniJones.Dcs.Grpc.V0;
-using RurouniJones.Dcs.Grpc.V0.Mission;
-using Grpc.Net.Client;
+using loki_bms_common.MathL;
+using RurouniJones.Dcs.Grpc.V0.Common;
 using RurouniJones.Dcs.Grpc.V0.Hook;
+using RurouniJones.Dcs.Grpc.V0.Mission;
 using RurouniJones.Dcs.Grpc.V0.Net;
 using RurouniJones.Dcs.Grpc.V0.World;
-using System.Diagnostics.CodeAnalysis;
-using RurouniJones.Dcs.Grpc.V0.Common;
-using loki_bms_common.MathL;
-using System.IO.Compression;
 using System.Diagnostics;
-using Grpc.Core;
+using System.Xml.Serialization;
 
 namespace loki_dcs
 {
@@ -64,7 +59,7 @@ namespace loki_dcs
             Task.Run(TryActivateAsync);
         }
 
-        public async void TryActivateAsync ()
+        public async void TryActivateAsync()
         {
             if (!CheckAlive())
             {
@@ -181,7 +176,7 @@ namespace loki_dcs
 #pragma warning restore CS8619
 
             // Purge the data but keep space allocated
-            foreach(uint key in FreshData.Keys)
+            foreach (uint key in FreshData.Keys)
             {
                 FreshData[key] = null;
             }
