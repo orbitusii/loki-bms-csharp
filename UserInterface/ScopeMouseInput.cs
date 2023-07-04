@@ -122,7 +122,7 @@ namespace loki_bms_csharp.UserInterface
             {
                 System.Diagnostics.Debug.WriteLine("Left-right click combo lost");
             }
-            else if (prevClick == MouseClickState.Right)
+            else if (prevClick == MouseClickState.Right && ProgramData.SelectedObject is null)
             {
                 rightClickOpen = true;
                 rightClickPos = ProgramData.MainWindow.ScopeCanvas.PointToScreen(screenPt);
