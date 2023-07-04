@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
 using loki_bms_common.MathL;
+using System.Diagnostics;
 
 namespace loki_bms_common.Database
 {
@@ -113,7 +114,10 @@ namespace loki_bms_common.Database
 
         public void PullNewData ()
         {
-            foreach (var src in DataSources)
+            var ActiveSources = DataSources.Where(x => x.Status == LokiDataSource.SourceStatus.Active).ToList();
+
+            Debug.WriteLine($"[DATABASE][LOG] Getting data from {ActiveSources.Count} Sources");
+            foreach (var src in ActiveSources)
             {
                 if (src.Active)
                 {
@@ -171,20 +175,6 @@ namespace loki_bms_common.Database
             foreach (var track in LiveTracks)
             {
                 track.UpdateVisual(dt);
-                TimeSpan age = DateTime.Now - track.Timestamp;
-
-                // Track Drop logic
-                // If a track is older than 20 seconds, set it to pending
-                // If a track is pending and older than 30 seconds, drop it
-                // This isn't complete logic, but it'll work for now.
-                if (age > TimeSpan.FromSeconds(30) && track.FFS == FriendFoeStatus.Pending)
-                {
-                    LiveTracks.Remove(track);
-                }
-                else if (age > TimeSpan.FromSeconds(20))
-                {
-                    track.FFS = FriendFoeStatus.Pending;
-                }
             }
         }
 
@@ -227,6 +217,24 @@ namespace loki_bms_common.Database
             foreach (var old in oldData)
             {
                 ProcessedData.Remove(old);
+            }
+
+            foreach(var track in LiveTracks)
+            {
+                TimeSpan age = DateTime.Now - track.Timestamp;
+
+                // Track Drop logic
+                // If a track is older than 20 seconds, set it to pending
+                // If a track is pending and older than 30 seconds, drop it
+                // This isn't complete logic, but it'll work for now.
+                if (age > TimeSpan.FromSeconds(30) && track.FFS == FriendFoeStatus.Pending)
+                {
+                    LiveTracks.Remove(track);
+                }
+                else if (age > TimeSpan.FromSeconds(20))
+                {
+                    track.FFS = FriendFoeStatus.Pending;
+                }
             }
         }
     }
