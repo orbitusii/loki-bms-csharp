@@ -41,4 +41,17 @@ namespace loki_bms_common.Database
         Mode4 = 8,
         TADIL = 16,
     }
+
+    public enum TEType
+    {
+        None,
+        SAM,
+        Airbase,
+        Markpoint,
+        Waypoint,
+        Bullseye,
+        DefendedPoint,
+        DownedAircraft,
+        Other,
+    }
 }
