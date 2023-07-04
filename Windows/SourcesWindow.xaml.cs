@@ -92,9 +92,24 @@ namespace loki_bms_csharp
 
         private void Bullseye_Select(object sender, RoutedEventArgs e)
         {
-            LokiDataSource ds = (LokiDataSource)SourceDetails.DataContext;
-            //LatLonCoord bullsPos = new LatLonCoord { Alt = 0, Lat_Degrees = ds.Bullseye.Lat, Lon_Degrees = ds.Bullseye.Lon };
-            //ProgramData.BullseyePos = bullsPos;
+            LokiDataSource? ds = (LokiDataSource)SourceDetails.DataContext;
+
+            if (ds is null || ds.Status != LokiDataSource.SourceStatus.Active) return;
+
+            Task.Run(() =>
+            {
+                ImportTEs(ds);
+            });
+        }
+
+        private void ImportTEs (LokiDataSource ds)
+        {
+            TacticalElement[] TEs = ds.GetTEs();
+
+            foreach ( var te in TEs )
+            {
+                DB.TEs.Add(te);
+            }
         }
 
         private void Pause_Click(object sender, RoutedEventArgs e)

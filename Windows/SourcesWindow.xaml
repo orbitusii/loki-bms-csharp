@@ -63,7 +63,7 @@
                 <Label Content="Slow" HorizontalAlignment="Left" Margin="80,70,0,0" VerticalAlignment="Top" Width="50" Height="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Padding="0,0,0,0"/>
             </Grid>
 
-            <Button x:Name="BullseyeButton" Content="Use Bullseye" HorizontalAlignment="Left" Margin="140,5,0,0" Grid.Row="3" VerticalAlignment="Top" Height="20" Width="75" Click="Bullseye_Select"/>
+            <Button x:Name="TEButton" Content="Import TEs" HorizontalAlignment="Left" Margin="140,5,0,0" Grid.Row="3" VerticalAlignment="Top" Height="20" Width="75" Click="Bullseye_Select"/>
             <Button Content="Toggle Pause" Margin="10,5,5,0" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top" Height="20" Click="Pause_Click" Grid.RowSpan="2" Width="100"/>
             <Label x:Name="SourceInfoLabel" Grid.Row="3" Content="{Binding SourceInfo, BindsDirectlyToSource=True, StringFormat=\{0:R\}, TargetNullValue=offline}" Margin="5,30,5,5" Background="#FF171717"/>
 
