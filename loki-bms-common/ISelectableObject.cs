@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace loki_bms_common
 {
-    public interface IDrawableObject
-    {
-        public void Draw();
-    }
+    public interface ISelectableObject : IPositionedObject { }
 }

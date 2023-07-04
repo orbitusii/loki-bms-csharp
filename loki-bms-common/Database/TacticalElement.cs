@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace loki_bms_common.Database
 {
-    public class TacticalElement: IPositionedObject
+    public class TacticalElement: ISelectableObject
     {
         public Vector64 Position { get; set; }
         public LatLonCoord LatLon => Conversions.XYZToLL(Position);
@@ -16,7 +16,7 @@ namespace loki_bms_common.Database
         public string Name = "New TE";
         public string SpecialInfo = string.Empty;
 
-        public FriendFoeStatus FriendFoe = FriendFoeStatus.Pending;
+        public FriendFoeStatus FFS = FriendFoeStatus.Pending;
         public TrackCategory Category = TrackCategory.None;
 
         public LokiDataSource? Source;

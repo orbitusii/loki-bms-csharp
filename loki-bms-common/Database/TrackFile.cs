@@ -6,7 +6,7 @@ using loki_bms_common;
 
 namespace loki_bms_common.Database
 {
-    public class TrackFile : INotifyPropertyChanged
+    public class TrackFile : ISelectableObject, INotifyPropertyChanged
     {
         public List<TrackNumber> TrackNumbers { get; set; }
         public Vector64 RawPosition { get; private set; }
