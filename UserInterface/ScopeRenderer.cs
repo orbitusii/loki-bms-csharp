@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
-using SkiaSharp;
-using SkiaSharp.Views.WPF;
-using loki_bms_common.Database;
-using loki_bms_common.MathL;
-using loki_bms_csharp.UserInterface;
+﻿using loki_bms_common.Database;
+using loki_bms_csharp.Extensions;
 using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Settings;
-using System.Linq;
-using loki_bms_csharp.Geometry.SVG;
+using SkiaSharp;
 
 namespace loki_bms_csharp.UserInterface
 {
@@ -46,12 +38,14 @@ namespace loki_bms_csharp.UserInterface
 
         public List<TrackHotspot> TrackClickHotspots = new List<TrackHotspot>();
         public int ClickThrough = -1;
-        
-        public ScopeRenderer () { }
 
-        public int GetTrackAtPosition (SKPoint ScreenPoint)
+        public Dictionary<LokiDataSource, SKPaint> DatumPaintCache = new Dictionary<LokiDataSource, SKPaint>();
+
+        public ScopeRenderer() { }
+
+        public int GetTrackAtPosition(SKPoint ScreenPoint)
         {
-            lock(TrackClickHotspots)
+            lock (TrackClickHotspots)
             {
                 List<TrackHotspot> hotspots = TrackClickHotspots.FindAll(x => x.Bounds.Contains(ScreenPoint));
 
@@ -63,14 +57,14 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        public void Redraw (SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args, TangentMatrix cameraMatrix, double VFov)
+        public void Redraw(SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs args, TangentMatrix cameraMatrix, double VFov)
         {
             Info = args.Info;
-            if(Surface == null || Surface != args.Surface)
+            if (Surface == null || Surface != args.Surface)
             {
                 Surface = args.Surface;
             }
-            if(Canvas == null || Canvas != Surface.Canvas)
+            if (Canvas == null || Canvas != Surface.Canvas)
             {
                 Canvas = Surface.Canvas;
             }
@@ -134,7 +128,7 @@ namespace loki_bms_csharp.UserInterface
                 using (SKPath clone = new SKPath(path))
                 {
                     clone.Transform(screenMatrix);
-                    
+
                     if (Canvas.QuickReject(clone)) continue;
 
                     Canvas.DrawPath(clone, paint);
@@ -176,7 +170,7 @@ namespace loki_bms_csharp.UserInterface
         }
 
         private void DrawBullseye()
-        { 
+        {
             Vector64 BEPos = ProgramData.BullseyeCartesian;
             SKPaint BEBlue = new SKPaint
             {
@@ -201,6 +195,11 @@ namespace loki_bms_csharp.UserInterface
 
             if (ProgramData.ViewSettings.ZoomIncrement <= 9)
             {
+                foreach (LokiDataSource ds in DB.DataSources)
+                {
+                    DatumPaintCache[ds] = ds.GetPaint();
+                }
+
                 List<TrackDatum> dataSymbols = new List<TrackDatum>(DB.ProcessedData);
 
                 foreach (var datum in dataSymbols)
@@ -211,7 +210,7 @@ namespace loki_bms_csharp.UserInterface
 
             TrackClickHotspots.Clear();
 
-            if(ProgramData.TrackSelection.Track != null)
+            if (ProgramData.TrackSelection.Track != null)
             {
                 SKPaint brush = new SKPaint
                 {
@@ -241,8 +240,8 @@ namespace loki_bms_csharp.UserInterface
 
             if (Math.Abs(screenPos.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
             {
-                var path = new SKPath(ProgramData.DataSymbols.FirstOrDefault(x => x.name == datum.Origin.DataSymbol)?.SKPath) ?? new SKPath();
-                var paint = new SKPaint { Color = SKColor.Parse(datum.Origin.DataColor) };
+                var path = new SKPath(ProgramData.DataSymbols.First(x => x.name == datum.Origin.DataSymbol)?.SKPath) ?? new SKPath();
+                SKPaint paint = DatumPaintCache[datum.Origin];
                 path.Transform(SKMatrix.CreateScaleTranslation(1, 1, canvasPos.X, canvasPos.Y));
 
                 Canvas.DrawPath(path, paint);
@@ -261,7 +260,7 @@ namespace loki_bms_csharp.UserInterface
                 float rotation = 0;
                 float extraScale = 1;
 
-                if(ProgramData.SpecTypeSymbols.TryGetValue(track.SpecType, out var svgPath))
+                if (ProgramData.SpecTypeSymbols.TryGetValue(track.SpecType, out var svgPath))
                 {
                     originalPath = svgPath.SKPath;
                     rotation = (float)track.Heading_Rads;
@@ -292,8 +291,8 @@ namespace loki_bms_csharp.UserInterface
                 Canvas.DrawPath(clonedPath, fillPaint);
                 Canvas.DrawPath(clonedPath, strokePaint);
 
-                Canvas.DrawRect(bounds.Right-2, bounds.Bottom - 12, 24, 16, new SKPaint { Color = SKColor.Parse("#84000000"), Style = SKPaintStyle.Fill });
-                Canvas.DrawText($"{track.Altitude * Conversions.MetersToFeet / 100:F0}", new SKPoint(bounds.Right, bounds.Bottom), new SKPaint {  Color = SKColors.White, Style = SKPaintStyle.Fill });
+                Canvas.DrawRect(bounds.Right - 2, bounds.Bottom - 12, 24, 16, new SKPaint { Color = SKColor.Parse("#84000000"), Style = SKPaintStyle.Fill });
+                Canvas.DrawText($"{track.Altitude * Conversions.MetersToFeet / 100:F0}", new SKPoint(bounds.Right, bounds.Bottom), new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill });
             }
         }
 
@@ -304,7 +303,7 @@ namespace loki_bms_csharp.UserInterface
             DrawRay((0, 0, 0), (1, 0, 0), 6378137, SKColors.Red, 3, false);
         }
 
-        public void DrawLine (Vector64 from, Vector64 to, SKColor color, float width)
+        public void DrawLine(Vector64 from, Vector64 to, SKColor color, float width)
         {
             Vector64 localFrom = CameraMatrix.PointToTangentSpace(from);
             Vector64 localTo = CameraMatrix.PointToTangentSpace(to);
@@ -322,7 +321,7 @@ namespace loki_bms_csharp.UserInterface
             Canvas.DrawLine(ptFrom, ptTo, stroke);
         }
 
-        public void DrawRay (Vector64 from, Vector64 towards, double length, SKColor color, float width = 3, bool isRelativeToScreen = false)
+        public void DrawRay(Vector64 from, Vector64 towards, double length, SKColor color, float width = 3, bool isRelativeToScreen = false)
         {
             Vector64 localFrom = CameraMatrix.PointToTangentSpace(from);
             Vector64 localTo = CameraMatrix.PointToTangentSpace(towards) * length * (isRelativeToScreen ? Height : PixelsPerUnit);
@@ -340,7 +339,7 @@ namespace loki_bms_csharp.UserInterface
             Canvas.DrawLine(ptFrom, ptTo, stroke);
         }
 
-        public void DrawMeasureLine (Vector64 from, Vector64 to, SKColor color, float width)
+        public void DrawMeasureLine(Vector64 from, Vector64 to, SKColor color, float width)
         {
             double angle = Vector64.AngleBetween(from, to);
             double arcLength = Conversions.EarthRadius * angle;
@@ -373,7 +372,7 @@ namespace loki_bms_csharp.UserInterface
 
             };
 
-            Canvas.DrawText($"{heading:000}/{Math.Round(arcLength * Conversions.MetersToNM,0)} NM", textPoint, paint);
+            Canvas.DrawText($"{heading:000}/{Math.Round(arcLength * Conversions.MetersToNM, 0)} NM", textPoint, paint);
         }
 
         public void DrawCircle(Vector64 center, double radius, SKPaint brush, bool isRadiusInWorldUnits = true)
@@ -389,7 +388,7 @@ namespace loki_bms_csharp.UserInterface
             Canvas.DrawCircle(canvasCenter, (float)radius, brush);
         }
 
-        public SKPoint GetScreenPoint (Vector64 screenPos)
+        public SKPoint GetScreenPoint(Vector64 screenPos)
         {
             Vector64 scaled = screenPos * PixelsPerUnit;
 
