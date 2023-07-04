@@ -23,7 +23,9 @@ namespace loki_bms_csharp
         public static MainWindow MainWindow;
         public static UserInterface.ScopeRenderer MainScopeRenderer => MainWindow.ScopeRenderer;
 
-        public static TrackSelection TrackSelection { get; set; } = new TrackSelection();
+        public static ISelectableObject SelectedObject;
+        public static TacticalElement? SelectedTE => (TacticalElement)SelectedObject;
+        public static TrackSelection TrackSelection => new TrackSelection { Track = (TrackFile)SelectedObject };
 
         public static SourceWindow SrcWindow;
         public static GeometryWindow GeoWindow;

@@ -14,10 +14,11 @@ namespace loki_bms_csharp.UserInterface
 
     public class MouseInputData : InputData
     {
+        public bool OnlyMoved = true;
         public MouseClickState MouseButtons = MouseClickState.None;
         public bool DoubleClicked = false;
         public bool RightClickMenuOpen = false;
-        public Rect? RightClickMenuPos;
+        public Point? RightClickMenuPos;
     }
 
     public class KeyboardInputData: InputData

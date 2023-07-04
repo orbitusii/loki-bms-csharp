@@ -67,6 +67,7 @@ namespace loki_bms_csharp.UserInterface
 
             return new MouseInputData
             {
+                OnlyMoved = false,
                 DoubleClicked = true,
                 RequiresRedraw = redraw,
                 MouseButtons = ClickState,
@@ -115,7 +116,7 @@ namespace loki_bms_csharp.UserInterface
 
             // Close Right-Click Menu by default
             bool rightClickOpen = false;
-            Rect? rightClickPos = null;
+            Point? rightClickPos = null;
 
             if ((prevClick == (MouseClickState)5) && (MouseClickState)5 != ClickState)
             {
@@ -124,21 +125,29 @@ namespace loki_bms_csharp.UserInterface
             else if (prevClick == MouseClickState.Right)
             {
                 rightClickOpen = true;
-                rightClickPos = new Rect(screenPt, screenPt);
+                rightClickPos = ProgramData.MainWindow.ScopeCanvas.PointToScreen(screenPt);
 
-                ProgramData.TrackSelection.Track = SelectTrack(clickpoint);
+                ProgramData.SelectedObject = SelectObject(clickpoint);
             }
             else if (prevClick == MouseClickState.Left && !DoubleClickFired && !dragged)
             {
-                ProgramData.TrackSelection.Track = SelectTrack(clickpoint);
+                ProgramData.SelectedObject = SelectObject(clickpoint);
             }
 
             return new MouseInputData {
+                OnlyMoved = false,
                 MouseButtons = ClickState,
                 RequiresRedraw = true,
                 RightClickMenuOpen = rightClickOpen,
                 RightClickMenuPos = rightClickPos,
             };
+        }
+
+        private static ISelectableObject SelectObject (SKPoint point)
+        {
+            var selected = ProgramData.MainScopeRenderer.GetObjectAtPosition(point);
+
+            return selected;
         }
 
         private static TrackFile? SelectTrack (SKPoint point)

@@ -11,6 +11,7 @@ namespace loki_bms_csharp.UserInterface
     {
         public SKRect Bounds;
         public int Index;
+        public ISelectableObject Target;
 
         public bool Contains (SKPoint point)
         {

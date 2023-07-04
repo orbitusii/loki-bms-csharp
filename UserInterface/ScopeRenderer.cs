@@ -3,6 +3,8 @@ using loki_bms_csharp.Extensions;
 using loki_bms_csharp.Geometry;
 using loki_bms_csharp.Settings;
 using SkiaSharp;
+using System;
+using System.Windows.Controls.Primitives;
 
 namespace loki_bms_csharp.UserInterface
 {
@@ -43,6 +45,24 @@ namespace loki_bms_csharp.UserInterface
 
         public ScopeRenderer() { }
 
+        public ISelectableObject GetObjectAtPosition(SKPoint ScreenPoint)
+        {
+            lock(TrackClickHotspots)
+            {
+                List<TrackHotspot> hotspots = TrackClickHotspots.FindAll(x => x.Bounds.Contains(ScreenPoint));
+
+                ClickThrough = hotspots.Count > 1 ? (ClickThrough + 1) % hotspots.Count : 0;
+                TrackHotspot hotspot = hotspots.Count > 0 ? hotspots[ClickThrough] : null;
+
+                return hotspot?.Target;
+            }
+        }
+
+        /// <summary>
+        /// DEPRECATED
+        /// </summary>
+        /// <param name="ScreenPoint"></param>
+        /// <returns></returns>
         public int GetTrackAtPosition(SKPoint ScreenPoint)
         {
             lock (TrackClickHotspots)
@@ -219,26 +239,31 @@ namespace loki_bms_csharp.UserInterface
                     StrokeWidth = 1,
                 };
 
-                DrawCircle(ProgramData.TrackSelection.Track.Position, 16, brush, false);
+                DrawCircle(ProgramData.SelectedObject.Position, 16, brush, false);
             }
 
-            for (int i = 0; i < DB.LiveTracks.Count; i++)
-            {
-                TrackFile track = DB.LiveTracks[i];
+            int clickIndex = 0;
 
+            foreach (TrackFile track in DB.LiveTracks)
+            {
                 //Base symbol
-                DrawTrack(track, i, 16);
+                DrawTrack(track, clickIndex++, 16);
                 //Velocity leader
                 DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
+            }
+
+            foreach (TacticalElement TE in DB.TEs)
+            {
+                //Base symbol
+
             }
         }
 
         public void DrawDatum(TrackDatum datum)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(datum.Position);
-            var canvasPos = GetScreenPoint(screenPos);
 
-            if (Math.Abs(screenPos.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
+            if (CheckVisible(screenPos, out SKPoint canvasPos))
             {
                 var path = new SKPath(ProgramData.DataSymbols.First(x => x.name == datum.Origin.DataSymbol)?.SKPath) ?? new SKPath();
                 SKPaint paint = DatumPaintCache[datum.Origin];
@@ -251,9 +276,8 @@ namespace loki_bms_csharp.UserInterface
         public void DrawTrack(TrackFile track, int index, float size = 16)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(track.Position);
-            SKPoint canvasPos = GetScreenPoint(screenPos);
 
-            if (Math.Abs(screenPos.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos))
+            if (CheckVisible(screenPos, out SKPoint canvasPos))
             {
                 SKPath originalPath;
 
@@ -284,9 +308,7 @@ namespace loki_bms_csharp.UserInterface
                 clonedPath.Transform(SKMatrix.CreateRotation(rotation, clonedPath.Bounds.MidX, clonedPath.Bounds.MidY));
 
                 SKRect bounds = clonedPath.Bounds;
-                bounds.Inflate(4, 4);
-                TrackHotspot hotSpot = new TrackHotspot { Bounds = bounds, Index = index };
-                TrackClickHotspots.Add(hotSpot);
+                AddClickHotSpot(clonedPath.Bounds, track);
 
                 Canvas.DrawPath(clonedPath, fillPaint);
                 Canvas.DrawPath(clonedPath, strokePaint);
@@ -294,6 +316,41 @@ namespace loki_bms_csharp.UserInterface
                 Canvas.DrawRect(bounds.Right - 2, bounds.Bottom - 12, 24, 16, new SKPaint { Color = SKColor.Parse("#84000000"), Style = SKPaintStyle.Fill });
                 Canvas.DrawText($"{track.Altitude * Conversions.MetersToFeet / 100:F0}", new SKPoint(bounds.Right, bounds.Bottom), new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill });
             }
+        }
+
+        public void DrawTE(TacticalElement TE, float size=16)
+        {
+            Vector64 screenPos = CameraMatrix.PointToTangentSpace(TE.Position);
+
+            if (CheckVisible(screenPos, out SKPoint canvasPos))
+            {
+                SKPath path = new SKPath(ProgramData.TrackSymbols[TrackCategory.None][TE.FFS].SKPath);
+
+                var fillPaint = Colors.FillByFFS[TE.FFS];
+                var strokePaint = Colors.StrokeByFFS[TE.FFS];
+
+                float width = path.Bounds.Width;
+                float scale = size / width;
+                path.Transform(SKMatrix.CreateScaleTranslation(scale, scale, canvasPos.X, canvasPos.Y));
+
+                AddClickHotSpot(path.Bounds, TE);
+
+                Canvas.DrawPath(path, fillPaint);
+                Canvas.DrawPath(path, strokePaint);
+            }
+        }
+
+        private bool CheckVisible (Vector64 point, out SKPoint canvasPos)
+        {
+            canvasPos = GetScreenPoint(point);
+            return Math.Abs(point.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos);
+        }
+
+        private void AddClickHotSpot (SKRect bounds, ISelectableObject target)
+        {
+            bounds.Inflate(4, 4);
+            TrackHotspot hotSpot = new TrackHotspot { Bounds = bounds, Target = target };
+            TrackClickHotspots.Add(hotSpot);
         }
 
         public void DrawAxisLines()
