@@ -11,8 +11,6 @@ namespace loki_bms_common
     public class SerializedDataSource
     {
         [XmlAttribute]
-        public bool Active = false;
-        [XmlAttribute]
         public string SourceType = "unknown";
         [XmlAttribute]
         public string Name = "";
@@ -40,7 +38,6 @@ namespace loki_bms_common
             SerializedDataSource sds = new SerializedDataSource ();
 
             sds.SourceType = s.GetType().Name;
-            sds.Active= s.Active;
             sds.Name = s.Name;
             sds.Address = s.Address;
             sds.Port = s.Port;
