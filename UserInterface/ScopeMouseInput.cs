@@ -50,7 +50,7 @@ namespace loki_bms_csharp.UserInterface
 
             if(ClickState == MouseClickState.Left)
             {
-                if(CheckDoubleClick())
+                if(CheckDoubleClick(e))
                 {
                     redraw = true;
                     RecenterCamera(clickToScreenPoint(screenPt));
@@ -58,6 +58,10 @@ namespace loki_bms_csharp.UserInterface
                 else
                 {
                 }
+            }
+            else if (ClickState == MouseClickState.Right)
+            {
+                // Open Right-click Menu at the specified location
             }
             else if (ClickState == (MouseClickState)5)
             {
@@ -67,18 +71,11 @@ namespace loki_bms_csharp.UserInterface
             return new MouseInputData { DoubleClicked = true, RequiresRedraw = redraw, MouseButtons = ClickState };
         }
 
-        public static bool CheckDoubleClick()
+        public static bool CheckDoubleClick(MouseButtonEventArgs e)
         {
             DateTime now = DateTime.Now;
 
-            if ((now - LastLeftClick).TotalSeconds <= DoubleClickTime && !DoubleClickFired)
-            {
-                DoubleClickFired = true;
-            }
-            else
-            {
-                DoubleClickFired = false;
-            }
+            DoubleClickFired = e.ClickCount >= 2 ? true : false;
 
             LastLeftClick = now;
             return DoubleClickFired;
