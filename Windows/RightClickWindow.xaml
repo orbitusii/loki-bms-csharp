@@ -1,0 +1,14 @@
+﻿<Window x:Name="Window" x:Class="loki_bms_csharp.Windows.RightClickWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:loki_bms_csharp.Windows"
+        xmlns:controls="clr-namespace:loki_bms_csharp.Windows.Controls"
+        mc:Ignorable="d"
+        Title="RightClickWindow" ShowInTaskbar="False" Topmost="True" WindowStyle="None" Background="{DynamicResource VeryDarkGray}"
+        Width="150" Height="250" MaxWidth="150" MaxHeight="450" MinHeight="50" MinWidth="150" SnapsToDevicePixels="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+    <Grid>
+        <controls:ContextMenu HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.CanContentScroll="True"/>
+    </Grid>
+</Window>

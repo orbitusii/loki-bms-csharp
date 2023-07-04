@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:skia="clr-namespace:SkiaSharp.Views.WPF;assembly=SkiaSharp.Views.WPF"
         xmlns:local="clr-namespace:loki_bms_csharp"
-        xmlns:loki="clr-namespace:loki_bms_csharp.Windows"
+        xmlns:windows="clr-namespace:loki_bms_csharp.Windows"
         mc:Ignorable="d"
         Title="LOKI BMS - Main Scope" Height="880" Width="1720" ResizeMode="CanResizeWithGrip"
         Style="{StaticResource WindowTheme}" Closing="PrimaryDisplay_Closing" KeyDown="OnKeyDown" KeyUp="OnKeyUp"
@@ -27,11 +27,11 @@
         
         <Grid x:Name="ScopeGrid">
             <skia:SKElement x:Name="ScopeCanvas" PaintSurface="OnPaintSurface" MouseDown="OnMouseDown" MouseUp="OnMouseUp" MouseWheel="OnMouseWheel" MouseMove="OnMouseMove" Focusable="True"/>
-            <loki:TrackDetails x:Name="TrackDetails" Grid.Row="1" Width="200" Height="Auto" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top">
-                <loki:TrackDetails.DataContext>
+            <windows:TrackDetails x:Name="TrackDetails" Grid.Row="1" Width="200" Height="Auto" HorizontalAlignment="Left" Margin="10,10,10,10" VerticalAlignment="Top">
+                <windows:TrackDetails.DataContext>
                     <Binding Source="{x:Static local:ProgramData.TrackSelection}"/>
-                </loki:TrackDetails.DataContext>
-            </loki:TrackDetails>
+                </windows:TrackDetails.DataContext>
+            </windows:TrackDetails>
         </Grid>
     </DockPanel>
 </Window>

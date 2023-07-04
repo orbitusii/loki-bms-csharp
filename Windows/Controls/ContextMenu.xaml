@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="loki_bms_csharp.Windows.Controls.ContextMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:loki_bms_csharp.Windows.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="150" HorizontalAlignment="Left" VerticalAlignment="Top">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Button Content="Drop Track" BorderBrush="{x:Null}" HorizontalContentAlignment="Left"/>
+            <Button Content="Drop Protect" BorderBrush="{x:Null}" HorizontalContentAlignment="Left"/>
+            <Separator Margin="2,2,2,2"/>
+            <Button Content="Delete TE" BorderBrush="{x:Null}"/>
+            <Button Content="New TE" BorderBrush="{x:Null}"/>
+            <Button Content="Set As Bullseye" BorderBrush="{x:Null}"/>
+            <Button Content="Button" BorderBrush="{x:Null}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

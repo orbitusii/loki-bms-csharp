@@ -1,5 +1,6 @@
 ﻿using loki_bms_common.Database;
 using loki_bms_csharp.UserInterface;
+using loki_bms_csharp.Windows;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System;
@@ -20,11 +21,12 @@ namespace loki_bms_csharp
             DependencyProperty.Register("DrawDebug", typeof(bool), typeof(MainWindow));
         public bool DrawDebug
         {
-            get { return (bool) GetValue(DebugProperty); }
+            get { return (bool)GetValue(DebugProperty); }
             set { SetValue(DebugProperty, value); }
         }
 
         public ScopeRenderer ScopeRenderer = new ScopeRenderer();
+        public RightClickWindow RightClickMenu { get; protected set; } = new RightClickWindow();
 
         public int FPS { get; private set; } = 30;
         public double MSPerFrame
@@ -44,16 +46,19 @@ namespace loki_bms_csharp
             ScopeCanvas.PaintSurface += OnPaintSurface;
             DrawDebug = false;
 
+            RightClickMenu.Hide();
+
             EndInit();
         }
 
         private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ProgramData.Database.OnDatabaseUpdated -= Redraw;
+            RightClickMenu.Close();
             ProgramData.Shutdown();
         }
 
-        public void Redraw ()
+        public void Redraw()
         {
             try
             {
@@ -75,48 +80,65 @@ namespace loki_bms_csharp
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if(ScopeCanvas.IsFocused)
-                CheckForRedraw(ScopeHotkeys.OnKeyDown(e));
+            if (ScopeCanvas.IsFocused)
+                ProcessInput(ScopeHotkeys.OnKeyDown(e));
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e)
         {
             if (ScopeCanvas.IsFocused)
-                CheckForRedraw(ScopeHotkeys.OnKeyUp(e));
+                ProcessInput(ScopeHotkeys.OnKeyUp(e));
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             ScopeCanvas.Focus();
-            CheckForRedraw(ScopeMouseInput.OnMouseDown(e));
+            ProcessInput(ScopeMouseInput.OnMouseDown(e));
         }
 
         private void OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            CheckForRedraw(ScopeMouseInput.OnMouseUp(e));
+            ProcessInput(ScopeMouseInput.OnMouseUp(e));
         }
 
         private void OnMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            CheckForRedraw(ScopeMouseInput.OnMouseWheel(e));
+            ProcessInput(ScopeMouseInput.OnMouseWheel(e));
         }
 
         private void OnMouseMove(object sender, MouseEventArgs e)
         {
-            CheckForRedraw(ScopeMouseInput.OnMouseMove(e));
+            ProcessInput(ScopeMouseInput.OnMouseMove(e));
         }
 
-        private void CheckForRedraw (InputData dat)
+        private void ProcessInput(InputData dat)
         {
-            if(dat.RequiresRedraw)
+            if (dat.RequiresRedraw)
             {
                 Redraw();
+            }
+
+            if (dat is MouseInputData mid)
+            {
+                if (!mid.OnlyMoved) RightClickMenu.Hide();
+
+                if (mid.RightClickMenuOpen)
+                {
+                    if (mid.RightClickMenuPos is null)
+                        throw new NullReferenceException($"Didn't get a point for the right click menu when one was expected!");
+
+                    Point RealPos = (Point)mid.RightClickMenuPos;
+
+                    RightClickMenu.Left = RealPos.X;
+                    RightClickMenu.Top = RealPos.Y;
+                    RightClickMenu.Show();
+                }
             }
         }
 
         private void SourceMenuButton_Click(object sender, RoutedEventArgs e)
         {
-            if(ProgramData.SrcWindow == null)
+            if (ProgramData.SrcWindow == null)
             {
                 ProgramData.SrcWindow = new SourceWindow();
                 ProgramData.SrcWindow.Show();
