@@ -172,7 +172,7 @@ namespace loki_dcs
             // Suppresses this null coalescing complaint because it's going to get filtered
 #pragma warning disable CS8619
             TrackDatum[] values = FreshData.Values.Where(x => x is TrackDatum).ToArray();
-            Debug.WriteLine($"{values.Length} fresh TrackData");
+            //Debug.WriteLine($"{values.Length} fresh TrackData");
 #pragma warning restore CS8619
 
             // Purge the data but keep space allocated

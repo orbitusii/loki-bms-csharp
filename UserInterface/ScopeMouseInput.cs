@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using loki_bms_common.Database;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 
@@ -38,7 +39,7 @@ namespace loki_bms_csharp.UserInterface
             return new MouseInputData { RequiresRedraw = true, MouseButtons = ClickState };
         }
 
-        public static InputData OnMouseDown (MouseButtonEventArgs e)
+        public static InputData OnMouseDown(MouseButtonEventArgs e)
         {
             ClickState = (MouseClickState)(GetButtonValue(e.ChangedButton) | (int)ClickState);
 
@@ -48,9 +49,9 @@ namespace loki_bms_csharp.UserInterface
             currentMousePoint = clickStartPoint;
             bool redraw = false;
 
-            if(ClickState == MouseClickState.Left)
+            if (ClickState == MouseClickState.Left)
             {
-                if(CheckDoubleClick(e))
+                if (CheckDoubleClick(e))
                 {
                     redraw = true;
                     RecenterCamera(clickToScreenPoint(screenPt));
@@ -59,16 +60,17 @@ namespace loki_bms_csharp.UserInterface
                 {
                 }
             }
-            else if (ClickState == MouseClickState.Right)
-            {
-                // Open Right-click Menu at the specified location
-            }
             else if (ClickState == (MouseClickState)5)
             {
                 System.Diagnostics.Debug.WriteLine("Left-Right Click Combo fired");
             }
 
-            return new MouseInputData { DoubleClicked = true, RequiresRedraw = redraw, MouseButtons = ClickState };
+            return new MouseInputData
+            {
+                DoubleClicked = true,
+                RequiresRedraw = redraw,
+                MouseButtons = ClickState,
+            };
         }
 
         public static bool CheckDoubleClick(MouseButtonEventArgs e)
@@ -81,7 +83,7 @@ namespace loki_bms_csharp.UserInterface
             return DoubleClickFired;
         }
 
-        public static void RecenterCamera (Vector64 screenClickPt)
+        public static void RecenterCamera(Vector64 screenClickPt)
         {
             if (screenClickPt.magnitude <= Conversions.EarthRadius)
             {
@@ -105,22 +107,45 @@ namespace loki_bms_csharp.UserInterface
             Point screenPt = e.GetPosition(ProgramData.MainWindow.ScopeCanvas);
             clickEndPoint = clickToPointOnEarth(screenPt);
 
+            bool dragged = (clickEndPoint - clickStartPoint).SquareMagnitude > 0.01f;
+
             var prevClick = ClickState;
             ClickState = (MouseClickState)(buttonValue ^ (int)ClickState);
+            SKPoint clickpoint = new SKPoint((float)screenPt.X, (float)screenPt.Y);
 
-            if((prevClick == (MouseClickState)5) && (MouseClickState)5 != ClickState)
+            // Close Right-Click Menu by default
+            bool rightClickOpen = false;
+            Rect? rightClickPos = null;
+
+            if ((prevClick == (MouseClickState)5) && (MouseClickState)5 != ClickState)
             {
                 System.Diagnostics.Debug.WriteLine("Left-right click combo lost");
             }
-            else if (prevClick == MouseClickState.Left && !DoubleClickFired)
+            else if (prevClick == MouseClickState.Right)
             {
-                SKPoint skPoint = new SKPoint((float)screenPt.X, (float)screenPt.Y);
-                int trackIndex = ProgramData.MainScopeRenderer.GetTrackAtPosition(skPoint);
+                rightClickOpen = true;
+                rightClickPos = new Rect(screenPt, screenPt);
 
-                ProgramData.TrackSelection.Track = trackIndex >= 0 ? ProgramData.Database.LiveTracks[trackIndex] : null;
+                ProgramData.TrackSelection.Track = SelectTrack(clickpoint);
+            }
+            else if (prevClick == MouseClickState.Left && !DoubleClickFired && !dragged)
+            {
+                ProgramData.TrackSelection.Track = SelectTrack(clickpoint);
             }
 
-            return new MouseInputData { MouseButtons = ClickState, RequiresRedraw = true };
+            return new MouseInputData {
+                MouseButtons = ClickState,
+                RequiresRedraw = true,
+                RightClickMenuOpen = rightClickOpen,
+                RightClickMenuPos = rightClickPos,
+            };
+        }
+
+        private static TrackFile? SelectTrack (SKPoint point)
+        {
+            int trackIndex = ProgramData.MainScopeRenderer.GetTrackAtPosition(point);
+
+            return trackIndex >= 0 ? ProgramData.Database.LiveTracks[trackIndex] : null;
         }
 
         public static InputData OnMouseMove(MouseEventArgs e)
@@ -130,7 +155,7 @@ namespace loki_bms_csharp.UserInterface
             return new MouseInputData { MouseButtons = ClickState, RequiresRedraw = true };
         }
 
-        private static Vector64 clickToPointOnEarth (Point pt)
+        private static Vector64 clickToPointOnEarth(Point pt)
         {
             Vector64 camPoint = clickToScreenPoint(pt);
             Vector64 worldPos;
@@ -144,7 +169,8 @@ namespace loki_bms_csharp.UserInterface
             {
                 worldPos = ViewSettings.CameraMatrix.PointToWorldSpace((rawIntersect + WorldOrigin.x, camPoint.y, camPoint.z));
             }
-            else {
+            else
+            {
                 Vector64 atEdge = (0, camPoint.y, camPoint.z);
                 atEdge = atEdge.normalized * Conversions.EarthRadius;
 

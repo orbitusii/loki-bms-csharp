@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace loki_bms_csharp.UserInterface
 {
@@ -15,6 +16,8 @@ namespace loki_bms_csharp.UserInterface
     {
         public MouseClickState MouseButtons = MouseClickState.None;
         public bool DoubleClicked = false;
+        public bool RightClickMenuOpen = false;
+        public Rect? RightClickMenuPos;
     }
 
     public class KeyboardInputData: InputData
