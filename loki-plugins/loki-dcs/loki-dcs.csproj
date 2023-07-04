@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="call ..\..\BuildScripts\CopyFile.bat .\References\ ..\..\bin\Debug\net6.0-windows\Plugins\References\" />
+    <Exec Command="call ..\..\BuildScripts\CopyFile.bat .\bin\Debug\net6.0\ ..\..\bin\Debug\net6.0-windows\Plugins\&#xD;&#xA;&#xD;&#xA;call ..\..\BuildScripts\CopyFile.bat .\References\ ..\..\bin\Debug\net6.0-windows\Plugins\References\" />
   </Target>
 
 </Project>

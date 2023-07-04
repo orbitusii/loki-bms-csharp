@@ -11,21 +11,22 @@ using System.Diagnostics.CodeAnalysis;
 using RurouniJones.Dcs.Grpc.V0.Common;
 using loki_bms_common.MathL;
 using System.IO.Compression;
+using System.Diagnostics;
+using Grpc.Core;
 
 namespace loki_dcs
 {
     [XmlInclude(typeof(DCSSource))]
     public class DCSSource : LokiDataSource
     {
-        internal GrpcChannel Channel => GrpcChannel.ForAddress($"https://{Address}:{Port}");
+        internal GrpcChannel Channel => GrpcChannel.ForAddress($"http://{Address}:{Port}");
 
         internal HookService.HookServiceClient Hook;
         internal MissionService.MissionServiceClient Mission;
         internal NetService.NetServiceClient Net;
         internal WorldService.WorldServiceClient World;
 
-        private CancellationTokenSource StopTokenSource = new CancellationTokenSource(0);
-        private CancellationToken StopToken;
+        private CancellationTokenSource StopTokenSource = new CancellationTokenSource();
 
         private Dictionary<uint, TrackDatum?> FreshData = new Dictionary<uint, TrackDatum?>();
 
@@ -57,16 +58,28 @@ namespace loki_dcs
 
         public override void Activate()
         {
+            Debug.WriteLine("[DCS-grpc][LOG] Trying to start the DCS Source");
+            Status = SourceStatus.Starting;
+
+            Task.Run(TryActivateAsync);
+        }
+
+        public async void TryActivateAsync ()
+        {
             if (!CheckAlive())
             {
                 Active = false;
+                Status = SourceStatus.Disconnected;
                 return;
             }
 
-            if (!StopTokenSource.TryReset()) StopTokenSource = new CancellationTokenSource(0);
-            StopToken = StopTokenSource.Token;
+            StopTokenSource = new CancellationTokenSource();
 
-            Task.Run(StreamData, StopToken);
+            Active = true;
+            Status = SourceStatus.Active;
+            Debug.WriteLine($"[DCS-grpc][LOG] Success! Connected to {Channel.Target}");
+
+            await StreamData();
         }
 
         public async Task StreamData()
@@ -78,20 +91,23 @@ namespace loki_dcs
 
                 var units = Mission.StreamUnits(new StreamUnitsRequest { PollRate = pr, MaxBackoff = spr });
 
-                while (await units.ResponseStream.MoveNext(StopToken))
+                while (Active && await units.ResponseStream.MoveNext(StopTokenSource.Token))
                 {
-                    if (StopToken.IsCancellationRequested) break;
-
                     var unit = units.ResponseStream.Current;
 
-                    if (unit.Unit is null) continue;
-
-                    FreshData[unit.Unit.Id] = ConvertData(unit.Unit);
+                    if (unit.Unit is Unit)
+                    {
+                        FreshData[unit.Unit.Id] = ConvertData(unit.Unit);
+                    }
                 }
             }
-            finally
+            catch (Exception e)
             {
-                Deactivate();
+                Debug.WriteLine(
+                    $"[DCS-grpc][ERROR] Something broke the stream?! StopToken Cancelled? {StopTokenSource.IsCancellationRequested}\n" +
+                    $"                  Inner exception: {e}");
+                Active = false;
+                Status = SourceStatus.Disconnected;
             }
         }
 
@@ -135,26 +151,25 @@ namespace loki_dcs
 
         public override bool CheckAlive()
         {
-            return Task.Run(CheckAliveAsync).Result;
-        }
-
-        private async Task<bool> CheckAliveAsync()
-        {
             try
             {
-                var response = await Hook.GetMissionNameAsync(new GetMissionNameRequest { });
+                var response = Hook.GetMissionName(new GetMissionNameRequest { });
                 MissionName = response.Name;
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.WriteLine($"[DCS-grpc][LOG] Source at {Address}:{Port} wasn't reachable: {e}");
                 return false;
             }
         }
 
         public override void Deactivate()
         {
-            StopTokenSource.Cancel();
+            if (Status != SourceStatus.Active) return;
+
+            Active = false;
+            Status = SourceStatus.Offline;
         }
 
         public override TrackDatum[] GetFreshData()
@@ -162,6 +177,7 @@ namespace loki_dcs
             // Suppresses this null coalescing complaint because it's going to get filtered
 #pragma warning disable CS8619
             TrackDatum[] values = FreshData.Values.Where(x => x is TrackDatum).ToArray();
+            Debug.WriteLine($"{values.Length} fresh TrackData");
 #pragma warning restore CS8619
 
             // Purge the data but keep space allocated
@@ -169,6 +185,8 @@ namespace loki_dcs
             {
                 FreshData[key] = null;
             }
+
+            MissionTime = Mission.GetScenarioCurrentTime(new GetScenarioCurrentTimeRequest { }).Datetime;
 
             return values;
         }
