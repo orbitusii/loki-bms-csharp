@@ -19,6 +19,7 @@ namespace loki_bms_csharp.UserInterface
         public bool DoubleClicked = false;
         public bool RightClickMenuOpen = false;
         public Point? RightClickMenuPos;
+        public Vector64? worldClickPoint;
     }
 
     public class KeyboardInputData: InputData

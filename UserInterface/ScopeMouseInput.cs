@@ -117,6 +117,7 @@ namespace loki_bms_csharp.UserInterface
             // Close Right-Click Menu by default
             bool rightClickOpen = false;
             Point? rightClickPos = null;
+            Vector64? worldClickPoint = null;
 
             if ((prevClick == (MouseClickState)5) && (MouseClickState)5 != ClickState)
             {
@@ -126,6 +127,7 @@ namespace loki_bms_csharp.UserInterface
             {
                 rightClickOpen = true;
                 rightClickPos = ProgramData.MainWindow.ScopeCanvas.PointToScreen(screenPt);
+                worldClickPoint = clickToPointOnEarth(screenPt);
 
                 ProgramData.SelectedObject = SelectObject(clickpoint);
             }
@@ -140,6 +142,7 @@ namespace loki_bms_csharp.UserInterface
                 RequiresRedraw = true,
                 RightClickMenuOpen = rightClickOpen,
                 RightClickMenuPos = rightClickPos,
+                worldClickPoint = worldClickPoint,
             };
         }
 

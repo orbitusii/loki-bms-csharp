@@ -47,7 +47,7 @@ namespace loki_bms_csharp.UserInterface
 
         public ISelectableObject GetObjectAtPosition(SKPoint ScreenPoint)
         {
-            lock(TrackClickHotspots)
+            lock (TrackClickHotspots)
             {
                 List<TrackHotspot> hotspots = TrackClickHotspots.FindAll(x => x.Bounds.Contains(ScreenPoint));
 
@@ -191,6 +191,7 @@ namespace loki_bms_csharp.UserInterface
 
         private void DrawBullseye()
         {
+            Vector64 mousePos = ScopeMouseInput.currentMousePoint;
             Vector64 BEPos = ProgramData.BullseyeCartesian;
             SKPaint BEBlue = new SKPaint
             {
@@ -199,14 +200,30 @@ namespace loki_bms_csharp.UserInterface
                 StrokeWidth = 3
             };
 
-            DrawCircle(BEPos, 8, BEBlue, false);
-            DrawCircle(BEPos, 2, BEBlue, false);
+            int count = ProgramData.Bullseyes.Count;
 
-            var relToBE = ProgramData.GetPositionRelativeToBullseye(ScopeMouseInput.currentMousePoint);
+            for (int i = 0; i < count; i++)
+            {
+                ISelectableObject BE = ProgramData.Bullseyes[i];
+                SKPoint bottomRight = new SKPoint(Width - 100, Height - (20 * (count - i)));
 
-            SKPoint bottomRight = new SKPoint(Width - 100, Height - 20);
-            Canvas.DrawText($"BE: {relToBE.heading_rads * Conversions.ToDegrees:000},{relToBE.dist * Conversions.MetersToNM:0}",
-                bottomRight, new SKPaint { TextSize = 16, Style = SKPaintStyle.Fill, Color = SKColors.White });
+                double dist = Conversions.GetGreatCircleDistance(BE.Position, mousePos);
+                double heading = Conversions.GetBearing(BE.Position, mousePos);
+                string label = $"BE{i}";
+
+                string BullseyeText = $"BE{i}: {heading * Conversions.ToDegrees:000},{dist * Conversions.MetersToNM:0}";
+
+                Canvas.DrawText(BullseyeText, bottomRight, new SKPaint { TextSize = 16, Style = SKPaintStyle.Fill, Color = SKColors.White });
+
+                // Drawing a tag next to the bullseye for clarity!
+                Vector64 screenPos = CameraMatrix.PointToTangentSpace(BE.Position);
+
+                if (CheckVisible(screenPos, out SKPoint canvasPos))
+                {
+                    Canvas.DrawRect(canvasPos.X + 10, canvasPos.Y + 8, 6 * label.Length, 16, new SKPaint { Color = SKColor.Parse("#84000000"), Style = SKPaintStyle.Fill });
+                    Canvas.DrawText(label, new SKPoint(canvasPos.X + 12, canvasPos.Y+20), new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill });
+                }
+            }
         }
 
         public void DrawFromDatabase()
@@ -318,7 +335,7 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        public void DrawTE(TacticalElement TE, float size=16)
+        public void DrawTE(TacticalElement TE, float size = 16)
         {
             Vector64 screenPos = CameraMatrix.PointToTangentSpace(TE.Position);
 
@@ -340,13 +357,13 @@ namespace loki_bms_csharp.UserInterface
             }
         }
 
-        private bool CheckVisible (Vector64 point, out SKPoint canvasPos)
+        private bool CheckVisible(Vector64 point, out SKPoint canvasPos)
         {
             canvasPos = GetScreenPoint(point);
             return Math.Abs(point.x) <= Conversions.EarthRadius && Canvas.LocalClipBounds.Contains(canvasPos);
         }
 
-        private void AddClickHotSpot (SKRect bounds, ISelectableObject target)
+        private void AddClickHotSpot(SKRect bounds, ISelectableObject target)
         {
             bounds.Inflate(4, 4);
             TrackHotspot hotSpot = new TrackHotspot { Bounds = bounds, Target = target };
