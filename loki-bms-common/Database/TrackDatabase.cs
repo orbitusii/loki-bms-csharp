@@ -14,10 +14,13 @@ namespace loki_bms_common.Database
         public ObservableCollection<LokiDataSource> DataSources { get; set; } = new ObservableCollection<LokiDataSource>();
 
         public ObservableCollection<TrackFile> LiveTracks = new ObservableCollection<TrackFile>();
+        private List<TrackFile> forceDropTracks = new List<TrackFile>();
+
         public List<TrackDatum> ProcessedData = new List<TrackDatum>();
         public List<TrackDatum> FreshData = new List<TrackDatum>();
 
         public ObservableCollection<TacticalElement> TEs = new ObservableCollection<TacticalElement>();
+        private List<TacticalElement> deletedTEs = new List<TacticalElement>();
 
         private System.Timers.Timer UpdateClock;
         private DateTime LastUpdate;
@@ -106,6 +109,18 @@ namespace loki_bms_common.Database
             LiveTracks.Add(newTrack);
 
             return newTrack;
+        }
+
+        public void MarkForDeletion (ISelectableObject item)
+        {
+            if (item is TrackFile tf && LiveTracks.Contains(tf))
+            {
+                forceDropTracks.Add(tf);
+            }
+            else if (item is TacticalElement te && TEs.Contains(te))
+            {
+                deletedTEs.Add(te);
+            }
         }
 
         public void PullNewData()
@@ -231,6 +246,19 @@ namespace loki_bms_common.Database
                     track.FFS = FriendFoeStatus.Pending;
                 }
             }
+
+            foreach (var deleted in forceDropTracks)
+            {
+                LiveTracks.Remove(deleted);
+            }
+
+            foreach(var deleted in deletedTEs)
+            {
+                TEs.Remove(deleted);
+            }
+
+            forceDropTracks.Clear();
+            deletedTEs.Clear();
         }
     }
 }

@@ -108,5 +108,31 @@ namespace loki_bms_common.MathL
 
             return (speed, vertSpeed, heading);
         }
+
+        public static double GetGreatCircleDistance(Vector64 from, Vector64 to)
+        {
+            double surfaceAngle = Vector64.AngleBetween(from, to);
+            double dist = Conversions.EarthRadius * surfaceAngle;
+
+            return dist;
+        }
+
+        public static double GetBearing (Vector64 from, Vector64 to)
+        {
+
+            TangentMatrix mat = TangentMatrix.FromXYZ(from);
+
+            Vector64 vel_surface = mat.VectorToTangentSpace(to);
+            vel_surface -= (vel_surface.x, 0, 0);
+
+            double heading = Math.Acos(-vel_surface.normalized.z);
+            if (vel_surface.y < 0)
+            {
+                heading *= -1;
+                heading += Math.PI * 2;
+            }
+
+            return heading;
+        }
     }
 }
