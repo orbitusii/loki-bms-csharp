@@ -9,6 +9,6 @@
         Title="RightClickWindow" ShowInTaskbar="False" Topmost="True" WindowStyle="None" Background="{DynamicResource VeryDarkGray}"
         Width="150" Height="250" MaxWidth="150" MaxHeight="450" MinHeight="50" MinWidth="150" SnapsToDevicePixels="True" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
     <Grid>
-        <controls:ContextMenu HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.CanContentScroll="True"/>
+        <controls:ContextMenu x:Name="ButtonPane" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.CanContentScroll="True"/>
     </Grid>
 </Window>

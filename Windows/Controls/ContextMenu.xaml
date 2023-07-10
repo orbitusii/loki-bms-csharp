@@ -12,12 +12,13 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <Button Content="Drop Track" BorderBrush="{x:Null}" HorizontalContentAlignment="Left"/>
-            <Button Content="Drop Protect" BorderBrush="{x:Null}" HorizontalContentAlignment="Left"/>
+            <Button x:Name="DropTrackButton" Content="Drop Track" BorderBrush="{x:Null}" HorizontalContentAlignment="Left"/>
+            <Button x:Name="ProtectTrackButton" Content="Drop Protect" BorderBrush="{x:Null}" HorizontalContentAlignment="Left"/>
             <Separator Margin="2,2,2,2"/>
-            <Button Content="Delete TE" BorderBrush="{x:Null}"/>
-            <Button Content="New TE" BorderBrush="{x:Null}"/>
-            <Button Content="Set As Bullseye" BorderBrush="{x:Null}"/>
+            <Button x:Name="CreateTEButton" Content="New TE" BorderBrush="{x:Null}" Click="CreateTEButton_Click"/>
+            <Button x:Name="DeleteTEButton" Content="Delete TE" BorderBrush="{x:Null}" Click="DeleteTEButton_Click"/>
+            <Button x:Name="AddBullseyeButton" Content="Set As Bullseye" BorderBrush="{x:Null}" Click="AddBullseye_Click"/>
+            <Button x:Name="RemoveBullseyeButton" Content="Remove Bullseye" BorderBrush="{x:Null}" Click="RemoveBullseye_Click"/>
             <Button Content="Button" BorderBrush="{x:Null}"/>
         </StackPanel>
     </Grid>

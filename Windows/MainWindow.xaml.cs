@@ -125,13 +125,13 @@ namespace loki_bms_csharp
                 if (mid.RightClickMenuOpen)
                 {
                     if (mid.RightClickMenuPos is null)
-                        throw new NullReferenceException($"Didn't get a point for the right click menu when one was expected!");
+                        throw new NullReferenceException($"Didn't get a screenspace point for the right click menu when one was expected!");
+                    if (mid.worldClickPoint is null)
+                        throw new NullReferenceException($"Didn't get a Vector64 for the right click menu when one was expected!");
 
                     Point RealPos = (Point)mid.RightClickMenuPos;
 
-                    RightClickMenu.Left = RealPos.X;
-                    RightClickMenu.Top = RealPos.Y;
-                    RightClickMenu.Show();
+                    RightClickMenu.Popup(RealPos, mid.worldClickPoint ?? Vector64.zero);
                 }
             }
         }

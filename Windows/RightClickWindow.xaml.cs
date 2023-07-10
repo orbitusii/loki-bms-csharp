@@ -22,6 +22,17 @@ namespace loki_bms_csharp.Windows
         public RightClickWindow()
         {
             InitializeComponent();
+            ButtonPane.ParentWindow = this;
+        }
+
+        public void Popup (Point screenpos, Vector64 worldPos)
+        {
+            Left = screenpos.X;
+            Top = screenpos.Y;
+
+            ButtonPane.Reinit(worldPos);
+
+            Show();
         }
     }
 }
