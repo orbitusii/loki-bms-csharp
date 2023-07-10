@@ -41,7 +41,6 @@ namespace loki_bms_csharp
         public static TacticalElement? SelectedTE => (TacticalElement)SelectedObject;
         public static TrackSelection TrackSelection { get; } = new TrackSelection();
 
-
         public static SourceWindow SrcWindow;
         public static GeometryWindow GeoWindow;
 
@@ -52,6 +51,7 @@ namespace loki_bms_csharp
         public static Dictionary<TrackCategory, SymbolGroup> TrackSymbols { get; private set; }
         public static Dictionary<string, SVGPath> SpecTypeSymbols { get; private set; }
 
+        public static ObservableCollection<ISelectableObject> Bullseyes { get; set; } = new ObservableCollection<ISelectableObject>();
         public static LatLonCoord BullseyePos { get; set; }
         public static Vector64 BullseyeCartesian => Conversions.LLToXYZ(BullseyePos, Conversions.EarthRadius);
 
