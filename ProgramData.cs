@@ -14,6 +14,7 @@ using loki_bms_csharp.Plugins;
 using System.Linq;
 using System.Windows.Documents;
 using System.ComponentModel;
+using loki_bms_common.Plugins;
 
 namespace loki_bms_csharp
 {

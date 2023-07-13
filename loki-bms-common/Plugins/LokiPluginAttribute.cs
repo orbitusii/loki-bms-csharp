@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace loki_bms_common
+namespace loki_bms_common.Plugins
 {
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]
-    public class LokiPluginAttribute : System.Attribute
+    public class LokiPluginAttribute : Attribute
     {
         public Type? RootType;
         public string PluginName = string.Empty;

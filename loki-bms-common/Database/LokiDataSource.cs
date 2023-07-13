@@ -1,8 +1,7 @@
-﻿using loki_bms_common.Database;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace loki_bms_common
+namespace loki_bms_common.Database
 {
     public abstract class LokiDataSource : INotifyPropertyChanged
     {

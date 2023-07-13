@@ -1,4 +1,4 @@
-﻿namespace loki_bms_common
+﻿namespace loki_bms_common.Plugins
 {
     public abstract class LokiPlugin
     {

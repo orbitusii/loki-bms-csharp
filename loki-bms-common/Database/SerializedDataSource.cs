@@ -1,12 +1,11 @@
-﻿using loki_bms_common.Database;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace loki_bms_common
+namespace loki_bms_common.Database
 {
     public class SerializedDataSource
     {
@@ -33,9 +32,9 @@ namespace loki_bms_common
         [XmlElement("Extradata")]
         public string[] Extradata { get; set; } = Array.Empty<string>();
 
-        public static SerializedDataSource From (LokiDataSource s)
+        public static SerializedDataSource From(LokiDataSource s)
         {
-            SerializedDataSource sds = new SerializedDataSource ();
+            SerializedDataSource sds = new SerializedDataSource();
 
             sds.SourceType = s.GetType().Name;
             sds.Name = s.Name;
