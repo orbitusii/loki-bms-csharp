@@ -24,6 +24,7 @@ namespace loki_bms_csharp
 
             BaseDirPath = AppDomain.CurrentDomain.BaseDirectory;
             ResourcesPath = BaseDirPath + "Resources" + Delimiter;
+            Debug.WriteLine($"[PROGRAM]: Resources at {ResourcesPath}");
 
             AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"{Delimiter}Loki-BMS{Delimiter}";
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
