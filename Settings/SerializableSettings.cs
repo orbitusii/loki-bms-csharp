@@ -33,19 +33,23 @@ namespace loki_bms_csharp.Settings
         }
 
         public virtual void OnLoad() { }
-        public virtual void SaveToFile (string filename)
+        public virtual void OnSave () { }
+
+        public void SaveToFile (string filename)
         {
             SaveToFile(filename, Original);
         }
 
-        public static void SaveToFile (string filename, T settings)
+        public static void SaveToFile (string filename, T original)
         {
+            (original as SerializableSettings<T>).OnSave();
+
             if (!File.Exists(filename)) File.Create(filename).Close();
 
             using (FileStream stream = new(filename, FileMode.Truncate))
             {
                 XmlSerializer ser = new XmlSerializer(typeof(T));
-                ser.Serialize(stream, settings);
+                ser.Serialize(stream, original);
             }
         }
     }
