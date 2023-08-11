@@ -333,8 +333,7 @@ namespace loki_bms_csharp.UserInterface
                 float width = clonedPath.Bounds.Width;
                 float scale = size / width * extraScale;
 
-                var fillPaint = Colors.FillByFFS[track.FFS];
-                var strokePaint = Colors.StrokeByFFS[track.FFS];
+                var paints = ProgramData.ColorSettings.GetPaint(track);
 
                 clonedPath.Transform(SKMatrix.CreateScaleTranslation(scale, scale, canvasPos.X, canvasPos.Y));
                 clonedPath.Transform(SKMatrix.CreateRotation(rotation, clonedPath.Bounds.MidX, clonedPath.Bounds.MidY));
@@ -342,8 +341,8 @@ namespace loki_bms_csharp.UserInterface
                 SKRect bounds = clonedPath.Bounds;
                 AddClickHotSpot(clonedPath.Bounds, track);
 
-                Canvas.DrawPath(clonedPath, fillPaint);
-                Canvas.DrawPath(clonedPath, strokePaint);
+                Canvas.DrawPath(clonedPath, paints.fill);
+                Canvas.DrawPath(clonedPath, paints.stroke);
 
                 DrawLabel(TrackLabel, track, canvasPos);
             }
@@ -357,8 +356,7 @@ namespace loki_bms_csharp.UserInterface
             {
                 SKPath path = new SKPath(ProgramData.TrackSymbols[TrackCategory.None][TE.FFS].SKPath);
 
-                var fillPaint = Colors.FillByFFS[TE.FFS];
-                var strokePaint = Colors.StrokeByFFS[TE.FFS];
+                var paints = ProgramData.ColorSettings.GetPaint(TE);
 
                 float width = path.Bounds.Width;
                 float scale = size / width;
@@ -366,8 +364,8 @@ namespace loki_bms_csharp.UserInterface
 
                 AddClickHotSpot(path.Bounds, TE);
 
-                Canvas.DrawPath(path, fillPaint);
-                Canvas.DrawPath(path, strokePaint);
+                Canvas.DrawPath(path, paints.fill);
+                Canvas.DrawPath(path, paints.stroke);
             }
         }
 
