@@ -15,6 +15,7 @@ using System.Linq;
 using System.Windows.Documents;
 using System.ComponentModel;
 using loki_bms_common.Plugins;
+using loki_bms_csharp.Windows.Controls;
 
 namespace loki_bms_csharp
 {
@@ -23,6 +24,10 @@ namespace loki_bms_csharp
         public static PluginLoader PluginLoader = new PluginLoader(LokiVersion.v0_2_0);
 
         public static MainWindow MainWindow;
+        public static SourceWindow SrcWindow;
+        public static GeometryWindow GeoWindow;
+        public static TemplateWindow? BrushWindow;
+
         public static UserInterface.ScopeRenderer MainScopeRenderer => MainWindow.ScopeRenderer;
 
         public static ISelectableObject? SelectedObject
@@ -41,9 +46,6 @@ namespace loki_bms_csharp
 
         public static TacticalElement? SelectedTE => (TacticalElement)SelectedObject;
         public static TrackSelection TrackSelection { get; } = new TrackSelection();
-
-        public static SourceWindow SrcWindow;
-        public static GeometryWindow GeoWindow;
 
         public static GeometrySettings GeometrySettings;
         internal static ColorSettings ColorSettings;

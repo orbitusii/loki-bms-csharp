@@ -13,9 +13,9 @@
     <DockPanel x:Name="Docks">
 
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <Button x:Name="SourceMenuButton" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1" Content="SRC" Click="SourceMenuButton_Click" />
-            <Button x:Name="GeometryButton" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1" Content="GEO" Click="GeometryButton_Click"/>
-            <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
+            <Button x:Name="SourceMenuButton" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1" Content=" Sources " Click="SourceMenuButton_Click" />
+            <Button x:Name="GeometryButton" Height="30" VerticalAlignment="Top" Margin="1,1,1,1" Content=" Geometry " Click="GeometryButton_Click"/>
+            <Button x:Name="ColorsButton" Height="30" VerticalAlignment="Top" Margin="1,1,1,1" Content=" Colors " Click="ColorsButton_Click"/>
             <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
             <Button Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1,1,1,1"/>
         </StackPanel>

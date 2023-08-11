@@ -1,6 +1,7 @@
 ﻿using loki_bms_common.Database;
 using loki_bms_csharp.UserInterface;
 using loki_bms_csharp.Windows;
+using loki_bms_csharp.Windows.Controls;
 using SkiaSharp;
 using SkiaSharp.Views.WPF;
 using System;
@@ -159,6 +160,18 @@ namespace loki_bms_csharp
             else
             {
                 ProgramData.GeoWindow.Focus();
+            }
+        }
+
+        private void ColorsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProgramData.BrushWindow is TemplateWindow window)
+            {
+                ProgramData.BrushWindow.Focus();
+            }
+            else
+            {
+                ProgramData.BrushWindow = TemplateWindow.Create<BrushMenu>("Brushes", true, ProgramData.ColorSettings, () => { ProgramData.BrushWindow = null; });
             }
         }
     }
