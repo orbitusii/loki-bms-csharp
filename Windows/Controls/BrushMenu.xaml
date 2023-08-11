@@ -1,0 +1,77 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:loki_bms_csharp.Windows.Controls"
+             xmlns:Settings="clr-namespace:loki_bms_csharp.Settings" x:Class="loki_bms_csharp.Windows.Controls.BrushMenu"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="250" d:DesignWidth="475">
+    <UserControl.DataContext>
+        <Settings:ColorSettings/>
+    </UserControl.DataContext>
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Cursor="">
+            <Label Content="World Elements"/>
+            <StackPanel x:Name="Labels" Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel x:Name="Land">
+                    <Label Width="48" Margin="5" Padding="0" Content="Land" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="colorLand" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding LandmassColor, BindsDirectlyToSource=True}"/>
+                </StackPanel>
+                <StackPanel x:Name="Sea">
+                    <Label Width="48" Margin="5" Padding="0" Content="Sea" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="colorSea" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding OceanColor}"/>
+                </StackPanel>
+            </StackPanel>
+            <Separator/>
+            <Label Content="Tracks and Tactical Elements"/>
+            <StackPanel x:Name="StrokeColors" Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel>
+                    <Label Width="45" Margin="5" Height="16"/>
+                    <Label VerticalAlignment="Top" Height="32" Margin="5" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Width="45">Stroke</Label>
+                    <Label VerticalAlignment="Center" Height="32" Margin="5" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Width="45">Fill</Label>
+                </StackPanel>
+                <StackPanel x:Name="FND">
+                    <Label Width="48" Margin="5" Padding="0" Content="FND" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="stroke_fnd" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Stroke_Friend}"/>
+                    <xctk:ColorPicker x:Name="fill_fnd" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Fill_Friend}"/>
+                </StackPanel>
+
+                <StackPanel x:Name="ASF">
+                    <Label Width="48" Margin="5" Padding="0" Content="ASF" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="stroke_asf" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Stroke_AsFnd}"/>
+                    <xctk:ColorPicker x:Name="fill_asf" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Fill_AsFnd}"/>
+                </StackPanel>
+                <StackPanel x:Name="NEU">
+                    <Label Width="48" Margin="5" Padding="0" Content="NEU" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="stroke_neu" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Stroke_Neutral}"/>
+                    <xctk:ColorPicker x:Name="fill_neu" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Fill_Neutral}"/>
+                </StackPanel>
+                <StackPanel x:Name="SUS">
+                    <Label Width="48" Margin="5" Padding="0" Content="SUS" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="stroke_sus" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Stroke_Suspect}"/>
+                    <xctk:ColorPicker x:Name="fill_sus" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Fill_Suspect}"/>
+                </StackPanel>
+                <StackPanel x:Name="HOS">
+                    <Label Width="48" Margin="5" Padding="0" Content="HOS" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="stroke_hos" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Stroke_Hostile}"/>
+                    <xctk:ColorPicker x:Name="fill_hos" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Fill_Hostile}"/>
+                </StackPanel>
+                <StackPanel x:Name="UNK">
+                    <Label Width="48" Margin="5" Padding="0" Content="UNK" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="stroke_unk" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Stroke_Unknown}"/>
+                    <xctk:ColorPicker x:Name="fill_unk" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Fill_Unknown}"/>
+                </StackPanel>
+                <StackPanel x:Name="PND">
+                    <Label Width="48" Margin="5" Padding="0" Content="PND" HorizontalContentAlignment="Center" Height="16"/>
+                    <xctk:ColorPicker x:Name="stroke_pnd" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Stroke_Pending}"/>
+                    <xctk:ColorPicker x:Name="fill_pnd" Width="48" Height="32" Background="{StaticResource VeryDarkGray}" BorderBrush="{StaticResource MidGray}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,5,5" SelectedColor="{Binding DataContext.DataColor, ElementName=colorPicker}" DropDownBackground="{DynamicResource VeryDarkGray}" DropDownBorderBrush="{DynamicResource MidGray}" HeaderBackground="{DynamicResource VeryDarkGray}" HeaderForeground="{DynamicResource OffWhite}" TabBackground="{DynamicResource ButtonOverGray}" TabForeground="{DynamicResource OffWhite}" Foreground="{DynamicResource OffWhite}" DataContext="{Binding Fill_Pending}"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>
