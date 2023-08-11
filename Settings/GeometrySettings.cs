@@ -16,6 +16,8 @@ namespace loki_bms_csharp.Settings
     [XmlRoot("GeometrySettings")]
     public class GeometrySettings : SerializableSettings<GeometrySettings>
     {
+        public override GeometrySettings Original => this;
+
         [XmlIgnore]
         public MapGeometry Landmasses { get; set; }
 
@@ -56,11 +58,6 @@ namespace loki_bms_csharp.Settings
             {
                 geo.CachePaths(matrix);
             }
-        }
-
-        public void SaveToFile(string filename)
-        {
-            SaveToFile(filename, this);
         }
     }
 }

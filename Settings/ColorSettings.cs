@@ -5,12 +5,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Serialization;
 
 namespace loki_bms_csharp.Settings
 {
     public class ColorSettings: SerializableSettings<ColorSettings>, INotifyPropertyChanged
     {
+        public override ColorSettings Original => this;
+
         private string _ocean = "#ff0E131B";
         [XmlElement]
         public string OceanColor
@@ -37,6 +40,36 @@ namespace loki_bms_csharp.Settings
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        [XmlElement]
+        public string Stroke_Friend = "#FF0000FF";
+        [XmlElement]
+        public string Stroke_AsFnd = "#FF008000";
+        [XmlElement]
+        public string Stroke_Neutral = "#FF800080";
+        [XmlElement]
+        public string Stroke_Suspect = "#FFFFA500";
+        [XmlElement]
+        public string Stroke_Hostile = "#FFFF0000";
+        [XmlElement]
+        public string Stroke_Unknown = "#FFFFFF00";
+        [XmlElement]
+        public string Stroke_Pending = "#FF808080";
+
+        [XmlElement]
+        public string Fill_Friend = "#800000FF";
+        [XmlElement]
+        public string Fill_AsFnd = "#80008000";
+        [XmlElement]
+        public string Fill_Neutral = "#80800080";
+        [XmlElement]
+        public string Fill_Suspect = "#80FFA500";
+        [XmlElement]
+        public string Fill_Hostile = "#80FF0000";
+        [XmlElement]
+        public string Fill_Unknown = "#80FFFF00";
+        [XmlElement]
+        public string Fill_Pending = "#80808080";
+
         [XmlIgnore]
         public Dictionary<FriendFoeStatus, SkiaSharp.SKPaint> StrokeByFFS =
             new Dictionary<FriendFoeStatus, SkiaSharp.SKPaint>()
@@ -62,9 +95,9 @@ namespace loki_bms_csharp.Settings
                 {FriendFoeStatus.Pending, new SkiaSharp.SKPaint{Style = SkiaSharp.SKPaintStyle.Fill, Color = SkiaSharp.SKColors.Gray.WithAlpha(128) }  },
             };
 
-        public void SaveToFile (string filename)
+        public override void OnLoad()
         {
-            SaveToFile(filename, this);
+
         }
     }
 }
