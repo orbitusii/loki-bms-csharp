@@ -128,5 +128,11 @@ namespace loki_bms_csharp.Settings
 
             return CameraMatrix;
         }
+
+        public override void OnLoad()
+        {
+            UpdateViewPosition(ViewCenter);
+            SetZoom(ZoomIncrement);
+        }
     }
 }
