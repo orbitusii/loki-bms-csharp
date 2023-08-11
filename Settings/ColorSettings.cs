@@ -144,30 +144,5 @@ namespace loki_bms_csharp.Settings
         public Dictionary<FriendFoeStatus, SKPaint> cachedStroke = new Dictionary<FriendFoeStatus, SKPaint>();
         [XmlIgnore]
         public Dictionary<FriendFoeStatus, SKPaint> cachedFill = new Dictionary<FriendFoeStatus, SKPaint>();
-
-        [XmlIgnore]
-        public Dictionary<FriendFoeStatus, SKPaint> StrokeByFFS =
-            new Dictionary<FriendFoeStatus, SKPaint>()
-            {
-                {FriendFoeStatus.KnownFriend, new SKPaint{Style = SKPaintStyle.Stroke, Color = SKColors.Blue, StrokeWidth = 2 } },
-                {FriendFoeStatus.AssumedFriend, new SKPaint{Style = SKPaintStyle.Stroke, Color = SKColors.Green, StrokeWidth = 2 } },
-                {FriendFoeStatus.Neutral, new SKPaint{Style = SKPaintStyle.Stroke, Color = SKColors.Purple, StrokeWidth = 2 }  },
-                {FriendFoeStatus.Suspect, new SKPaint{Style = SKPaintStyle.Stroke, Color = SKColors.Orange, StrokeWidth = 2 }  },
-                {FriendFoeStatus.Hostile, new SKPaint{Style = SKPaintStyle.Stroke, Color = SKColors.Red, StrokeWidth = 2 }  },
-                {FriendFoeStatus.Unknown, new SKPaint{Style = SKPaintStyle.Stroke, Color = SKColors.Yellow, StrokeWidth = 2 }  },
-                {FriendFoeStatus.Pending, new SKPaint{Style = SKPaintStyle.Stroke, Color = SKColors.Gray, StrokeWidth = 2 }  },
-            };
-        [XmlIgnore]
-        public Dictionary<FriendFoeStatus, SKPaint> FillByFFS =
-            new Dictionary<FriendFoeStatus, SKPaint>()
-            {
-                {FriendFoeStatus.KnownFriend, new SKPaint{Style = SKPaintStyle.Fill, Color = SKColors.Blue.WithAlpha(128) } },
-                {FriendFoeStatus.AssumedFriend, new SKPaint{Style = SKPaintStyle.Fill, Color = SKColors.Green.WithAlpha(128) } },
-                {FriendFoeStatus.Neutral, new SKPaint{Style = SKPaintStyle.Fill, Color = SKColors.Purple.WithAlpha(128) }  },
-                {FriendFoeStatus.Suspect, new SKPaint{Style = SKPaintStyle.Fill, Color = SKColors.Orange.WithAlpha(128) }  },
-                {FriendFoeStatus.Hostile, new SKPaint{Style = SKPaintStyle.Fill, Color = SKColors.Red.WithAlpha(128) }  },
-                {FriendFoeStatus.Unknown, new SKPaint{Style = SKPaintStyle.Fill, Color = SKColors.Yellow.WithAlpha(128) }  },
-                {FriendFoeStatus.Pending, new SKPaint{Style = SKPaintStyle.Fill, Color = SKColors.Gray.WithAlpha(128) }  },
-            };
     }
 }
