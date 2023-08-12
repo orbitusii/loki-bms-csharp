@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +55,30 @@ namespace loki_bms_csharp.Windows
         {
             MapGeometry toRemove = (MapGeometry)GeometryList.SelectedItem;
             ProgramData.GeometrySettings.Geometries.Remove(toRemove);
+        }
+
+        private void ForceTextInputToNumerals(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !TextIsNumeric(e.Text);
+        }
+
+        private void PasteOnlyNumbers(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                string input = (string)e.DataObject.GetData(typeof(string));
+                if (!TextIsNumeric(input)) e.CancelCommand();
+            }
+            else
+            {
+                e.CancelCommand();
+            }
+        }
+
+        private bool TextIsNumeric(string input)
+        {
+            char separator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
+            return input.All(c => char.IsNumber(c) || c.Equals(separator));
         }
     }
 }
