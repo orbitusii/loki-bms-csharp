@@ -8,7 +8,7 @@
         xmlns:windows="clr-namespace:loki_bms_csharp.Windows"
         mc:Ignorable="d"
         Title="LOKI BMS - Main Scope" Height="880" Width="1720" ResizeMode="CanResizeWithGrip"
-        Style="{StaticResource WindowTheme}" Closing="PrimaryDisplay_Closing" KeyDown="OnKeyDown" KeyUp="OnKeyUp"
+        Style="{StaticResource WindowTheme}" Closing="MainWindow_Closing" KeyDown="OnKeyDown" KeyUp="OnKeyUp"
         FocusManager.IsFocusScope="True">
     <DockPanel x:Name="Docks">
 

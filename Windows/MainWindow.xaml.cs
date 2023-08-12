@@ -52,7 +52,7 @@ namespace loki_bms_csharp
             EndInit();
         }
 
-        private void PrimaryDisplay_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             ProgramData.Database.OnDatabaseUpdated -= Redraw;
             RightClickMenu.Close();

@@ -216,6 +216,7 @@ namespace loki_bms_csharp
         {
             SrcWindow?.Close();
             GeoWindow?.Close();
+            BrushWindow?.Close();
 
             SaveDataSources(AppDataPath + "DataSources.xml");
             ViewSettings.SaveToFile(AppDataPath + "Views.xml");
