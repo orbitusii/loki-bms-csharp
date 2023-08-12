@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Style="{StaticResource WindowTheme}"
         Title="TemplateWindow" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" MinWidth="150" MinHeight="50" ResizeMode="CanResizeWithGrip" Closing="WindowBase_Closing">
-    <Grid x:Name="Content">
+    <Grid x:Name="ContentGrid">
         
     </Grid>
 </Window>

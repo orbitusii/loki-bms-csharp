@@ -37,7 +37,7 @@ namespace loki_bms_csharp.Windows
             UserControl contentControl = (UserControl)Activator.CreateInstance (typeof (T));
             window.Width = contentControl.MinWidth;
             window.Height = contentControl.MinHeight + 50;
-            window.Content.Children.Add(contentControl);
+            window.ContentGrid.Children.Add(contentControl);
             contentControl.DataContext = DataContext;
 
             window.ClosingCallbacks += closingCallback;

@@ -44,6 +44,12 @@
     <Compile Remove="Database\IKinematicData.cs" />
     <Compile Remove="Database\TrackNumber.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\LOKI Splash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="Resources\LOKI Splash.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
