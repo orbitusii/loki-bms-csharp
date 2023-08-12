@@ -31,11 +31,14 @@ namespace loki_bms_csharp.Windows
         {
             var window = new TemplateWindow();
             window.Title = Title;
+            
             window.ResizeMode = CanResize ? ResizeMode.CanResizeWithGrip : ResizeMode.NoResize;
 
             UserControl contentControl = (UserControl)Activator.CreateInstance (typeof (T));
+            window.Width = contentControl.MinWidth;
+            window.Height = contentControl.MinHeight + 50;
             window.Content.Children.Add(contentControl);
-            window.DataContext = DataContext;
+            contentControl.DataContext = DataContext;
 
             window.ClosingCallbacks += closingCallback;
 

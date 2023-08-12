@@ -229,18 +229,18 @@ namespace loki_bms_csharp.Settings
                 FriendFoeStatus.Unknown => SKColor.TryParse(Fill_Unknown, out var _out) ? _out : SKColors.Yellow,
                 FriendFoeStatus.Pending => SKColor.TryParse(Fill_Pending, out var _out) ? _out : SKColors.Yellow,
                 _ => SKColors.Gray
-            }).WithAlpha(128);
+            });
 
             SKPaint stroke;
             SKPaint fill;
 
             // Same color present in the cached stroke paint, reuse the cached one
-            if (cachedStroke.TryGetValue(target.FFS, out var _stroke) && _stroke.Color.Equals(strokecolor))
-            {
-                stroke = _stroke;
-            }
-            else
-            {
+            //if (cachedStroke.TryGetValue(target.FFS, out var _stroke) && _stroke.Color.Equals(strokecolor))
+            //{
+            //    stroke = _stroke;
+            //}
+            //else
+            //{
                 stroke = new SKPaint
                 {
                     Style = SKPaintStyle.Stroke,
@@ -248,22 +248,22 @@ namespace loki_bms_csharp.Settings
                     StrokeWidth = 2,
                 };
                 cachedStroke[target.FFS] = stroke;
-            }
+            //}
 
             // Same color present in the cached fill paint, reuse the cached one
-            if (cachedFill.TryGetValue(target.FFS, out var _fill) && _fill.Color.Equals(fillcolor))
-            {
-                fill = _fill;
-            }
-            else
-            {
+            //if (cachedFill.TryGetValue(target.FFS, out var _fill) && _fill.Color.Equals(fillcolor))
+            //{
+            //    fill = _fill;
+            //}
+            //else
+            //{
                 fill = new SKPaint
                 {
                     Style = SKPaintStyle.Fill,
                     Color = fillcolor
                 };
                 cachedFill[target.FFS] = fill;
-            }
+            //}
 
             return (stroke, fill);
         }
