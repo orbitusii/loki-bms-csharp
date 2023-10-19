@@ -245,6 +245,8 @@ namespace loki_bms_common
                 if (disposing)
                 {
                     CloseLog();
+                    FlushTimer?.Stop();
+                    FlushTimer?.Dispose();
                 }
                 disposedValue = true;
             }
