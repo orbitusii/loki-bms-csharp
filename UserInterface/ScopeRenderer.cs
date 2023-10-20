@@ -1,6 +1,7 @@
 ﻿using loki_bms_common.Database;
 using loki_bms_csharp.Extensions;
 using loki_bms_csharp.Geometry;
+using loki_bms_csharp.Geometry.SVG;
 using loki_bms_csharp.Settings;
 using loki_bms_csharp.UserInterface.Labels;
 using SkiaSharp;
@@ -245,7 +246,7 @@ namespace loki_bms_csharp.UserInterface
         {
             if (DB is null) return;
 
-            if (ProgramData.ViewSettings.ZoomIncrement <= 9)
+            if (ProgramData.ViewSettings.ZoomIncrement <= 11)
             {
                 foreach (LokiDataSource ds in DB.DataSources)
                 {
@@ -282,12 +283,15 @@ namespace loki_bms_csharp.UserInterface
 
             int clickIndex = 0;
 
-            foreach (TrackFile track in DB.LiveTracks)
+            lock(DB.LiveTracks)
             {
-                //Base symbol
-                DrawTrack(track, clickIndex++, 16);
-                //Velocity leader
-                DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
+                foreach (TrackFile track in DB.LiveTracks)
+                {
+                    //Base symbol
+                    DrawTrack(track, clickIndex++, 16);
+                    //Velocity leader
+                    DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
+                }
             }
         }
 
@@ -316,7 +320,7 @@ namespace loki_bms_csharp.UserInterface
                 float rotation = 0;
                 float extraScale = 1;
 
-                if (ProgramData.SpecTypeSymbols.TryGetValue(track.SpecType, out var svgPath))
+                if (ProgramData.SpecTypeSymbols.TryGetValue(track.SpecType, out var svgPath) && svgPath is SVGPath)
                 {
                     originalPath = svgPath.SKPath;
                     rotation = (float)track.Heading_Rads;
