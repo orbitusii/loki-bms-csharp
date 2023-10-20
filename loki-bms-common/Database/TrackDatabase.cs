@@ -1,5 +1,6 @@
 ﻿using loki_bms_common.MathL;
 using System.Collections.ObjectModel;
+using System.Drawing;
 
 namespace loki_bms_common.Database
 {
@@ -29,8 +30,12 @@ namespace loki_bms_common.Database
         public delegate void DatabaseUpdatedCallback();
         public DatabaseUpdatedCallback? OnDatabaseUpdated;
 
-        public TrackDatabase(float tickRate = 100)
+        public Logger? Log { get; private set; }
+
+        public TrackDatabase(float tickRate = 1000, bool withLog = true)
         {
+            if (withLog) Log = new Logger("Database", false);
+
             LiveTracks = new ObservableCollection<TrackFile>();
             ProcessedData = new List<TrackDatum>();
             FreshData = new List<TrackDatum>();
@@ -68,7 +73,8 @@ namespace loki_bms_common.Database
                 }
                 catch (Exception e)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[DATABASE][ERROR][{DateTime.UtcNow:h:mm:ss.fff}] Missed a Database tick! Exception: {e.Message}\n\t{e.StackTrace}");
+                    Log?.LogError("Missed a database tick! The specific exception is visible if you set Log.MaxLevel to 'Debug'.", Logger.LogLevel.Normal);
+                    Log?.LogException(e, Logger.LogLevel.Debug);
                 }
             };
             UpdateClock.Start();
@@ -78,36 +84,45 @@ namespace loki_bms_common.Database
         {
             Vector64 posit = Conversions.LLToXYZ(latLon, Conversions.EarthRadius);
             Vector64 vel = Conversions.GetTangentVelocity(latLon, heading, speed, vertSpeed);
-
+            IFFData[] transponder = new IFFData[0];
             var newTN = new TrackNumber.Internal { Value = NextITN };
 
             TrackFile newTrack = new TrackFile(
                 newTN,
                 posit,
                 vel,
-                new IFFData[0],
+                transponder,
                 type: trackType);
 
 
             LiveTracks.Add(newTrack);
 
+            Log?.LogMessageMultiline(Logger.LogLevel.Verbose,
+                $"Initiated a new Track #{newTN}",
+                $"Kinematics: Position {posit}; Velocity {vel}",
+                $"Category: {trackType}; IFF: {transponder}");
             return newTrack;
         }
 
         public TrackFile InitiateTrack(Vector64 position, Vector64 velocity, TrackType trackType = TrackType.Sim)
         {
             var newTN = new TrackNumber.Internal { Value = NextITN };
+            IFFData[] transponder = new IFFData[0];
 
             TrackFile newTrack = new TrackFile(
                 newTN,
                 position,
                 velocity,
-                new IFFData[0],
+                transponder,
                 type: trackType);
 
 
             LiveTracks.Add(newTrack);
 
+            Log?.LogMessageMultiline(Logger.LogLevel.Verbose,
+                $"Initiated a new Track #{newTN}",
+                $"Kinematics: Position {position}; Velocity {velocity}",
+                $"Category: {trackType}; IFF: {transponder}");
             return newTrack;
         }
 
@@ -115,10 +130,12 @@ namespace loki_bms_common.Database
         {
             if (item is TrackFile tf && LiveTracks.Contains(tf))
             {
+                Log?.LogMessage($"Marked TrackFile {tf.TrackNumbers[0]} for deletion", Logger.LogLevel.Verbose);
                 forceDropTracks.Add(tf);
             }
             else if (item is TacticalElement te && TEs.Contains(te))
             {
+                Log?.LogMessage($"Marked TacticalElement {te.Name} for deletion", Logger.LogLevel.Verbose);
                 deletedTEs.Add(te);
             }
         }
@@ -224,37 +241,55 @@ namespace loki_bms_common.Database
                 }
             }
 
-            foreach (var old in oldData)
+            lock(ProcessedData)
             {
-                ProcessedData.Remove(old);
-            }
-
-            foreach (var track in LiveTracks)
-            {
-                TimeSpan age = DateTime.Now - track.Timestamp;
-
-                // Track Drop logic
-                // If a track is older than 20 seconds, set it to pending
-                // If a track is pending and older than 30 seconds, drop it
-                // This isn't complete logic, but it'll work for now.
-                if (age > TimeSpan.FromSeconds(30) && track.FFS == FriendFoeStatus.Pending)
+                Log?.LogMessage($"Removing {oldData.Count} old data symbols", Logger.LogLevel.Verbose);
+                foreach (var old in oldData)
                 {
-                    LiveTracks.Remove(track);
-                }
-                else if (age > TimeSpan.FromSeconds(20))
-                {
-                    track.FFS = FriendFoeStatus.Pending;
+                    ProcessedData.Remove(old);
                 }
             }
 
-            foreach (var deleted in forceDropTracks)
+            lock(LiveTracks)
             {
-                LiveTracks.Remove(deleted);
+                var OldTracks = LiveTracks.Where(x => DateTime.Now - x.Timestamp > TimeSpan.FromSeconds(30)).ToList();
+
+                if(OldTracks.Count > 0 || forceDropTracks.Count > 0)
+                    Log?.LogMessage($"Removing {OldTracks.Count} stale tracks and {forceDropTracks.Count} dropped tracks", Logger.LogLevel.Verbose);
+                
+                foreach (var track in LiveTracks)
+                {
+                    TimeSpan age = DateTime.Now - track.Timestamp;
+
+                    // Track Drop logic
+                    // If a track is older than 20 seconds, set it to pending
+                    // If a track is pending and older than 30 seconds, drop it
+                    // This isn't complete logic, but it'll work for now.
+                    if (age > TimeSpan.FromSeconds(30) && track.FFS == FriendFoeStatus.Pending)
+                    {
+                        LiveTracks.Remove(track);
+                    }
+                    else if (age > TimeSpan.FromSeconds(20))
+                    {
+                        track.FFS = FriendFoeStatus.Pending;
+                    }
+                }
+
+                foreach (var deleted in forceDropTracks)
+                {
+                    LiveTracks.Remove(deleted);
+                }
             }
 
-            foreach(var deleted in deletedTEs)
+            lock(TEs)
             {
-                TEs.Remove(deleted);
+                if(deletedTEs.Count > 0)
+                    Log?.LogMessage($"Removing {deletedTEs} deleted TEs", Logger.LogLevel.Verbose);
+
+                foreach (var deleted in deletedTEs)
+                {
+                    TEs.Remove(deleted);
+                }
             }
 
             forceDropTracks.Clear();
