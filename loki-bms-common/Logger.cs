@@ -31,7 +31,7 @@ namespace loki_bms_common
         /// <summary>
         /// The folder containing all log files; defaults to "%localappdata%\CASWebDir\Logs\"
         /// </summary>
-        public string LogDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CASWebDir", "Logs");
+        public string LogDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Loki-BMS", "Logs");
         public string OldLogsDir => Path.Combine(LogDirectory, "OldLogs");
 
         public string LogName = "NewLog";
@@ -41,7 +41,7 @@ namespace loki_bms_common
         public string FullPath => Path.Combine(LogDirectory, $"{LogName}.{Extension}");
         public DateTime CreationTime = DateTime.Now;
 
-        public LogLevel MaxLevel = LogLevel.Normal;
+        public LogLevel MaxLevel { get; private set; } = LogLevel.Normal;
         /// <summary>
         /// Should the logger flush to file immediately upon logging a message? If false, waits to log and does it periodically.
         /// </summary>
@@ -95,6 +95,12 @@ namespace loki_bms_common
                 FlushTimer.Start();
             }
             
+        }
+
+        public void SetLogLevel (LogLevel newLevel)
+        {
+            WriteAnnotation($"Switching to LogLevel {newLevel}", false);
+            MaxLevel = newLevel;
         }
 
         /// <summary>
