@@ -112,7 +112,7 @@ namespace loki_bms_csharp
             {
                 foreach (var te in TEs)
                 {
-                    DB.TEs.Add(te);
+                    DB.AddTE(te);
                 }
                 Debug.WriteLine($"[DATABASE][LOG] Done.");
             });

@@ -85,7 +85,7 @@ namespace loki_bms_csharp.Windows.Controls
 
                 Dispatcher.Invoke(() =>
                 {
-                    ProgramData.Database.TEs.Add(newTE);
+                    ProgramData.Database.AddTE(newTE);
                 });
             }
 

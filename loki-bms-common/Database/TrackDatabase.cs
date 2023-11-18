@@ -18,10 +18,10 @@ namespace loki_bms_common.Database
         public ObservableCollection<TrackFile> LiveTracks = new ObservableCollection<TrackFile>();
         private List<TrackFile> forceDropTracks = new List<TrackFile>();
 
-        public List<TrackDatum> ProcessedData = new List<TrackDatum>();
-        public List<TrackDatum> FreshData = new List<TrackDatum>();
+        protected List<TrackDatum> ProcessedData = new List<TrackDatum>();
+        protected List<TrackDatum> FreshData = new List<TrackDatum>();
 
-        public ObservableCollection<TacticalElement> TEs = new ObservableCollection<TacticalElement>();
+        protected ObservableCollection<TacticalElement> TEs = new ObservableCollection<TacticalElement>();
         private List<TacticalElement> deletedTEs = new List<TacticalElement>();
 
         private System.Timers.Timer UpdateClock;
@@ -92,6 +92,12 @@ namespace loki_bms_common.Database
         {
             if (predicate is null) return TEs.ToArray();
             else return TEs.Where(predicate).ToArray();
+        }
+
+        public bool AddTE (TacticalElement newTE)
+        {
+            TEs.Add(newTE);
+            return true;
         }
 
         public TrackFile InitiateTrack(LatLonCoord latLon, double heading = 0, double speed = 0, double vertSpeed = 0, TrackType trackType = TrackType.Sim)

@@ -253,9 +253,7 @@ namespace loki_bms_csharp.UserInterface
                     DatumPaintCache[ds] = ds.GetPaint();
                 }
 
-                List<TrackDatum> dataSymbols = new List<TrackDatum>(DB.ProcessedData);
-
-                foreach (var datum in dataSymbols)
+                foreach (var datum in DB.GetDataMarks())
                 {
                     DrawDatum(datum);
                 }
@@ -275,7 +273,7 @@ namespace loki_bms_csharp.UserInterface
                 DrawCircle(ProgramData.SelectedObject.Position, 16, brush, false);
             }
 
-            foreach (TacticalElement TE in DB.TEs)
+            foreach (TacticalElement TE in DB.GetTacticalElements())
             {
                 //Base symbol
                 DrawTE(TE, 16);
@@ -285,7 +283,7 @@ namespace loki_bms_csharp.UserInterface
 
             lock(DB.LiveTracks)
             {
-                foreach (TrackFile track in DB.LiveTracks)
+                foreach (TrackFile track in DB.GetTracks())
                 {
                     //Base symbol
                     DrawTrack(track, clickIndex++, 16);
