@@ -1,6 +1,7 @@
 ﻿using loki_bms_common.MathL;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Reflection.Metadata.Ecma335;
 
 namespace loki_bms_common.Database
 {
@@ -78,6 +79,19 @@ namespace loki_bms_common.Database
                 }
             };
             UpdateClock.Start();
+        }
+
+        public TrackFile[] GetTracks (Func<TrackFile, bool>? predicate = null)
+        {
+            if (predicate is null) return LiveTracks.ToArray();
+            else return LiveTracks.Where(predicate).ToArray();
+        }
+
+        public TrackDatum[] GetDataMarks() => ProcessedData.ToArray();
+        public TacticalElement[] GetTacticalElements (Func<TacticalElement, bool>? predicate = null)
+        {
+            if (predicate is null) return TEs.ToArray();
+            else return TEs.Where(predicate).ToArray();
         }
 
         public TrackFile InitiateTrack(LatLonCoord latLon, double heading = 0, double speed = 0, double vertSpeed = 0, TrackType trackType = TrackType.Sim)
