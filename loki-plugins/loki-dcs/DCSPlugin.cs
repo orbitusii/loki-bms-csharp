@@ -1,4 +1,5 @@
 global using loki_bms_common;
+using loki_bms_common.Plugins;
 using loki_dcs;
 using System.Diagnostics;
 

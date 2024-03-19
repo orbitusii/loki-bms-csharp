@@ -16,7 +16,7 @@ namespace loki_bms_common.Database
         public string Name = "New TE";
         public string SpecialInfo = string.Empty;
 
-        public FriendFoeStatus FFS = FriendFoeStatus.Pending;
+        public FriendFoeStatus FFS { get; set; } = FriendFoeStatus.Pending;
         public TEType Category = TEType.None;
 
         public LokiDataSource? Source;

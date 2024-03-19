@@ -44,12 +44,18 @@
     <Compile Remove="Database\IKinematicData.cs" />
     <Compile Remove="Database\TrackNumber.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\LOKI Splash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <SplashScreen Include="Resources\LOKI Splash.png" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
-    <PackageReference Include="O2Kml" Version="0.1.2" />
-    <PackageReference Include="SkiaSharp" Version="2.88.3" />
-    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.3" />
+    <PackageReference Include="O2Kml" Version="0.1.3" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
+    <PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -87,6 +93,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\DCSMaps.kml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Fonts\CascadiaMono LICENSE">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Fonts\CascadiaMono.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\LOKI_256.png">

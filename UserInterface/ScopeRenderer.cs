@@ -1,9 +1,13 @@
 ﻿using loki_bms_common.Database;
 using loki_bms_csharp.Extensions;
 using loki_bms_csharp.Geometry;
+using loki_bms_csharp.Geometry.SVG;
 using loki_bms_csharp.Settings;
+using loki_bms_csharp.UserInterface.Labels;
 using SkiaSharp;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Controls.Primitives;
 
 namespace loki_bms_csharp.UserInterface
@@ -42,6 +46,25 @@ namespace loki_bms_csharp.UserInterface
         public int ClickThrough = -1;
 
         public Dictionary<LokiDataSource, SKPaint> DatumPaintCache = new Dictionary<LokiDataSource, SKPaint>();
+
+        public ScopeLabel<TacticalElement> BullseyeLabel = new ScopeLabel<TacticalElement>()
+        {
+            Margins = 3,
+            LineSpacing = 3,
+            LabelItems = new List<LabelItem> { new LabelItem.NameLabel() }
+        };
+        public ScopeLabel<TrackFile> TrackLabel = new ScopeLabel<TrackFile>()
+        {
+            Margins = 3,
+            LineSpacing = 3,
+            LabelItems = new List<LabelItem>
+            {
+                new LabelItem.TNLabel(), new LabelItem.LabelSeparator(), new LabelItem.AltitudeLabel(), new LabelItem.LabelNewLine(),
+                new LabelItem.NameLabel(),
+            }
+        };
+        internal SKPaint LabelBG = new SKPaint { Color = SKColor.Parse("#C5000000"), Style = SKPaintStyle.Fill };
+        internal SKPaint LabelText = new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill };
 
         public ScopeRenderer() { }
 
@@ -193,12 +216,6 @@ namespace loki_bms_csharp.UserInterface
         {
             Vector64 mousePos = ScopeMouseInput.currentMousePoint;
             Vector64 BEPos = ProgramData.BullseyeCartesian;
-            SKPaint BEBlue = new SKPaint
-            {
-                Style = SKPaintStyle.Stroke,
-                Color = SKColors.Blue,
-                StrokeWidth = 3
-            };
 
             int count = ProgramData.Bullseyes.Count;
 
@@ -220,8 +237,7 @@ namespace loki_bms_csharp.UserInterface
 
                 if (CheckVisible(screenPos, out SKPoint canvasPos))
                 {
-                    Canvas.DrawRect(canvasPos.X + 10, canvasPos.Y + 8, 6 * label.Length, 16, new SKPaint { Color = SKColor.Parse("#84000000"), Style = SKPaintStyle.Fill });
-                    Canvas.DrawText(label, new SKPoint(canvasPos.X + 12, canvasPos.Y+20), new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill });
+                    DrawLabel(BullseyeLabel, BE, canvasPos);
                 }
             }
         }
@@ -230,16 +246,14 @@ namespace loki_bms_csharp.UserInterface
         {
             if (DB is null) return;
 
-            if (ProgramData.ViewSettings.ZoomIncrement <= 9)
+            if (ProgramData.ViewSettings.ZoomIncrement <= 11)
             {
                 foreach (LokiDataSource ds in DB.DataSources)
                 {
                     DatumPaintCache[ds] = ds.GetPaint();
                 }
 
-                List<TrackDatum> dataSymbols = new List<TrackDatum>(DB.ProcessedData);
-
-                foreach (var datum in dataSymbols)
+                foreach (var datum in DB.GetDataMarks())
                 {
                     DrawDatum(datum);
                 }
@@ -259,7 +273,7 @@ namespace loki_bms_csharp.UserInterface
                 DrawCircle(ProgramData.SelectedObject.Position, 16, brush, false);
             }
 
-            foreach (TacticalElement TE in DB.TEs)
+            foreach (TacticalElement TE in DB.GetTacticalElements())
             {
                 //Base symbol
                 DrawTE(TE, 16);
@@ -267,12 +281,15 @@ namespace loki_bms_csharp.UserInterface
 
             int clickIndex = 0;
 
-            foreach (TrackFile track in DB.LiveTracks)
+            lock(DB.LiveTracks)
             {
-                //Base symbol
-                DrawTrack(track, clickIndex++, 16);
-                //Velocity leader
-                DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
+                foreach (TrackFile track in DB.GetTracks())
+                {
+                    //Base symbol
+                    DrawTrack(track, clickIndex++, 16);
+                    //Velocity leader
+                    DrawLine(track.Position, track.Position + track.Velocity * 60, SKColors.White, 1);
+                }
             }
         }
 
@@ -301,7 +318,7 @@ namespace loki_bms_csharp.UserInterface
                 float rotation = 0;
                 float extraScale = 1;
 
-                if (ProgramData.SpecTypeSymbols.TryGetValue(track.SpecType, out var svgPath))
+                if (ProgramData.SpecTypeSymbols.TryGetValue(track.SpecType, out var svgPath) && svgPath is SVGPath)
                 {
                     originalPath = svgPath.SKPath;
                     rotation = (float)track.Heading_Rads;
@@ -318,8 +335,7 @@ namespace loki_bms_csharp.UserInterface
                 float width = clonedPath.Bounds.Width;
                 float scale = size / width * extraScale;
 
-                var fillPaint = Colors.FillByFFS[track.FFS];
-                var strokePaint = Colors.StrokeByFFS[track.FFS];
+                var paints = ProgramData.ColorSettings.GetPaint(track);
 
                 clonedPath.Transform(SKMatrix.CreateScaleTranslation(scale, scale, canvasPos.X, canvasPos.Y));
                 clonedPath.Transform(SKMatrix.CreateRotation(rotation, clonedPath.Bounds.MidX, clonedPath.Bounds.MidY));
@@ -327,11 +343,10 @@ namespace loki_bms_csharp.UserInterface
                 SKRect bounds = clonedPath.Bounds;
                 AddClickHotSpot(clonedPath.Bounds, track);
 
-                Canvas.DrawPath(clonedPath, fillPaint);
-                Canvas.DrawPath(clonedPath, strokePaint);
+                Canvas.DrawPath(clonedPath, paints.fill);
+                Canvas.DrawPath(clonedPath, paints.stroke);
 
-                Canvas.DrawRect(bounds.Right - 2, bounds.Bottom - 12, 24, 16, new SKPaint { Color = SKColor.Parse("#84000000"), Style = SKPaintStyle.Fill });
-                Canvas.DrawText($"{track.Altitude * Conversions.MetersToFeet / 100:F0}", new SKPoint(bounds.Right, bounds.Bottom), new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill });
+                DrawLabel(TrackLabel, track, canvasPos);
             }
         }
 
@@ -343,8 +358,7 @@ namespace loki_bms_csharp.UserInterface
             {
                 SKPath path = new SKPath(ProgramData.TrackSymbols[TrackCategory.None][TE.FFS].SKPath);
 
-                var fillPaint = Colors.FillByFFS[TE.FFS];
-                var strokePaint = Colors.StrokeByFFS[TE.FFS];
+                var paints = ProgramData.ColorSettings.GetPaint(TE);
 
                 float width = path.Bounds.Width;
                 float scale = size / width;
@@ -352,8 +366,8 @@ namespace loki_bms_csharp.UserInterface
 
                 AddClickHotSpot(path.Bounds, TE);
 
-                Canvas.DrawPath(path, fillPaint);
-                Canvas.DrawPath(path, strokePaint);
+                Canvas.DrawPath(path, paints.fill);
+                Canvas.DrawPath(path, paints.stroke);
             }
         }
 
@@ -368,6 +382,20 @@ namespace loki_bms_csharp.UserInterface
             bounds.Inflate(4, 4);
             TrackHotspot hotSpot = new TrackHotspot { Bounds = bounds, Target = target };
             TrackClickHotspots.Add(hotSpot);
+        }
+
+        private void DrawLabel<T> (ScopeLabel<T> label, ISelectableObject target, SKPoint canvasPos) where T: ISelectableObject
+        {
+            //Canvas.DrawText(label, new SKPoint(canvasPos.X + 12, canvasPos.Y+20),new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill });
+            string[] labelVals = label.Evaluate(target, out var text, out var border);
+
+            Canvas.DrawRect(canvasPos.X + 10 + border.Left, canvasPos.Y + 8 + border.Top, border.Width, border.Height, LabelBG);
+            int heightOffset = 0;
+            foreach (string val in labelVals)
+            {
+                Canvas.DrawText(val, canvasPos.X + 9 + text.Left, canvasPos.Y + 8 + text.Top + heightOffset, BullseyeLabel.Font, LabelText);
+                heightOffset += label.charHeight + label.LineSpacing;
+            }
         }
 
         public void DrawAxisLines()

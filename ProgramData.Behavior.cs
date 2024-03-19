@@ -24,6 +24,7 @@ namespace loki_bms_csharp
 
             BaseDirPath = AppDomain.CurrentDomain.BaseDirectory;
             ResourcesPath = BaseDirPath + "Resources" + Delimiter;
+            Debug.WriteLine($"[PROGRAM]: Resources at {ResourcesPath}");
 
             AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"{Delimiter}Loki-BMS{Delimiter}";
             if (!Directory.Exists(AppDataPath)) Directory.CreateDirectory(AppDataPath);
@@ -35,7 +36,7 @@ namespace loki_bms_csharp
             LoadSymbology();
             LoadGeometries();
 
-            ViewSettings = LoadViewSettings(AppDataPath + "Views.xml");
+            LoadViewSettings(AppDataPath + "Views.xml");
 
             ColorSettings = LoadColorSettings();
 
@@ -131,28 +132,19 @@ namespace loki_bms_csharp
             GeometrySettings = loaded;
         }
 
-        public static ViewSettings LoadViewSettings(string filePath)
+        public static void LoadViewSettings(string filePath)
         {
-            if (File.Exists(filePath))
+            ViewSettings? loaded = ViewSettings.LoadFromFile(filePath);
+
+            if (loaded is null)
             {
-                XmlSerializer ser = new XmlSerializer(typeof(ViewSettings));
-                using var stream = new FileStream(filePath, FileMode.OpenOrCreate);
+                loaded = new ViewSettings();
 
-                var vs = (ViewSettings)ser.Deserialize(stream);
-                vs.UpdateViewPosition(vs.ViewCenter);
-                vs.SetZoom(vs.ZoomIncrement);
-
-                return vs;
+                loaded.UpdateViewPosition(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0 });
+                loaded.SetZoom(16);
             }
-            else
-            {
-                var _viewSettings = new ViewSettings();
 
-                _viewSettings.UpdateViewPosition(new LatLonCoord { Lat_Degrees = 0, Lon_Degrees = 0 });
-                _viewSettings.SetZoom(16);
-
-                return _viewSettings;
-            }
+            ViewSettings = loaded;
         }
 
         public static ObservableCollection<LokiDataSource> LoadDataSources(string filePath)
@@ -224,33 +216,16 @@ namespace loki_bms_csharp
         {
             SrcWindow?.Close();
             GeoWindow?.Close();
+            BrushWindow?.Close();
 
-            SaveViewSettings(AppDataPath + "Views.xml");
             SaveDataSources(AppDataPath + "DataSources.xml");
+            ViewSettings.SaveToFile(AppDataPath + "Views.xml");
             GeometrySettings.SaveToFile(AppDataPath + "Geometry.xml");
             ColorSettings.SaveToFile(AppDataPath + "Colors.xml");
 
             foreach (var source in DataSources)
             {
                 source.Deactivate();
-            }
-        }
-
-        public static bool SaveViewSettings(string filePath)
-        {
-            if (!File.Exists(filePath)) File.Create(filePath).Close();
-
-            XmlSerializer ser = new XmlSerializer(typeof(ViewSettings));
-            using var stream = new FileStream(filePath, FileMode.Truncate);
-
-            try
-            {
-                ser.Serialize(stream, ViewSettings);
-                return true;
-            }
-            catch
-            {
-                return false;
             }
         }
 

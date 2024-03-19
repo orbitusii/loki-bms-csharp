@@ -2,6 +2,7 @@
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
 <Document>
 	<name>DCSMaps.kml</name>
+	<open>1</open>
 	<StyleMap id="msn_ylw-pushpin">
 		<Pair>
 			<key>normal</key>
@@ -12,7 +13,32 @@
 			<styleUrl>#sh_ylw-pushpin</styleUrl>
 		</Pair>
 	</StyleMap>
+	<StyleMap id="msn_ylw-pushpin0">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_ylw-pushpin0</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_ylw-pushpin0</styleUrl>
+		</Pair>
+	</StyleMap>
 	<Style id="sh_ylw-pushpin">
+		<IconStyle>
+			<scale>1.3</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LineStyle>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<fill>0</fill>
+		</PolyStyle>
+	</Style>
+	<Style id="sh_ylw-pushpin0">
 		<IconStyle>
 			<scale>1.3</scale>
 			<Icon>
@@ -23,6 +49,7 @@
 		<BalloonStyle>
 		</BalloonStyle>
 		<LineStyle>
+			<color>ff0055ff</color>
 			<width>2</width>
 		</LineStyle>
 		<PolyStyle>
@@ -37,9 +64,25 @@
 			</Icon>
 			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
 		</IconStyle>
+		<LineStyle>
+			<width>2</width>
+		</LineStyle>
+		<PolyStyle>
+			<fill>0</fill>
+		</PolyStyle>
+	</Style>
+	<Style id="sn_ylw-pushpin0">
+		<IconStyle>
+			<scale>1.1</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
 		<BalloonStyle>
 		</BalloonStyle>
 		<LineStyle>
+			<color>ff0055ff</color>
 			<width>2</width>
 		</LineStyle>
 		<PolyStyle>
@@ -76,7 +119,7 @@
                         60,23,0
                         60,33,0
                         47,33,0
-                        47,23,0 
+                        47,23,0
 					</coordinates>
 				</LinearRing>
 			</outerBoundaryIs>
@@ -108,11 +151,11 @@
 			<outerBoundaryIs>
 				<LinearRing>
 					<coordinates>
-						138.0,10.85,0
-                        152.0,10.85,0
-                        152.0,21.7,0
-                        138.0,21.7,0
-                        138.0,10.85,0 
+						138,10.85,0
+                        152,10.85,0
+                        152,21.7,0
+                        138,21.7,0
+                        138,10.85,0 
 					</coordinates>
 				</LinearRing>
 			</outerBoundaryIs>
@@ -128,13 +171,102 @@
 					<coordinates>
 						28.238,25.967,0
                         37.16,25.967,0
-                        37.16,33.0,0
-                        28.238,33.0,0
+                        37.16,33,0
+                        28.238,33,0
                         28.238,25.967,0 
 					</coordinates>
 				</LinearRing>
 			</outerBoundaryIs>
 		</Polygon>
-	</Placemark>   
+	</Placemark>
+	<Placemark>
+		<name>Nevada</name>
+		<styleUrl>#msn_ylw-pushpin</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-119.0,34.5,0
+						-112.5,34.5,0
+                        -112.5,39.0,0
+                        -119.0,39.0,0
+						-119.0,34.5,0
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark>
+		<name>Falklands</name>
+		<styleUrl>#msn_ylw-pushpin</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-72.5,-54.0111910386373,0
+                        -70.0,-54.00441749212696,0
+                        -65.0,-53.99053598617959,0
+                        -60.0,-54.01228996796581,0
+                        -55.0,-54.02947356238885,0
+                        -55.0,-49.0521212821283,0
+                        -60.0,-49.03196199378064,0
+                        -65.0,-49.01947026293183,0
+                        -70.0,-49.0079071398463,0
+                        -72.5,-49.03922922311413,0
+                        -72.5,-54.0111910386373,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark>
+		<name>Kola (Speculative)</name>
+		<styleUrl>#msn_ylw-pushpin0</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						10.5148892412088,64.79040160213476,0
+                        35.0913253908962,64.52443946995143,0
+                        35.50820520813745,65.3102604581686,0
+                        36.10607669055595,65.47626300736735,0
+                        38.44453741896602,65.62952023521096,0
+                        40.07270542449135,65.86913709882373,0
+                        41.28361472288768,66.17517765355247,0
+                        42.08733843724769,66.61667981000056,0
+                        42.71418188507042,67.00572779295173,0
+                        43.08647662063751,67.7636062519442,0
+                        42.88050143295004,68.55564342816442,0
+                        43.32985528203244,68.90325185718915,0
+                        46.00023971653994,69.62603219769817,0
+                        47.97993974935294,70.75845072646833,0
+                        6.64019459641028,71.87162240107921,0
+                        10.5148892412088,64.79040160213476,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark>
+		<name>Normandy 2</name>
+		<styleUrl>#msn_ylw-pushpin</styleUrl>
+		<Polygon>
+			<tessellate>1</tessellate>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						-2.247039637846917,51.66116019643562,0
+                        -2.242373014652845,48.38284143242196,0
+                        3.02561266196941,48.38469756337762,0
+                        3.027327172109651,51.67421230273795,0
+                        -2.247039637846917,51.66116019643562,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
 </Document>
 </kml>

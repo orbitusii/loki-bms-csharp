@@ -11,8 +11,10 @@ using System.ComponentModel;
 namespace loki_bms_csharp.Settings
 {
     [XmlRoot("ViewSettings")]
-    public class ViewSettings: INotifyPropertyChanged
+    public class ViewSettings: SerializableSettings<ViewSettings>, INotifyPropertyChanged
     {
+        public override ViewSettings Original => this;
+
         [XmlIgnore]
         public bool Debug;
 
@@ -125,6 +127,12 @@ namespace loki_bms_csharp.Settings
             CameraMatrix.SetOrigin(CameraMatrix.Out * Conversions.EarthRadius);
 
             return CameraMatrix;
+        }
+
+        public override void OnLoad()
+        {
+            UpdateViewPosition(ViewCenter);
+            SetZoom(ZoomIncrement);
         }
     }
 }

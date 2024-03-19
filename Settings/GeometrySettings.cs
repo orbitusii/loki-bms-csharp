@@ -8,12 +8,16 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using loki_bms_csharp.Geometry;
 using loki_bms_common.MathL;
+using System.IO;
+using System.Diagnostics;
 
 namespace loki_bms_csharp.Settings
 {
     [XmlRoot("GeometrySettings")]
     public class GeometrySettings : SerializableSettings<GeometrySettings>
     {
+        public override GeometrySettings Original => this;
+
         [XmlIgnore]
         public MapGeometry Landmasses { get; set; }
 
@@ -25,30 +29,35 @@ namespace loki_bms_csharp.Settings
             {
                 Geometries.Clear();
                 foreach (var rawGeo in value)
-                {
-                    MapGeometry loaded = MapGeometry.LoadFromFile(rawGeo.FilePath, rawGeo.ConformToSurface);
-
-                    rawGeo.Paths3D = loaded.Paths3D;
-
-                    Geometries.Add(rawGeo);
-                }
+                    LoadGeoFile(rawGeo);
             }
         }
         [XmlIgnore]
         public ObservableCollection<MapGeometry> Geometries { get; set; } = new ObservableCollection<MapGeometry>();
 
-        public void CacheGeometry (TangentMatrix matrix)
+        private void LoadGeoFile(MapGeometry geo)
         {
-            Landmasses?.CachePaths(matrix);
-            foreach(MapGeometry geo in Geometries)
+            try
             {
-                geo.CachePaths(matrix);
+                MapGeometry loaded = MapGeometry.LoadFromFile(geo.FilePath, geo.ConformToSurface);
+
+                geo.Paths3D = loaded.Paths3D;
+
+                Geometries.Add(geo);
+            }
+            catch (FileNotFoundException)
+            {
+                Debug.WriteLine($"[GEOMETRY][ERROR] Tried to load Gemoetry from {geo.FilePath} but the file doesn't exist!");
             }
         }
 
-        public void SaveToFile (string filename)
+        public void CacheGeometry(TangentMatrix matrix)
         {
-            SaveToFile(filename, this);
+            Landmasses?.CachePaths(matrix);
+            foreach (MapGeometry geo in Geometries)
+            {
+                geo.CachePaths(matrix);
+            }
         }
     }
 }

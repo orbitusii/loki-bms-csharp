@@ -11,6 +11,8 @@ namespace loki_bms_csharp.Settings
 {
     public abstract class SerializableSettings<T>
     {
+        public abstract T Original { get; }
+
         public static T? LoadFromFile(string filename)
         {
             if(File.Exists(filename))
@@ -20,20 +22,34 @@ namespace loki_bms_csharp.Settings
                     XmlSerializer ser = new XmlSerializer(typeof(T));
                     var result = (T)ser.Deserialize(stream);
 
-                    if (result is SerializableSettings<T>) return result;
+                    if (result is SerializableSettings<T> loaded)
+                    {
+                        loaded.OnLoad();
+                        return result;
+                    }
                 }
             }
             return default;
         }
 
-        public static void SaveToFile (string filename, T settings)
+        public virtual void OnLoad() { }
+        public virtual void OnSave () { }
+
+        public void SaveToFile (string filename)
         {
+            SaveToFile(filename, Original);
+        }
+
+        public static void SaveToFile (string filename, T original)
+        {
+            (original as SerializableSettings<T>).OnSave();
+
             if (!File.Exists(filename)) File.Create(filename).Close();
 
             using (FileStream stream = new(filename, FileMode.Truncate))
             {
                 XmlSerializer ser = new XmlSerializer(typeof(T));
-                ser.Serialize(stream, settings);
+                ser.Serialize(stream, original);
             }
         }
     }

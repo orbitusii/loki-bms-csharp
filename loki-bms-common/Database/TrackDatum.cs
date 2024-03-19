@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using loki_bms_common;
 using loki_bms_common.MathL;
 
 namespace loki_bms_common.Database

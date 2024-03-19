@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using loki_bms_common;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using loki_bms_common.Plugins;
 
 namespace loki_bms_csharp.Plugins
 {

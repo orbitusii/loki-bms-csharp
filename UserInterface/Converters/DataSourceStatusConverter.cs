@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
+using loki_bms_common.Database;
 using Color = System.Windows.Media.Color;
 
 namespace loki_bms_csharp.UserInterface.Converters
