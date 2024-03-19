@@ -1,0 +1,35 @@
+{
+    "Clients": [
+        {
+            "ClientGuid": "hI7gk8xK-ka81aKnXLtVRg",
+            "Name": "player",
+            "Seat": 0,
+            "Coalition": 0,
+            "AllowRecord": false,
+            "RadioInfo": {
+                "radios": null,
+                "unit": "EAM",
+                "unitId": 100000001,
+                "iff": {
+                    "control": 2,
+                    "mode1": -1,
+                    "mode2": -1,
+                    "mode3": -1,
+                    "mode4": false,
+                    "mic": -1,
+                    "status": 0
+                },
+                "ambient": {
+                    "vol": 0.0,
+                    "abType": ""
+                }
+            },
+            "LatLngPosition": {
+                "lat": 0.0,
+                "lng": 0.0,
+                "alt": 0.0
+            }
+        }
+    ],
+    "ServerVersion": "2.1.0.2"
+}
