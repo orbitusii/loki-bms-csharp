@@ -1,0 +1,52 @@
+{
+    "OtherText": "some other text",
+    "Timestamp": 42,
+    "Units": [
+        {
+            "group": "Norse 69",
+            "name": "Norse 69",
+            "position": {
+                "Alt": 9148.7652738131,
+                "Lat": 25.712742739782,
+                "Long": 52.65656304011
+            }
+        },
+        {
+            "group": "Weasel 4",
+            "name": "Weasel 41",
+            "position": {
+                "Alt": 6091.6441974939,
+                "Lat": 25.652932129843,
+                "Long": 54.412548528804
+            }
+        },
+        {
+            "group": "USS Ron Johnson",
+            "name": "CVN 69",
+            "position": {
+                "Alt": 0.0019171378888828,
+                "Lat": 25.049625099148,
+                "Long": 52.550836771684
+            }
+        },
+        {
+            "group": "Weasel 4",
+            "name": "Weasel 42",
+            "position": {
+                "Alt": 5876.1907856108,
+                "Lat": 25.674853331933,
+                "Long": 54.418456952914
+            }
+        },
+        {
+            "group": "Xian 1",
+            "name": "Xian 1",
+            "position": {
+                "Alt": 9148.8542142918,
+                "Lat": 32.788778589916,
+                "Long": 54.595218288019
+            }
+        }
+    ],
+    "isExportAllowed": true
+}
