@@ -161,7 +161,7 @@ namespace loki_bms_csharp.Geometry
                             {
                                 Lat_Degrees = x.Lat,
                                 Lon_Degrees = x.Lon,
-                                Alt = x.Alt
+                                Alt = x.Alt / Conversions.EarthRadius
                             })));
                     geoPaths.Add(new Path3D { Name = pm.name, Points = points.ToArray(), ConformToSurface = conformToSurface, Closed = false });
                 }
