@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,10 +38,13 @@ namespace loki_bms_csharp.Windows
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = true;
             fileDialog.Filter = "KML files (*.kml)|*.kml|All files (*.*)|*.*";
-            fileDialog.InitialDirectory = ProgramData.AppDataPath;
+            fileDialog.InitialDirectory = ProgramData.GeometrySettings.GetLastFolderPath();
 
             if (fileDialog.ShowDialog() == true)
             {
+                DirectoryInfo dirInfo = new DirectoryInfo(fileDialog.FileName);
+                ProgramData.GeometrySettings.UpdateLastFolderPath(dirInfo.Parent.FullName);
+
                 foreach (string filename in fileDialog.FileNames)
                 {
                     MapGeometry geo = MapGeometry.LoadFromKML(filename);

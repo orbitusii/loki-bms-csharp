@@ -18,6 +18,9 @@ namespace loki_bms_csharp.Settings
     {
         public override GeometrySettings Original => this;
 
+        [XmlElement(IsNullable = true)]
+        public string? LastFolderPath { get; set; }
+
         [XmlIgnore]
         public MapGeometry Landmasses { get; set; }
 
@@ -58,6 +61,16 @@ namespace loki_bms_csharp.Settings
             {
                 geo.CachePaths(matrix);
             }
+        }
+
+        public string GetLastFolderPath() {
+            if(LastFolderPath is string && Directory.Exists(LastFolderPath)) return LastFolderPath;
+            return ProgramData.AppDataPath;
+            }
+
+        public void UpdateLastFolderPath(string? path)
+        {
+            LastFolderPath = path;
         }
     }
 }
