@@ -162,7 +162,7 @@ namespace loki_bms_csharp.Geometry
                         {
                             Category = TEType.Other,
                             FFS = FriendFoeStatus.Pending,
-                            Position = Conversions.LLToXYZ(point.Coordinates),
+                            Position = Conversions.LLToXYZ(point.Coordinates, Conversions.EarthRadius),
                             Radius = 0,
                             Source = null,
                             Name = pm.name ?? "Imported TE",
@@ -185,7 +185,8 @@ namespace loki_bms_csharp.Geometry
                     geoPaths.Add(new Path3D { Name = pm.name, Points = points.ToArray(), ConformToSurface = conformToSurface, Closed = false });
                 }
 
-                return new MapGeometry { Name = geoPaths[0]?.Name, FilePath = filepath, ConformToSurface = conformToSurface, Paths3D = geoPaths.ToArray() };
+                if(geoPaths.Count <= 0 ) return new MapGeometry() { Name = kml.Document.name, FilePath = filepath, ConformToSurface = conformToSurface, Paths3D = Array.Empty<Path3D>() };
+                else return new MapGeometry { Name = geoPaths[0]?.Name, FilePath = filepath, ConformToSurface = conformToSurface, Paths3D = geoPaths.ToArray() };
             }
             else throw new FileNotFoundException($"KML File at {filepath} was not found!");
         }
