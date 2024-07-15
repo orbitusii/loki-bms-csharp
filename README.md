@@ -23,8 +23,8 @@ LOKI Battle Management System (BMS) is a free, open-source radar scope for use w
 	1. Click "Import" to open a file browser that will let you locate and load in KML files (you can select multiple!)
 	2. Select the geometry you want to adjust from the list on the left in order to rename it, change its stroke and fill colors, or remove it from the list
 	3. A geometry can be made invisible without removing it by toggling the checkbox next to its name in the list
-	- Geometry does not persist through application close/reopen as of 23 Nov 2022
-	- Geometry does not import colors from the source KML as of 23 Nov 2022
+	- Geometry **will** persist through application close/reopen
+	- Geometry *should* import colors from the source KML
 
 ### Main Scope View
 - The Main Scope's view is determined by a central view position and a vertical field of view
