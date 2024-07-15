@@ -39,6 +39,22 @@ namespace loki_bms_common.MathL
         }
 
         /// <summary>
+        /// Converts an <see cref="O2Kml.LatLon"/> coordinate into its cartesian (XYZ) counterpart
+        /// </summary>
+        /// <param name="latLon"><see cref="O2Kml.LatLon"/> to be converted</param>
+        /// <param name="radius">The radius of the reference sphere (defaults to 1)</param>
+        /// <returns></returns>
+        public static Vector64 LLToXYZ (O2Kml.LatLon latLon, double radius = 1)
+        {
+            return LLToXYZ(new LatLonCoord()
+            {
+                Lat_Degrees = latLon.Lat,
+                Lon_Degrees = latLon.Lon,
+                Alt = latLon.Alt,
+            }, radius);
+        }
+
+        /// <summary>
         /// Converts a LatLonCoord representing an object on the surface of a sphere to a Vector64
         /// </summary>
         /// <param name="latLon">LatLonCoord to be converted</param>

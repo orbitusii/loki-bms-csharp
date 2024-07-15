@@ -16,4 +16,8 @@
     <None Include="Database\DataSource.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="O2Kml" Version="0.1.4" />
+  </ItemGroup>
+
 </Project>
