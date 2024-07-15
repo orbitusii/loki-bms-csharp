@@ -154,6 +154,8 @@ namespace loki_bms_csharp.Geometry
                 var placemarks = kml.Document.Placemarks;
                 List<Path3D> geoPaths = new List<Path3D>();
 
+                if (placemarks.Length <= 0) throw new Exception("KML file is empty!");
+
                 foreach (KmlPlacemark pm in placemarks)
                 {
                     if(pm.Shape is KmlPoint point)
