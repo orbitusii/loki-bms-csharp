@@ -12,6 +12,7 @@ using System.Windows;
 using SkiaSharp;
 using O2Kml;
 using O2Kml.Shapes;
+using loki_bms_common.Database;
 
 namespace loki_bms_csharp.Geometry
 {
@@ -155,6 +156,24 @@ namespace loki_bms_csharp.Geometry
 
                 foreach (KmlPlacemark pm in placemarks)
                 {
+                    if(pm.Shape is KmlPoint point)
+                    {
+                        TacticalElement generated = new()
+                        {
+                            Category = TEType.Other,
+                            FFS = FriendFoeStatus.Pending,
+                            Position = Conversions.LLToXYZ(point.Coordinates),
+                            Radius = 0,
+                            Source = null,
+                            Name = pm.name ?? "Imported TE",
+                            SpecialInfo = $"Imported from {kml.Document.name}",
+                        };
+
+                        ProgramData.Database.AddTE(generated);
+
+                        continue;
+                    }
+
                     List<Vector64> points = new List<Vector64>(((KmlShape)pm.Shape).GetPoints()
                         .Select(x => Conversions.LLToXYZ(
                             new LatLonCoord
