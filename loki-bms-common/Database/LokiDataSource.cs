@@ -75,6 +75,12 @@ namespace loki_bms_common.Database
         public TrackNumberRange TNRange { get; set; } = new TrackNumberRange { TNMin = -1, TNMax = -1 };
 
         /// <summary>
+        /// How this DataSource should handle its tracks when set to disabled.
+        /// </summary>
+        [XmlAttribute]
+        public DataSourceDropControl DropControl { get; set; } = DataSourceDropControl.DoNothing;
+
+        /// <summary>
         /// The symbol used to render this source's raw data.
         /// </summary>
         [XmlAttribute("Symbol")]

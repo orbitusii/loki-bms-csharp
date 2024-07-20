@@ -13,8 +13,9 @@ using System.Xml.Serialization;
 using System.Windows;
 using System.ComponentModel;
 
-namespace loki_bms_csharp.Database
+namespace loki_bms_common.Database
 {
+    [Obsolete("Use LokiDataSource instead", true)]
     public class DataSource: INotifyPropertyChanged
     {
         private string _name = "New Data Source";
@@ -36,6 +37,8 @@ namespace loki_bms_csharp.Database
         public string PollRate { get; set; } = "10";
         [XmlAttribute]
         public string SlowPollrate { get; set; } = "30";
+        [XmlAttribute]
+        public DataSourceDropControl DropControl { get; set; } = DataSourceDropControl.DoNothing;
 
         [XmlElement]
         public TrackNumberRange TNRange { get; set; } = new TrackNumberRange { TNMin = -1, TNMax = -1 };
