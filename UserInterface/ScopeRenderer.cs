@@ -8,6 +8,7 @@ using SkiaSharp;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
 namespace loki_bms_csharp.UserInterface
@@ -65,6 +66,7 @@ namespace loki_bms_csharp.UserInterface
         };
         internal SKPaint LabelBG = new SKPaint { Color = SKColor.Parse("#C5000000"), Style = SKPaintStyle.Fill };
         internal SKPaint LabelText = new SKPaint { Color = SKColors.White, Style = SKPaintStyle.Fill };
+        internal SKPaint DecoratorText = new SKPaint {  Color = SKColors.Yellow, Style = SKPaintStyle.Fill };
 
         public ScopeRenderer() { }
 
@@ -355,6 +357,10 @@ namespace loki_bms_csharp.UserInterface
                 Canvas.DrawPath(clonedPath, paints.fill);
                 Canvas.DrawPath(clonedPath, paints.stroke);
 
+                if (track.Status == TrackStatus.Drop_Auto || track.Status == TrackStatus.Drop_Manual)
+                    DrawDecorator("DROP", canvasPos);
+                else if (track.Status == TrackStatus.Protected)
+                    DrawDecorator("PTCT", canvasPos);
                 DrawLabel(TrackLabel, track, canvasPos);
             }
         }
@@ -391,6 +397,12 @@ namespace loki_bms_csharp.UserInterface
             bounds.Inflate(4, 4);
             TrackHotspot hotSpot = new TrackHotspot { Bounds = bounds, Target = target };
             TrackClickHotspots.Add(hotSpot);
+        }
+
+        private void DrawDecorator (string Text, SKPoint canvasPos)
+        {
+            Canvas.DrawRect(canvasPos.X + 10, canvasPos.Y - 16, 7 * Text.Length, 12, LabelBG);
+            Canvas.DrawText(Text, canvasPos.X + 9, canvasPos.Y - 8, BullseyeLabel.Font, DecoratorText);
         }
 
         private void DrawLabel<T> (ScopeLabel<T> label, ISelectableObject target, SKPoint canvasPos) where T: ISelectableObject
