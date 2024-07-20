@@ -249,7 +249,7 @@ namespace loki_bms_common.Database
 
         public void PurgeOldData()
         {
-            DateTime now = DateTime.Now;
+            DateTime now = DateTime.UtcNow;
 
             List<TrackDatum> oldData = new List<TrackDatum>();
 

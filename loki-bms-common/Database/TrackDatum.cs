@@ -39,7 +39,7 @@ namespace loki_bms_common.Database
             this.Origin = Origin;
             this.Position = Position;
             this.Velocity = Velocity;
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.UtcNow;
         }
     }
 }
