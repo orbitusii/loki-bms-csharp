@@ -337,6 +337,15 @@ namespace loki_bms_csharp.UserInterface
 
                 var paints = ProgramData.ColorSettings.GetPaint(track);
 
+                if(track.History.Count > 0 && track.ShowHistory)
+                {
+                    var hist = track.History.ToArray();
+                    DrawLine(track.Position, hist[^1], paints.stroke.Color, 1f);
+
+                    for (int h = 1; h < hist.Length; h++)
+                        DrawLine(hist[h - 1], hist[h], paints.stroke.Color, 1f);
+                }
+
                 clonedPath.Transform(SKMatrix.CreateScaleTranslation(scale, scale, canvasPos.X, canvasPos.Y));
                 clonedPath.Transform(SKMatrix.CreateRotation(rotation, clonedPath.Bounds.MidX, clonedPath.Bounds.MidY));
 

@@ -39,9 +39,8 @@ namespace loki_bms_common.Database
         public string SpecType { get; set; }
 
         public bool ShowHistory { get; set; }
-        public List<Vector64> History { get; private set; }
+        public Queue<Vector64> History { get; private set; }
         private DateTime NewestHistory;
-        private DateTime OldestHistory;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -63,10 +62,9 @@ namespace loki_bms_common.Database
             Callsign = vcs;
             SpecType = spec;
 
-            ShowHistory = false;
-            History = new List<Vector64>(0);
-            NewestHistory = Timestamp;
-            OldestHistory = Timestamp;
+            ShowHistory = true;
+            History = new Queue<Vector64>(10);
+            NewestHistory = Timestamp - TimeSpan.FromSeconds(30);
         }
 
         public void AddNewData (TrackDatum data, IFFData[] codes)
@@ -100,6 +98,20 @@ namespace loki_bms_common.Database
 
             Timestamp = data.Timestamp;
             freshData = true;
+
+            UpdateHistory();
+        }
+
+        protected void UpdateHistory()
+        {
+            DateTime nextHist = NewestHistory + TimeSpan.FromSeconds(60);
+
+            if(Timestamp.CompareTo(nextHist) >= 0)
+            {
+                if(History.Count >= 10) History.Dequeue();
+                History.Enqueue(RawPosition);
+                NewestHistory = Timestamp;
+            }
         }
 
         public void UpdateVisual (float dt)
