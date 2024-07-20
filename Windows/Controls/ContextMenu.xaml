@@ -12,8 +12,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <Button x:Name="DropTrackButton" Content="Drop Track" BorderBrush="{x:Null}" HorizontalContentAlignment="Left"/>
-            <Button x:Name="ProtectTrackButton" Content="Drop Protect" BorderBrush="{x:Null}" HorizontalContentAlignment="Left"/>
+            <Button x:Name="DropTrackButton" Content="Drop Track" BorderBrush="{x:Null}" HorizontalContentAlignment="Left" Click="DropTrackButton_Click"/>
+            <Button x:Name="ProtectTrackButton" Content="Protect Track" BorderBrush="{x:Null}" HorizontalContentAlignment="Left" Click="ProtectTrackButton_Click"/>
             <Separator Margin="2,2,2,2"/>
             <Button x:Name="CreateTEButton" Content="New TE" BorderBrush="{x:Null}" Click="CreateTEButton_Click"/>
             <Button x:Name="DeleteTEButton" Content="Delete TE" BorderBrush="{x:Null}" Click="DeleteTEButton_Click"/>

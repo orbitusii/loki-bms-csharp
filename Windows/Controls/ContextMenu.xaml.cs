@@ -107,5 +107,33 @@ namespace loki_bms_csharp.Windows.Controls
 
             ParentWindow.Hide();
         }
+
+        private void DropTrackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedTrack is null) return;
+
+            if (SelectedTrack.Status == TrackStatus.Drop_Manual)
+            {
+                SelectedTrack.SetTrackStatus(TrackStatus.Live);
+                SelectedTrack.MakeAlive(DateTime.UtcNow);
+            }
+            else SelectedTrack.SetTrackStatus(TrackStatus.Drop_Manual);
+
+            ParentWindow.Hide();
+        }
+
+        private void ProtectTrackButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedTrack is null) return;
+
+            if (SelectedTrack.Status == TrackStatus.Protected)
+            {
+                SelectedTrack.SetTrackStatus(TrackStatus.Live);
+                SelectedTrack.MakeAlive(DateTime.UtcNow);
+            }
+            else SelectedTrack.SetTrackStatus(TrackStatus.Protected);
+
+            ParentWindow.Hide();
+        }
     }
 }
