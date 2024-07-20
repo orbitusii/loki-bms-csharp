@@ -27,6 +27,7 @@ namespace loki_bms_common.Database
         public IFFType IFFTypes { get; private set; }
 
         public DateTime Timestamp { get; private set; }
+        public TrackStatus Status { get; private set; } = TrackStatus.Live;
         private bool freshData = false;
         public TrackType TrackType { get; private set; }
         public TrackCategory Category { get; set; } = TrackCategory.None;
@@ -96,10 +97,27 @@ namespace loki_bms_common.Database
                 IFFTypes = IFFTypes & code.Type;
             }
 
-            Timestamp = data.Timestamp;
+            MakeAlive(data.Timestamp);
             freshData = true;
 
             UpdateHistory();
+        }
+
+        public void MakeAlive (DateTime timestamp)
+        {
+            if (Status == TrackStatus.Drop_Auto) Status = TrackStatus.Live;
+            if (Status == TrackStatus.Live || Status == TrackStatus.Protected || Status == TrackStatus.Generated)
+            {
+                Timestamp = timestamp;
+            }
+        }
+
+        public void SetTrackStatus (TrackStatus newStatus)
+        {
+            Status = newStatus;
+
+            if (Status == TrackStatus.Drop_Manual)
+                Timestamp = DateTime.UtcNow;
         }
 
         protected void UpdateHistory()
